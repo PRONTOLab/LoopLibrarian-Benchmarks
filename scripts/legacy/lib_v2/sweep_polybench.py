@@ -3,10 +3,10 @@
 
 Usage: sweep_polybench.py [--raised DIR] [--out DIR] [-j N] [kernel ...]
 
-Inputs:  <raised>/<kernel>/debuf.mlir   (default: issues/lib_v2/polybench_raised,
+Inputs:  <raised>/<kernel>/debuf.mlir   (default: results/archive/issues/lib_v2/polybench_raised,
          produced by raise_polybench.py with the shared recipe)
 Outputs: <out>/<kernel>/{matched.mlir,report.json} and <out>/summary.json
-Production baseline: issues/polybench_section42/ir/<kernel>/**/matched.mlir
+Production baseline: results/archive/issues/polybench_section42/ir/<kernel>/**/matched.mlir
 """
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ import csv
 import json
 import re
 import subprocess
+import os
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -22,8 +23,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
-MANIFEST = REPO / "issues/polybench_section42/manifest.csv"
-PROD = REPO / "issues/polybench_section42/ir"
+COMPILER = Path(os.environ.get("POLYGEIST_ROOT", REPO/"third_party/Polygeist"))
+MANIFEST = REPO / "results/archive/issues/polybench_section42/manifest.csv"
+PROD = REPO / "results/archive/issues/polybench_section42/ir"
 
 
 def kernels() -> list[str]:
@@ -49,7 +51,7 @@ def one(kernel: str, raised: Path, out: Path, timeout: int, extra_args: list) ->
         return row
     t0 = time.time()
     try:
-        p = subprocess.run([sys.executable, str(HERE / "match_v2.py"), str(src),
+        p = subprocess.run([sys.executable, str(COMPILER / "scripts/correctness/lib_v2/match_v2.py"), str(src),
                             "-o", str(d / "matched.mlir"), "--report", str(d / "report.json"),
                             "--diagnose", *extra_args], capture_output=True, text=True,
                            timeout=timeout)
@@ -74,8 +76,8 @@ def one(kernel: str, raised: Path, out: Path, timeout: int, extra_args: list) ->
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--raised", default=str(REPO / "issues/lib_v2/polybench_raised"))
-    ap.add_argument("--out", default=str(REPO / "issues/lib_v2/polybench_matched"))
+    ap.add_argument("--raised", default=str(REPO / "results/archive/issues/lib_v2/polybench_raised"))
+    ap.add_argument("--out", default=str(REPO / "results/archive/issues/lib_v2/polybench_matched"))
     ap.add_argument("-j", type=int, default=6)
     ap.add_argument("--timeout", type=int, default=900)
     ap.add_argument("--no-region-match", action="store_true")

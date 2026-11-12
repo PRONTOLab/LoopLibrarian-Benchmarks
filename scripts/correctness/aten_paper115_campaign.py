@@ -45,7 +45,7 @@ def counts(text):
 def worker(request):
     req = json.loads(request.read_text())
     dest = request.parent
-    sys.path[:0] = [str(HERE), str(COMPILER / 'scripts/correctness/lib_v2')]
+    sys.path[:0] = [str(COMPILER/'scripts/correctness'), str(HERE), str(COMPILER / 'scripts/correctness/lib_v2')]
     os.environ.update(POLYGEIST_SPEC_SUITE='lib_v3',
                      POLYGEIST_NUMERIC_MODEL=req['numeric_model'],
                      OPENBLAS_NUM_THREADS='1', OMP_NUM_THREADS='1',

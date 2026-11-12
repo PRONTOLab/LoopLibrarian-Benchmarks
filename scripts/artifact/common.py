@@ -43,7 +43,7 @@ def environment(**extra):
                PYTHON=PYTHON, OPENBLAS_NUM_THREADS="1", OMP_NUM_THREADS="1",
                MKL_NUM_THREADS="1")
     env["PATH"] = str(COMPILER / "build/bin") + ":" + str(COMPILER / "llvm-project/build/bin") + ":" + env.get("PATH", "")
-    env["PYTHONPATH"] = str(ROOT / "scripts/artifact") + ":" + str(COMPILER / "scripts/correctness") + ":" + str(ROOT / "scripts/correctness") + ":" + str(COMPILECOMPILER / "scripts/correctness/lib_v2") + ":" + env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = str(ROOT / "scripts/artifact") + ":" + str(COMPILER / "scripts/correctness") + ":" + str(ROOT / "scripts/correctness") + ":" + str(COMPILER / "scripts/correctness/lib_v2") + ":" + env.get("PYTHONPATH", "")
     for key, value in CONFIG.get("environment", {}).items():
         env[key] = str(value)
     env.update({key: str(value) for key, value in extra.items()})

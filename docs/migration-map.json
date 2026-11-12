@@ -14511,7 +14511,6 @@
     "scripts/correctness/cudnn_stencil3d_7pt_smoke.c": "scripts/correctness/cudnn_stencil3d_7pt_smoke.c",
     "scripts/correctness/diagnose_bsr_reference.py": "scripts/correctness/diagnose_bsr_reference.py",
     "scripts/correctness/egglog_library_variants.py": "scripts/correctness/egglog_library_variants.py",
-    "scripts/correctness/eqsat_ablation.py": "scripts/correctness/eqsat_ablation.py",
     "scripts/correctness/extracted_darknet_jetson.sh": "scripts/correctness/extracted_darknet_jetson.sh",
     "scripts/correctness/fig3_board_preflight.py": "scripts/correctness/fig3_board_preflight.py",
     "scripts/correctness/gemm_bias_relu_jetson_harness.c": "scripts/correctness/gemm_bias_relu_jetson_harness.c",
@@ -14722,5 +14721,8 @@
     "tools/cgeist/Test/polybench/utilities/time_benchmark.sh": "polybench/sources/utilities/time_benchmark.sh",
     "scripts/correctness/lib_v2/e2e_v2.py": "scripts/legacy/lib_v2/e2e_v2.py",
     "scripts/correctness/lib_v2/validate_v2.py": "scripts/legacy/lib_v2/validate_v2.py"
+  },
+  "partial_moves": {
+    "scripts/correctness/tests/test_fp32_import.py::ImportedSoftmax": "tests/test_llama_softmax.py"
   }
 }

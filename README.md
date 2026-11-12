@@ -5,8 +5,7 @@ for the LoopLibrarian paper. Polygeist is a pinned dependency under
 `third_party/Polygeist`; its `artifact-submission` branch contains the compiler,
 runtime adapters, imported reference specifications, and compiler tests.
 
-This repository is being prepared as a **private** GitHub repository. Repository
-visibility must be checked on GitHub before publishing an artifact link.
+Repository: https://github.com/arpitj1/LoopLibrarian-Benchmarks (public).
 
 ## Testing systems
 
@@ -53,7 +52,7 @@ installed SDK; PVA runtime timings are not a paper reproduction target.
 | cuDNN | 9.25.1; runtime API reports 92501 |
 | cuTENSOR | 2.7.0; runtime API reports 20700 |
 | ATen native comparison | Real CUDA libtorch, `2.6.0a0+df5bbc09d1.nv24.12`, built for CUDA 12.6 |
-| OpenBLAS | Single-threaded; exact loaded binary/version must be captured by each CPU run |
+| OpenBLAS | 0.3.20 on Orin; `DYNAMIC_ARCH`, `NO_AFFINITY`, armv8, built with `MAX_THREADS=64`; measurements use one thread |
 | Other source dependencies | Pinned submodules and `dependency_sources/repos.json` |
 | SpEQ | Published artifact and pinned LLVM fork; separate Docker environment |
 
@@ -103,7 +102,7 @@ compilation_cost/      compilation measurements
 library_inventory/     imported-specification inventory
 inputs/                shared pinned fixture inputs
 scripts/               shared experiment drivers
-results/archive/       retained evidence, not fresh-run inputs
+results/archive/       retained evidence and original extraction fixtures
 docs/                  methodology, system metadata, migration record
 ```
 
@@ -128,7 +127,9 @@ python3 reproduce.py polybench_cpu --output results/runs/fig3
 
 Configure SDK paths, cross-compilation tools, and an SSH alias in `config.json`.
 Keep credentials in SSH/client configuration; `config.json` and fresh run outputs
-are ignored. Each successful run retains its commands, source/compiler hashes,
+are ignored. The `aten/inputs` and `mfem/inputs` links expose the preserved extraction
+fixtures; historical output dumps are never used as correctness oracles.
+Each successful run retains its commands, source/compiler hashes,
 intermediate IR, correctness checks, raw samples, and paper comparison.
 See [docs/reproduction.md](docs/reproduction.md) for the original eight evaluation
 protocols and [aten/README.md](aten/README.md) for the incomplete ATen cohort.

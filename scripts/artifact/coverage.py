@@ -16,7 +16,7 @@ from common import ARTIFACT, ROOT, PYTHON, command, environment, save, setting, 
 def worker(request):
     row = json.loads(Path(request).read_text())
     dest = Path(row['output']); dest.mkdir(parents=True, exist_ok=True)
-    sys.path[:0] = [str(ROOT/'scripts/correctness'), str(COMPILECOMPILER / 'scripts/correctness/lib_v2')]
+    sys.path[:0] = [str(COMPILER/'scripts/correctness'), str(ROOT/'scripts/correctness'), str(COMPILER / 'scripts/correctness/lib_v2')]
     os.environ.update(environment(EQSAT_ABLATION=row.get('ablation', 'full'),
         REGION_MATCH_NO_CACHE=1, REGION_MATCH_CACHE_DIR=dest/'cache'))
     import recipe

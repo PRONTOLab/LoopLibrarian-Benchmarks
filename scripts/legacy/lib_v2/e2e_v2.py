@@ -36,6 +36,7 @@ HERE = COMPILER / "scripts/correctness/lib_v2"
 sys.path[:0] = [str(BENCHMARKS/"scripts/correctness"), str(Path(__file__).resolve().parent)]
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
+from ll_paths import source_path
 import recipe as R  # noqa: E402
 from generate_polybench_harness import generate_harness  # noqa: E402
 
@@ -65,7 +66,7 @@ LOWER_TO_LLVM = [
 
 def sources() -> dict[str, Path]:
     with MANIFEST.open() as fh:
-        return {r["kernel"]: REPO / r["source"] for r in csv.DictReader(fh)}
+        return {r["kernel"]: source_path(r["source"]) for r in csv.DictReader(fh)}
 
 
 def sh(cmd, log: Path, timeout=900, stdout=None) -> int:

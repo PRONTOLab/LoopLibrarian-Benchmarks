@@ -13,23 +13,28 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+BENCHMARKS = Path(__file__).resolve().parents[3]
+COMPILER = Path(os.environ.get("POLYGEIST_ROOT", BENCHMARKS/"third_party/Polygeist"))
+sys.path[:0] = [str(COMPILER/"scripts/correctness/lib_v2"), str(BENCHMARKS/"scripts/correctness")]
+from ll_paths import source_path
 import recipe as R  # noqa: E402
 
-REPO = R.REPO
-MANIFEST = REPO / "issues/polybench_section42/manifest.csv"
-UTIL = REPO / "tools/cgeist/Test/polybench/utilities"
+REPO = BENCHMARKS
+MANIFEST = REPO / "results/archive/issues/polybench_section42/manifest.csv"
+UTIL = REPO / "polybench/sources/utilities"
 
 
 def kernels() -> list[tuple[str, Path]]:
     out = []
     with MANIFEST.open() as fh:
         for row in csv.DictReader(fh):
-            out.append((row["kernel"], REPO / row["source"]))
+            out.append((row["kernel"], source_path(row["source"])))
     return out
 
 
@@ -66,7 +71,7 @@ def one(kernel: str, src: Path, out: Path, rec: R.Recipe, timeout: int) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--recipe", default="production", choices=sorted(R.RECIPES))
-    ap.add_argument("--out", default=str(REPO / "issues/lib_v2/polybench_raised"))
+    ap.add_argument("--out", default=str(REPO / "results/archive/issues/lib_v2/polybench_raised"))
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("-j", type=int, default=6)
     ap.add_argument("only", nargs="*")

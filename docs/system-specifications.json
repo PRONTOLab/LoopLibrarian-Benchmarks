@@ -69,7 +69,16 @@
       "libcutensor.so.2.7.0"
     ],
     "cutensor_api_version": 20700,
-    "openblas": [],
+    "openblas": [
+      {
+        "library": "/tmp/looplibrarian-spec-reevaluation-cpu/libopenblas.so.0",
+        "configuration": "OpenBLAS 0.3.20 NO_LAPACKE DYNAMIC_ARCH NO_AFFINITY armv8 MAX_THREADS=64"
+      },
+      {
+        "library": "libopenblas.so.0",
+        "configuration": "OpenBLAS 0.3.20 NO_LAPACKE DYNAMIC_ARCH NO_AFFINITY armv8 MAX_THREADS=64"
+      }
+    ],
     "compute_capability": [
       8,
       7

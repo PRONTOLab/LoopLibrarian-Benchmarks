@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 sys.path[:0] = [str(Path(__file__).resolve().parent / 'scripts/artifact'), str(Path(__file__).resolve().parent / 'scripts/correctness')]
-from ll_paths import COMPILER
+from ll_paths import COMPILER, DEPENDENCIES
 import argparse
 import hashlib
 import json
@@ -54,7 +54,9 @@ def verify_sources():
         row=json.loads(p.read_text())
         upstreams=row.get('upstream_files',[])+([row['upstream']] if row.get('upstream') else [])
         for u in upstreams:
-            path=(COMPILER if u['path'].startswith('generic_solver/') else ROOT)/u['path'];checked+=1
+            relative=Path(u['path'])
+            path=(DEPENDENCIES/relative.relative_to('third_party') if relative.parts[0]=='third_party' else COMPILER/relative)
+            checked+=1
             actual=hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
             if actual!=u['sha256']:bad.append(dict(path=u['path'],actual=actual,expected=u['sha256']))
     save(DEPS/'upstream-audit.json',dict(checked=checked,mismatches=bad))

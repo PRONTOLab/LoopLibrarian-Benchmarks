@@ -41,8 +41,9 @@ these are not the Orin Figure 3 baseline. EqSat and graph measurements need
 only the host and Docker.
 
 Install the repository's pinned LLVM/MLIR and Polygeist build as described in
-the root README. Required executables are `build/bin/{cgeist,polygeist-opt}`
-and the LLVM tools under `llvm-project/build/bin`. Do not substitute a system
+the root README. Required executables are
+`third_party/Polygeist/build/bin/{cgeist,polygeist-opt}` and the LLVM tools under
+`third_party/Polygeist/llvm-project/build/bin`. Do not substitute a system
 MLIR release. Also install:
 
 - Python 3.10 or later, `egglog==11.4.0`, and NumPy (tested with 1.21.5);
@@ -62,8 +63,9 @@ Create your local configuration:
 
 ```
 cp config.example.json config.json
-export POLYGEIST_ROOT="$PWD"
-source envsetup.sh
+export POLYGEIST_ROOT="$PWD/third_party/Polygeist"
+export POLYGEIST_DEPENDENCY_ROOT="$PWD/third_party"
+source "$POLYGEIST_ROOT/envsetup.sh"
 ```
 
 Edit the paths in `config.json`. It is gitignored. `ssh_host` is an
