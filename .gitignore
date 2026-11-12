@@ -1,0 +1,10 @@
+/config.json
+/results/runs/
+/build/
+/dependencies/
+__pycache__/
+*.pyc
+*.o
+*.so
+*.a
+*.egg-info/

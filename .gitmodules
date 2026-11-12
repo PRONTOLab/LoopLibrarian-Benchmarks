@@ -1,0 +1,4 @@
+[submodule "Polygeist"]
+	path = third_party/Polygeist
+	url = https://github.com/arpitj1/Polygeist.git
+	branch = artifact-submission

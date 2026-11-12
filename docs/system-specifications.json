@@ -1,0 +1,80 @@
+{
+  "captured_utc": "2026-11-12T21:41:51.684726+00:00",
+  "host": {
+    "cpu": "Intel Xeon Processor (Cascadelake)",
+    "logical_cpus": 24,
+    "virtualization": "KVM",
+    "memory": "67399593984",
+    "os": "Ubuntu 22.04.1 LTS",
+    "kernel": "5.15.0-151-generic",
+    "architecture": "x86_64",
+    "load_snapshot": "13:41:51 up 448 days, 18:11,  2 users,  load average: 2.50, 2.82, 2.81"
+  },
+  "target": {
+    "model": "NVIDIA Jetson AGX Orin Developer Kit",
+    "kernel": "6.8.12-1021-tegra",
+    "architecture": "aarch64",
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+    "memory": "MemTotal:       64387204 kB",
+    "online_cpus": "0-11",
+    "cpu_clocks": {
+      "policy8": {
+        "scaling_min_freq": "2201600",
+        "scaling_max_freq": "2201600"
+      },
+      "policy4": {
+        "scaling_min_freq": "2201600",
+        "scaling_max_freq": "2201600"
+      },
+      "policy0": {
+        "scaling_min_freq": "2201600",
+        "scaling_max_freq": "2201600"
+      }
+    },
+    "gpu_clocks": {
+      "/sys/class/devfreq/17000000.gpu": {
+        "min_freq": "1300500000",
+        "max_freq": "1300500000",
+        "cur_freq": "1300500000",
+        "available_frequencies": "306000000 408000000 510000000 612000000 714000000 816000000 918000000 1020000000 1122000000 1224000000 1300500000"
+      }
+    },
+    "power_mode": "NV Power Mode: MAXN\n0",
+    "packages": []
+  },
+  "target_libraries": {
+    "cudnn": [
+      "libcudnn.so.9.25.1"
+    ],
+    "cudnn_api_version": 92501,
+    "cublas": [
+      "libcublas.so.12",
+      "libcublas.so.12.6.4.1"
+    ],
+    "cublasLt": [
+      "libcublasLt.so.12",
+      "libcublasLt.so.12.6.4.1"
+    ],
+    "cusparse": [
+      "libcusparse.so.12.5.4.2"
+    ],
+    "cusolver": [
+      "libcusolver.so.11.7.1.2"
+    ],
+    "cudart": [
+      "libcudart.so.12",
+      "libcudart.so.12.6.77"
+    ],
+    "cutensor": [
+      "libcutensor.so.2.7.0"
+    ],
+    "cutensor_api_version": 20700,
+    "openblas": [],
+    "compute_capability": [
+      8,
+      7
+    ],
+    "cuda_driver_api_version": 13030
+  },
+  "scope": "Current reproduction environment, not an assertion of identical original-paper software."
+}
