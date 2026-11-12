@@ -5,7 +5,7 @@ for the LoopLibrarian paper. Polygeist is a pinned dependency under
 `third_party/Polygeist`; its `artifact-submission` branch contains the compiler,
 runtime adapters, imported reference specifications, and compiler tests.
 
-Repository: https://github.com/arpitj1/LoopLibrarian-Benchmarks (public).
+Repository: https://github.com/PRONTOLab/LoopLibrarian-Benchmarks (public).
 
 ## Testing systems
 
@@ -115,7 +115,7 @@ as pending rather than presented as completed reproduction results.
 ## Getting started
 
 ```
-git clone --recurse-submodules git@github.com:arpitj1/LoopLibrarian-Benchmarks.git
+git clone --recurse-submodules git@github.com:PRONTOLab/LoopLibrarian-Benchmarks.git
 cd LoopLibrarian-Benchmarks
 cp config.example.json config.json
 python3 setup.py sources
