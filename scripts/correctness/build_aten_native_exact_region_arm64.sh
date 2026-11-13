@@ -5,7 +5,7 @@ repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 torch_root=${ATEN_NATIVE_TORCH_ROOT:-/tmp/aten_native_sysroot_24_12/usr/local/lib/python3.12/dist-packages/torch}
 cuda_root=${ATEN_NATIVE_CUDA_ROOT:-/usr/local/cuda-12.6/targets/sbsa-linux}
 output=${1:-/tmp/aten_native_exact_region_bench}
-source_file="$repo_root/results/archive/issues/aten_c_kernels/native_cuda_results/native_exact_region_bench.cpp"
+source_file="$repo_root/aten/harnesses/native_exact_region_bench.cpp"
 
 test -f "$torch_root/include/ATen/ATen.h"
 test -f "$torch_root/lib/libtorch_cuda.so"

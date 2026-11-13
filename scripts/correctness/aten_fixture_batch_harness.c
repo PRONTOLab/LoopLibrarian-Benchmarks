@@ -65,7 +65,7 @@ int main(int argc,char **argv) {
       CU(cudaMemcpy(allocation(device[a]),allocation(initial[a]),bytes(a),cudaMemcpyHostToDevice));
     }
     invoke_reference(reference);
-    invoke_native(device); CU(cudaDeviceSynchronize());
+    invoke_native(device); complete_native(device); CU(cudaDeviceSynchronize());
     for(int a=0;a<NA;a++) CU(cudaMemcpy(allocation(native[a]),allocation(device[a]),bytes(a),cudaMemcpyDeviceToHost));
     if(argc>1&&!strcmp(argv[1],"timing")) {
       /* Input restoration is outside each measured interval, including in-place operations. */

@@ -121,11 +121,11 @@ fi
 if [ -n "$MATCH" ]; then
   PY=$PYTHON
   SCRIPTS=$REPO_ROOT/scripts/correctness
-  $PY $SCRIPTS/kernel_match_rewrite.py --with-roundtrip-markers \
+  $PY $POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py --with-roundtrip-markers \
     $OUT/std.mlir > $OUT/matched.mlir 2>$OUT/match.err
   N_LAUNCH=$(grep -c '= kernel\.launch ' $OUT/matched.mlir 2>/dev/null || echo 0)
   N_MARK=$(grep -c '// POLYGEIST-MATCH-BEGIN-' $OUT/matched.mlir 2>/dev/null || echo 0)
-  $PY $SCRIPTS/kernel_launch_lower.py $OUT/matched.mlir \
+  $PY $POLYGEIST_ROOT/scripts/correctness/kernel_launch_lower.py $OUT/matched.mlir \
     -o $OUT/std.mlir 2>$OUT/lower.err
   # Note: $OUT/std.mlir is now the restored IR. If matcher had no matches,
   # std.mlir is unchanged. If it matched, restoration is bit-exact (asserted
@@ -142,14 +142,14 @@ if [ -n "$MATCH_CANONICAL" ]; then
   PY=$PYTHON
   SCRIPTS=$REPO_ROOT/scripts/correctness
   LIB=$POLYGEIST_ROOT/generic_solver/kernel_library_phase2.mlir
-  $PY $SCRIPTS/kernel_match_rewrite.py $OUT/std.mlir > $OUT/matched.mlir 2>$OUT/match.err
+  $PY $POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py $OUT/std.mlir > $OUT/matched.mlir 2>$OUT/match.err
   # Count both forms: `%X = kernel.launch ...` (tensor) and bare `kernel.launch ...`
   # (memref, void-returning). grep -c returns exit code 1 when zero matches, so
   # `|| echo 0` keeps us alive under `set -e`.
   N_LAUNCH=$(grep -cE '\bkernel\.launch ' $OUT/matched.mlir 2>/dev/null || echo 0)
   N_LAUNCH=${N_LAUNCH:-0}
   if [ "$N_LAUNCH" -gt 0 ]; then
-    $PY $SCRIPTS/inject_kernel_library.py $OUT/matched.mlir $LIB -o $OUT/combined.mlir 2>$OUT/inject.err
+    $PY $POLYGEIST_ROOT/scripts/correctness/inject_kernel_library.py $OUT/matched.mlir $LIB -o $OUT/combined.mlir 2>$OUT/inject.err
     polygeist-opt --lower-kernel-launch $OUT/combined.mlir -o $OUT/std.mlir 2>$OUT/lower.err || {
       echo "$TAG: PHASE2_LOWER_FAIL"; cat $OUT/lower.err >&2; exit 5; }
   fi
@@ -180,7 +180,7 @@ $MLIR_TRANSLATE --mlir-to-llvmir $OUT/llvm.mlir -o $OUT/kernel.ll 2>$OUT/transla
 sed -i "s/@${FN}\b/@${FN}_impl/g" $OUT/kernel.ll
 
 # Step 6: generate the C wrapper for this kernel.
-python3 $SCRIPT_DIR/gen_wrapper.py "$SRC" "$FN" > $OUT/wrapper.c 2>$OUT/wrapper_gen.err
+python3 $POLYGEIST_ROOT/scripts/correctness/gen_wrapper.py "$SRC" "$FN" > $OUT/wrapper.c 2>$OUT/wrapper_gen.err
 
 # Step 7: compile pieces. The original application object must not define the
 # transformed function; linker-symbol replacement is forbidden.

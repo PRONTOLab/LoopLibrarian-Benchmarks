@@ -1,1 +1,0 @@
-../../third_party/Polygeist/scripts/correctness/spec_match.py

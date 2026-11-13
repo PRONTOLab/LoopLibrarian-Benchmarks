@@ -5,10 +5,10 @@ import json
 from pathlib import Path
 import re
 import shlex
-from common import ROOT, OUT, INPUTS, command, environment, save, setting, sha
+from common import ROOT, OUT, command, environment, save, setting, sha
 import remote
 
-BASE=INPUTS/'mfem'
+BASE=ROOT/'mfem/inputs'
 CASES=json.loads((BASE/'manifest.json').read_text())
 CASES.append(dict(kernel='pcg_application',function='mfem_app_ex9p_mass_convection_2d',
                   source='application_extractions/ex9p_mass_convection_2d.c',macro='MFEM_APP_EX9P'))
@@ -16,7 +16,7 @@ CASES.append(dict(kernel='pcg_application',function='mfem_app_ex9p_mass_convecti
 def build(row):
     name=row['kernel'];d=OUT/name;d.mkdir(parents=True,exist_ok=True)
     pcg=name=='pcg_application'
-    harness=BASE/('application_extractions/mfem_application_reference_harness.c' if pcg else 'mfem_full_output_validation.c')
+    harness=BASE/('application_extractions/mfem_application_reference_harness.c' if pcg else 'benchmarks/mfem_full_output_validation.c')
     env=environment(POLYGEIST_BUILD_WORK_DIR=d/'work',POLYGEIST_ABI_BACKEND='cuda',
                     POLYGEIST_KEEP_DEPENDENCIES=1,POLYGEIST_MATCH_MAX_PARALLEL_DIMS=2,POLYGEIST_MATCH_MAX_OPERAND_RANK=2)
     args=[ROOT/'scripts/correctness/polygeist_build.sh','--target=jetson','--function='+row['function'],

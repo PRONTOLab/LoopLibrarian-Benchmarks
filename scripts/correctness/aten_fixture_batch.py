@@ -18,6 +18,7 @@ import shutil
 import subprocess
 import sys
 import time
+import uuid
 
 import aten_pointwise_graph_silicon as BENCH
 
@@ -135,6 +136,8 @@ NATIVE = {
       else at::any_out(reduced,t[0].view({R,C}),1,false);
       t[1].copy_(reduced);''',
     'nansum_cpu': 'at::nansum_out(t[1],t[0].view({R,K}),{1},false,std::nullopt);',
+    'argmax_cpu': 'at::argmax_out(native_indices,t[0].view({R,K}),1,false);',
+    'argmin_cpu': 'at::argmin_out(native_indices,t[0].view({R,K}),1,false);',
     'outer': 'auto out=t[2].view({M,N}); at::outer_out(out,t[0],t[1]);',
     'addmm': 'auto out=t[2].view({M,N}); at::addmm_out(out,out,t[0].view({M,K}),t[1].view({K,N}),s[0],s[1]);',
     'exponential_cpu': '''static auto scratch=at::empty_like(t[0]);
@@ -212,6 +215,14 @@ NATIVE = {
     'geometric_cpu': 'at::ceil_out(t[1],at::log(1.0f-t[0])/::logf(1.0f-s[0]));',
     'cauchy_cpu': 'at::add_out(t[1],at::tan(3.14159265358979323846f*(t[0]-.5f))*s[1],s[0]);',
     'sparse_norm_cpu': 'auto total=at::sum(t[0]*t[0]).view({1}); at::sqrt_out(t[1],total);',
+    # Preserve the publication's five operations and preallocated temporaries.
+    'joint_scaling_cpu': '''static auto absolute_a=at::empty_like(t[0]);
+      static auto absolute_b=at::empty_like(t[1]);
+      static auto maximum_a=at::empty({},t[0].options());
+      static auto maximum_b=at::empty({},t[1].options());
+      at::abs_out(absolute_a,t[0]);at::amax_out(maximum_a,absolute_a,{},false);
+      at::abs_out(absolute_b,t[1]);at::amax_out(maximum_b,absolute_b,{},false);
+      auto out=t[2].view(at::IntArrayRef{});at::mul_out(out,maximum_a,maximum_b);''',
     'pixel_shuffle': 'auto out=t[1].view({B,C,H*R,W*R}); at::pixel_shuffle_out(out,t[0].view({B,C*R*R,H,W}),R);',
     'pixel_shuffle_cpu_backend': 'auto out=t[1].view({B,C,H*RATIO,W*RATIO}); at::pixel_shuffle_out(out,t[0].view({B,C*RATIO*RATIO,H,W}),RATIO);',
     'pixel_unshuffle_cpu_backend': 'auto out=t[1].view({B,C*RATIO*RATIO,H,W}); at::pixel_unshuffle_out(out,t[0].view({B,C,H*RATIO,W*RATIO}),RATIO);',
@@ -252,6 +263,14 @@ def sha(path):
 
 def configuration(name, shape_record=None):
     cfg = BENCH.auto_spec(name) or BENCH.CASES.get(name)
+    if cfg and name in BENCH.CASES:
+        # Signature inference identifies integer storage but cannot infer
+        # which arrays encode sparse structure. Preserve the recorded roles
+        # when the declared argument name, type, and direction agree.
+        metadata = {(n,k,o):init for n,k,_,o,init in BENCH.CASES[name]['args']
+                    if k == 'iptr' and init in ('csr_rowptr','csr_col','csr_col_k')}
+        cfg = dict(cfg, args=[(n,k,v,o,metadata.get((n,k,o),init))
+                             for n,k,v,o,init in cfg['args']])
     if cfg and any(a[1] in ('dptr','dscalar') for a in cfg['args']):
         if any(a[1] not in ('dptr','dscalar') for a in cfg['args']):
             raise ValueError('Mixed FP64 storage is not supported by this harness')
@@ -324,18 +343,38 @@ def harness(name, cfg):
     prefix += 'static const int integer_arrays[]={'+','.join(map(str,integers))+'};\n'
     prefix += 'static const size_t element_bytes[]={'+','.join(elements)+'};\n'
     prefix += 'static int initialize_integer_metadata(int array,size_t index,int32_t *value){\n'
-    for i,(n,k,_,_,_) in enumerate(a for a in cfg['args'] if a[1] in ('ptr','iptr','bptr')):
+    for i,(n,k,_,output,initialization) in enumerate(a for a in cfg['args'] if a[1] in ('ptr','iptr','bptr')):
         values=cfg.get('integer_array_values',{}).get(n)
         if values is not None:
             if k!='iptr' or not values or any(type(v) is not int or not -(1<<31)<=v<(1<<31) for v in values):
                 raise ValueError('invalid fixture integer metadata values: '+n)
             prefix+=f' if(array=={i}){{static const int32_t data[]={{'+','.join(map(str,values))+f'}};*value=data[index%{len(values)}];return 1;}}\n'
+        elif k == 'iptr' and not output and initialization in ('csr_rowptr','csr_col','csr_col_k'):
+            # Sparse structure is metadata, not an arbitrary integer payload.
+            # Keep it valid for normal, exceptional-value, and zero tests.
+            # The recorded paper recipe still overrides it in the harness.
+            dims = cfg['dims']
+            rows, nnz = dims['R'], dims.get('NNZ', dims.get('N'))
+            if rows <= 0 or nnz is None or nnz < 0:
+                raise ValueError('invalid sparse fixture dimensions')
+            if initialization == 'csr_rowptr':
+                expression = f'(int32_t)(index*(size_t){nnz}/{rows})'
+            else:
+                cols = dims['K' if initialization == 'csr_col_k' else 'C']
+                if cols <= 0:
+                    raise ValueError('invalid sparse fixture column extent')
+                expression = f'(int32_t)((index*17+(index*{rows}/{max(nnz,1)})*13)%{cols})'
+            prefix += f' if(array=={i}){{*value={expression};return 1;}}\n'
     prefix += ' (void)array;(void)index;(void)value;return 0;}\n'
     prefix += 'void '+name+'('+','.join(decl)+');\nvoid native_reference('+','.join(decl)+');\n'
     prefix += 'void native_fixture(float**,const float*,const size_t*,int);\n'
     prefix += 'static void invoke(float **p){'+name+'('+','.join(actual)+');}\n'
     prefix += 'static void invoke_reference(float **p){native_reference('+','.join(actual)+');}\n'
     prefix += 'static void invoke_native(float **p){native_fixture(p,parameters,sizes,NA);}\n'
+    if name in ('aten_argmax_cpu', 'aten_argmin_cpu'):
+        prefix += 'void native_fixture_complete(void);\nstatic void complete_native(float **p){(void)p;native_fixture_complete();}\n'
+    else:
+        prefix += 'static void complete_native(float **p){(void)p;}\n'
     text=prefix+(HERE/'aten_fixture_batch_harness.c').read_text()
     if cfg.get('dtype') == 'double':
         text=re.sub(r'\bfloat\b','double',text).replace('FLT_MAX','DBL_MAX').replace('FLT_MIN','DBL_MIN')
@@ -365,6 +404,16 @@ extern "C" void native_fixture(float **p,const float *s,const size_t *sizes,int 
   std::puts("NATIVE_BACKEND real libtorch CUDA; preallocated extracted-stage outputs");
  }
  '''+'\n'.join('constexpr int64_t '+k+'='+str(v)+';' for k,v in cfg['dims'].items())+'\n'+NATIVE[name.removeprefix('aten_')]+ '\n}\n'
+    if name in ('aten_argmax_cpu', 'aten_argmin_cpu'):
+        # ATen returns int64 indices; the extracted fixture uses int32. Keep
+        # the conversion in correctness setup, outside the native timing, as
+        # the paper's native arg-reduction measured the int64 result directly.
+        text = text.replace('extern "C" void native_fixture(',
+            'static at::Tensor native_indices, native_index_output;\nextern "C" void native_fixture(', 1)
+        text = text.replace('  std::puts("NATIVE_BACKEND',
+            '  native_indices=at::empty({(int64_t)sizes[1]},t[0].options().dtype(at::kLong));\n'
+            '  native_index_output=t[1];\n  std::puts("NATIVE_BACKEND', 1)
+        text += '\nextern "C" void native_fixture_complete(){native_index_output.copy_(native_indices);}\n'
     if cfg.get('dtype') == 'double':
         text=re.sub(r'\bfloat\b','double',text).replace('at::kFloat','at::kDouble')
     return text
@@ -469,6 +518,8 @@ def build(name, args):
         row['baseline']='ATen CUDA bitwise_xor tree with preallocated intermediates; installed libtorch lacks hash_tensor; not the newer xor_sum kernel'
     if name == 'aten_quant_col_offsets_cpu':
         row['baseline']='ATen CUDA sum and subtract composition; preallocated outputs'
+    if name in ('aten_argmax_cpu', 'aten_argmin_cpu'):
+        row['baseline']='ATen CUDA argmax_out/argmin_out with preallocated int64 output; int32 conversion for correctness only, outside timing'
     if name == 'aten_nested_sum_dim_cpu':
         row['baseline']='ATen CUDA length mask, where and sum composition; preallocated intermediates'
     if name == 'aten_nested_all_cpu':
@@ -519,7 +570,9 @@ def run_gpu(names, args):
     environment = 'LD_LIBRARY_PATH='+shlex.quote(args.remote_library_path)+' '
     if args.cudnn_plan_cache:
         environment += 'POLYGEIST_CUDNN_PLAN_CACHE=1 '
-    run_id=time.strftime('%Y%m%dT%H%M%SZ',time.gmtime())
+    if getattr(args,'gpu_workspace_cache',False):
+        environment += 'POLYGEIST_GPU_WORKSPACE_CACHE=1 '
+    run_id=uuid.uuid4().hex[:12]
     prior=args.output/'gpu-results.json'
     results=[r for r in json.loads(prior.read_text()) if r['kernel'] not in names] if prior.exists() else []
     (args.output/(run_id+'-host-uptime.txt')).write_text(subprocess.check_output(['uptime'],text=True))
@@ -545,7 +598,8 @@ def run_gpu(names, args):
         if rc or built['binary_sha256'] not in log:raise RuntimeError('Remote hash check failed')
         row=dict(kernel=name,run_id=run_id,binary_sha256=built['binary_sha256'],
                  scope=built['baseline'],dimension_scope=built['configuration']['dimension_scope'],
-                 cudnn_plan_cache=args.cudnn_plan_cache,correctness={})
+                 cudnn_plan_cache=args.cudnn_plan_cache,
+                 gpu_workspace_cache=getattr(args,'gpu_workspace_cache',False),correctness={})
         results.append(row)
         cfg=built['configuration']; expected=sum(eval(a[2],{'__builtins__':{}},cfg['dims']) for a in cfg['args'] if a[1] in ('ptr','iptr','bptr') and a[3])
         modes=2*(2 if any(a[1] in ('scalar','iscalar') for a in cfg['args']) else 1)
@@ -599,6 +653,8 @@ def main():
     p.add_argument('--campaign',type=Path,required=True)
     p.add_argument('--cudnn-plan-cache',action='store_true',
                    help='reuse cuDNN descriptors, algorithm and workspace; recorded in run results')
+    p.add_argument('--gpu-workspace-cache',action='store_true',
+                   help='reuse compiler-generated GPU allocations through the bounded runtime cache; recorded separately from cuDNN caching')
     p.add_argument('--time-validated-normal-inputs',action='store_true',
                    help='allow normal-input timings when all three normal comparisons pass; preserve edge failures and failed full validation')
     p.add_argument('--output',type=Path,required=True)

@@ -138,7 +138,7 @@ def main():
     opts.cgeist = opts.root / "build/bin/cgeist"
     opts.opt = opts.root / "build/bin/polygeist-opt"
     opts.resource_dir = opts.root / "llvm-project/build/lib/clang/18"
-    output = (opts.output or opts.root / "notes/polygeist_raise_to_linalg/aten_raise_sweep_2026_07_21").resolve()
+    output = (opts.output or opts.root / "notes/polygeist_raise_to_linalg/aten_raise_sweep_run-lhhecjicah").resolve()
     output.mkdir(parents=True, exist_ok=True)
 
     sources = discover(opts.pytorch / "aten/src/ATen/native")

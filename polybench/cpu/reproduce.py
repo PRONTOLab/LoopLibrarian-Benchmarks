@@ -216,7 +216,7 @@ def run(args, manifest):
                        "timeout " + str(args.timeout) + " taskset -c " + str(args.cpu) +
                        " " + shlex.quote(target))
                 write_json(args.output / "state.json", {"state": "running", "kernel": name,
-                                                        "variant": variant, "started": time.time()})
+                                                        "variant": variant})
                 monitor = shlex.quote(target + "-thermal.log")
                 measured_cmd = ("tegrastats --interval 1000 > " + monitor +
                     " 2>&1 & monitor_pid=$!; " + cmd +

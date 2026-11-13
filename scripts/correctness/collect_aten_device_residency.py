@@ -94,7 +94,7 @@ def main() -> int:
     parser.add_argument("--manifest", action="append", type=Path, default=[])
     parser.add_argument(
         "--match-csv", type=Path,
-        default=ROOT / "results/archive/issues/aten_c_kernels/cuda_library_audit.csv")
+        default=ROOT / "aten/metadata/cuda_library_audit.csv")
     parser.add_argument("--resident-override", action="append", default=[],
                         metavar="KERNEL=MICROSECONDS")
     args = parser.parse_args()

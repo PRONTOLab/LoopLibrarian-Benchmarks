@@ -48,7 +48,30 @@ def sources():
         if not target.exists():target.symlink_to(os.path.relpath(source,includes),target_is_directory=True)
     verify_sources()
 
+def prepare_bundled_references():
+    """Materialize compiler-owned public references in the dependency layout.
+
+    These files come from the pinned compiler, not an independent upstream
+    download. Refuse to replace a different local file; hash validation below
+    still checks every reference used by the imported specifications.
+    """
+    source = COMPILER / 'third_party/cudnn_reference'
+    target = DEPENDENCIES / 'cudnn_reference'
+    if not source.is_dir():
+        raise RuntimeError(f'{source}: initialize the pinned Polygeist submodule first')
+    for path in sorted(source.rglob('*')):
+        if not path.is_file():
+            continue
+        dest = target / path.relative_to(source)
+        if dest.exists():
+            if dest.read_bytes() != path.read_bytes():
+                raise RuntimeError(f'{dest}: differs from the pinned compiler reference')
+            continue
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, dest)
+
 def verify_sources():
+    prepare_bundled_references()
     bad=[];checked=0
     for p in (COMPILER / 'generic_solver/lib_v3/manifest').glob('*.json'):
         row=json.loads(p.read_text())
@@ -119,7 +142,7 @@ def ggml():
 
 def specs():
     verify_sources()
-    command([PYTHON,ROOT/'scripts/correctness/lib_v2/build_lib_v2.py','-j',str(setting('jobs',3)),
+    command([PYTHON,COMPILER / "scripts/correctness/lib_v2/build_lib_v2.py",'-j',str(setting('jobs',3)),
              '--timeout','300'],LOG,timeout=14400)
 
 def compiler():

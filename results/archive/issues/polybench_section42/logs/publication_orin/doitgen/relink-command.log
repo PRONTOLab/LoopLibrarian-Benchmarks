@@ -10,5 +10,5 @@
   -o doitgen-raised-timed
 
 Execution used scripts/correctness/run_jetson.sh --exe with the locally
-configured configured-host profile. The private endpoint and credentials are not
+configured manual profile. The private endpoint and credentials are not
 recorded in tracked artifacts.

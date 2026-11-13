@@ -9,7 +9,7 @@
 # --semantic-mlir.
 #
 # Usage: build_whole_operator.sh <normalized.c> <function> <bench-define> [OUTDIR]
-#   e.g. build_whole_operator.sh issues/mfem_c_kernels/normalized/mass_stage_sliced.c \
+#   e.g. build_whole_operator.sh mfem/inputs/normalized/mass_stage_sliced.c \
 #          mfem_pa_mass_apply_2d_stage_sliced BENCH_MASS_2D /tmp/mfem_cpu/acc
 set -euo pipefail
 REPO=/home/arjaiswal/Polygeist
@@ -17,7 +17,7 @@ SRC=$1; FN=$2; BENCH_DEF=$3; W=${4:-/tmp/mfem_cpu/acc}
 NE=${NE:-1024}
 source "$REPO/envsetup.sh" >/dev/null 2>&1
 mkdir -p "$W"
-HARNESS=$REPO/issues/mfem_c_kernels/benchmarks/mfem_raised_pa_bench.c
+HARNESS=$REPO/mfem/inputs/benchmarks/mfem_raised_pa_bench.c
 
 # 1. normal build to obtain the matcher output (matched.mlir)
 POLYGEIST_CGEIST_FLAGS="-DMFEM_BENCH_NE=$NE" POLYGEIST_BUILD_WORK_DIR="$W/base_work" \

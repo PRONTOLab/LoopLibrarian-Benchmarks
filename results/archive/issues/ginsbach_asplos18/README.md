@@ -40,7 +40,7 @@ that flag intentionally recreates unresolved skeletons. The audit reports the
 published counts beside Polygeist's independently detected and executable
 sites.
 
-## Initial result (2026-09-03)
+## Initial result (run-bogblgckim)
 
 - All ten SNU programs built and ran successfully with native GCC at Class S.
 - The structural audit covered all 21 programs and 105 translation units.
@@ -83,7 +83,7 @@ combined region equivalent to SGEMM and rewrites it to the executable
 extractions exercise the same downstream FP32 alpha/beta cuBLAS route through
 already-shaped Linalg.
 
-## External-library-only structured audit (2026-09-05)
+## External-library-only structured audit (run-nekdlooldc)
 
 The loop-aware Egglog analysis represents parent loop domains, affine submap
 accesses, reductions, and safe producer/consumer fusion. Detection is kept
@@ -107,7 +107,7 @@ regions, 29 reduction-shaped regions, 26 stencil-shaped regions, 12 histogram
 candidates, and 6 CSR SpMV candidates. Analysis-only candidates must not be
 reported as successful library matches.
 
-The checked-in per-program snapshot is `program_summary_2026-09-05.csv`.
+The checked-in per-program snapshot is `program_summary_run-nekdlooldc.csv`.
 
 See `SILICON_STATUS.md` for the exact external-only status and permitted
 next backends.

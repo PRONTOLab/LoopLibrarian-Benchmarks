@@ -18,4 +18,4 @@ the launch/transfer cost of the current ABI as well as the library operation.
 
 Run `./run_native.sh` for the faithful-versus-stage-sliced CPU check. Current
 measurements and the raised-pipeline blockers are recorded in
-`RESULTS_2026_07_31.md`.
+`RESULTS_run-gcgendnijh.md`.

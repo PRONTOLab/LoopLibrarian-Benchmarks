@@ -8,11 +8,11 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "issues" / "mfem_c_kernels" / "application_extractions"
-RESULTS = CORPUS / "results"
+CORPUS = ROOT / "mfem" / "inputs" / "application_extractions"
+RESULTS = ROOT / "results/archive/issues/mfem_c_kernels/application_extractions/results"
 CGEIST = COMPILER / "build" / "bin" / "cgeist"
 OPT = COMPILER / "build" / "bin" / "polygeist-opt"
-MATCHER = ROOT / "scripts" / "correctness" / "kernel_match_rewrite.py"
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 RESOURCE = COMPILER / "llvm-project" / "build" / "lib" / "clang" / "18"
 
 

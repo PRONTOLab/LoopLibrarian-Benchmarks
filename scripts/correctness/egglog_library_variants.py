@@ -9,6 +9,8 @@ timeout to be reported instead of hanging the full audit.
 
 from __future__ import annotations
 from ll_paths import COMPILER
+import sys
+sys.path.insert(0, str(COMPILER / "scripts/correctness"))
 
 import argparse
 import csv

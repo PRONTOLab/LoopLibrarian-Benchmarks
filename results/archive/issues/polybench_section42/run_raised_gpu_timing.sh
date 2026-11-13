@@ -49,14 +49,14 @@ for kernel in "${kernels[@]}"; do
   deploy_rc=not_run
   completed=0
   if [[ $build_rc -eq 0 ]]; then
-    scp -o BatchMode=yes "$local_binary" configured-host:"${remote_binary}.stage" \
+    scp -o BatchMode=yes "$local_binary" manual:"${remote_binary}.stage" \
       > "$log_dir/raised_gpu_timing_deploy.log" 2>&1 &&
-      ssh configured-host "scp -o BatchMode=yes '${remote_binary}.stage' nvidia@192.0.2.1:'$remote_binary'" \
+      ssh manual "scp -o BatchMode=yes '${remote_binary}.stage' nvidia@jetson-orin:'$remote_binary'" \
       >> "$log_dir/raised_gpu_timing_deploy.log" 2>&1
     deploy_rc=$?
     if [[ $deploy_rc -eq 0 ]]; then
       # One complete process warmup is excluded from the five recorded runs.
-      ssh configured-host "ssh nvidia@192.0.2.1 'export LD_LIBRARY_PATH=/home/nvidia/cuda-12.6/lib64:/usr/lib/aarch64-linux-gnu; timeout 900s $remote_binary'" \
+      ssh manual "ssh nvidia@jetson-orin 'export LD_LIBRARY_PATH=/home/nvidia/cuda-12.6/lib64:/usr/lib/aarch64-linux-gnu; timeout 900s $remote_binary'" \
         > "$log_dir/raised_gpu_timing_warmup.stdout" \
         2> "$log_dir/raised_gpu_timing_warmup.stderr"
       warmup_rc=$?
@@ -67,7 +67,7 @@ for kernel in "${kernels[@]}"; do
         for sample in 1 2 3 4 5; do
         stdout="$log_dir/raised_gpu_timing_${sample}.stdout"
         stderr="$log_dir/raised_gpu_timing_${sample}.stderr"
-        ssh configured-host "ssh nvidia@192.0.2.1 'export LD_LIBRARY_PATH=/home/nvidia/cuda-12.6/lib64:/usr/lib/aarch64-linux-gnu; timeout 900s $remote_binary'" \
+        ssh manual "ssh nvidia@jetson-orin 'export LD_LIBRARY_PATH=/home/nvidia/cuda-12.6/lib64:/usr/lib/aarch64-linux-gnu; timeout 900s $remote_binary'" \
           > "$stdout" 2> "$stderr"
         rc=$?
         e2e_s=$(awk '/^[0-9]+([.][0-9]+)?$/ {value=$1} END {print value}' "$stdout")

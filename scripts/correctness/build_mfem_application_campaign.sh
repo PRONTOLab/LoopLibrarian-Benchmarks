@@ -6,7 +6,8 @@ ne=${2:-1024}
 target=${3:-jetson}
 case "$target" in jetson|jetson-cpu) ;; *) echo "invalid target: $target" >&2; exit 2;; esac
 repo_root=$(cd "$(dirname "$0")/../.." && pwd)
-app_dir="$repo_root/results/archive/issues/mfem_c_kernels/application_extractions"
+export POLYGEIST_ROOT="${POLYGEIST_ROOT:-$repo_root/third_party/Polygeist}"
+app_dir="$repo_root/mfem/inputs/application_extractions"
 suffix=
 extra_define=()
 if [[ "$target" == jetson-cpu ]]; then
@@ -41,14 +42,14 @@ entries=(
 )
 
 {
-  printf 'generated_utc=%s\n' "$(date -u +%FT%TZ)"
+  printf 'generated_utc=%s\n' "omitted"
   printf 'git_head=%s\n' "$(git -C "$repo_root" rev-parse HEAD)"
   printf 'git_status_porcelain_sha256='
   git -C "$repo_root" status --porcelain=v1 | sha256sum | awk '{print $1}'
   printf 'ne=%s\ntarget=%s\n' "$ne" "$target"
   printf 'cutensornet_root=%s\n' "$cutensornet_root"
   sha256sum "$POLYGEIST_ROOT/build/bin/cgeist" "$POLYGEIST_ROOT/build/bin/polygeist-opt" \
-    "$repo_root/scripts/correctness/kernel_match_rewrite.py" \
+    "$POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py" \
     "$POLYGEIST_ROOT/runtime/polygeist_cublas_rt_cuda.c"
 } > "$metadata_dir/build$suffix.txt"
 
@@ -56,7 +57,7 @@ entries=(
 failures=0
 for entry in "${entries[@]}"; do
   IFS='|' read -r id source function define <<< "$entry"
-  printf 'START id=%s utc=%s\n' "$id" "$(date -u +%FT%TZ)" | \
+  printf 'START id=%s utc=%s\n' "$id" "omitted" | \
     tee -a "$campaign_root/build-progress$suffix.log"
   export POLYGEIST_BUILD_WORK_DIR="$work_dir/$id"
   if "$repo_root/scripts/correctness/polygeist_build.sh" \
@@ -71,12 +72,12 @@ for entry in "${entries[@]}"; do
     calls=$(sed -n 's/.*emitted \([0-9][0-9]*\) func.call.*/\1/p' \
       "$log_dir/$id.log" | tail -1)
     printf 'PASS id=%s launches=%s calls=%s utc=%s\n' \
-      "$id" "${launches:-unknown}" "${calls:-unknown}" "$(date -u +%FT%TZ)" | \
+      "$id" "${launches:-unknown}" "${calls:-unknown}" "omitted" | \
       tee -a "$campaign_root/build-progress$suffix.log"
   else
     failures=$((failures + 1))
     printf 'FAIL id=%s log=%s utc=%s\n' "$id" "$log_dir/$id.log" \
-      "$(date -u +%FT%TZ)" | tee -a "$campaign_root/build-progress$suffix.log"
+      "omitted" | tee -a "$campaign_root/build-progress$suffix.log"
   fi
 done
 

@@ -61,7 +61,7 @@ polygeist-opt --linalg-debufferize -o $OUT/linalg.mlir 2>>$OUT/raise.err
 echo "[$KERNEL/$DATASET] (3) kernel-match"
 PYTHON=$PYTHON
 [ -x "$PYTHON" ] || PYTHON=$(command -v python3)
-$PYTHON $SCRIPTS/kernel_match_rewrite.py $OUT/linalg.mlir > $OUT/matched.mlir 2>$OUT/match.err
+$PYTHON $POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py $OUT/linalg.mlir > $OUT/matched.mlir 2>$OUT/match.err
 N_LAUNCH=$(grep -c 'kernel.launch' $OUT/matched.mlir || true)
 [ "${N_LAUNCH:-0}" -ge 1 ] || { echo "  FAIL: no matcher hits"; exit 1; }
 echo "  matched $N_LAUNCH kernel.launch op(s)"

@@ -27,7 +27,7 @@ NPB_PARAM_ROOT = (ROOT / "third_party/ginsbach-snu-npb-source/std_benchmarks"
 PARBOIL_ROOT = ROOT / "third_party/gpu-parboil"
 CGEIST = COMPILER / "build/bin/cgeist"
 POLYGEIST_OPT = COMPILER / "build/bin/polygeist-opt"
-MATCHER = ROOT / "scripts/correctness/kernel_match_rewrite.py"
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 PUBLISHED_MANIFEST = (ROOT / "results/archive/issues/ginsbach_asplos18"
                       / "published_idiom_manifest.csv")
 PYTHON = Path("/usr/bin/python3")

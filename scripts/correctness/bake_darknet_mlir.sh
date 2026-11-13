@@ -75,7 +75,7 @@ for src in $ROOT/src/*.c; do
 
   # 3. matcher
   matched=$OUT/${base}.matched.mlir
-  timeout 60 $PY $SCRIPTS/kernel_match_rewrite.py $linalg > $matched 2>$OUT/${base}.match.err
+  timeout 60 $PY $POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py $linalg > $matched 2>$OUT/${base}.match.err
   klc=$(grep -c "kernel.launch" $matched 2>/dev/null)
   klc=${klc:-0}
   if [ "$klc" -gt 0 ]; then MATCH_OK=$((MATCH_OK+1)); fi

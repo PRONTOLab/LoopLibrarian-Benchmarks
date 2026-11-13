@@ -41,7 +41,7 @@ XLA execution harness; its separately reproduced synthesis results must not be
 plotted as execution speedups.
 
 The B300 FP32 figure reads all correctness-passing native PolyBenchGPU rows
-directly from `../b300_polybenchgpu_fp32_2026-09-09/summary.csv`, rather than a
+directly from `../b300_polybenchgpu_fp32_run-jlhcdpenjb/summary.csv`, rather than a
 hand-maintained subset. These native and Polygeist runs used different physical
 B300 workers, so the figure marks their comparison as secondary cross-worker
 evidence. The x86 figure includes the retained native-correlation baseline and

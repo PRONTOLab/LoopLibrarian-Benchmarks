@@ -72,45 +72,45 @@ WHISPER_OPS_MLIR_DIR = env_path(
 )
 ATEN_C_ROOT = env_path(
     "POLYGEIST_ATEN_C_ROOT",
-    REPO_ROOT / "results/archive/issues/aten_c_kernels",
+    REPO_ROOT / "aten/inputs",
 )
 ATEN_C_MLIR_DIR = env_path(
     "POLYGEIST_ATEN_C_MLIR_DIR",
-    ATEN_C_ROOT / "results",
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/results",
 )
 ATEN_CUDA_LIBRARY_AUDIT = env_path(
     "POLYGEIST_ATEN_CUDA_LIBRARY_AUDIT",
-    ATEN_C_ROOT / "cuda_library_audit.csv",
+    REPO_ROOT / "aten/metadata/cuda_library_audit.csv",
 )
 ATEN_NATIVE_CUDA_AUDIT = env_path(
     "POLYGEIST_ATEN_NATIVE_CUDA_AUDIT",
-    ATEN_C_ROOT / "native_cuda_audit.csv",
+    REPO_ROOT / "aten/metadata/native_cuda_audit.csv",
 )
 ATEN_UPSTREAM_ROOT = env_path(
     "POLYGEIST_ATEN_UPSTREAM_ROOT",
     REPO_ROOT / "third_party/pytorch",
 )
 ATEN_UPSTREAM_COMMIT = "d7af122d81a49b1fa7a31ba52bd57c026f092646"
-ATEN_PAPER_ANALYSIS_DIR = ATEN_C_ROOT / "paper_analysis"
+ATEN_PAPER_ANALYSIS_DIR = REPO_ROOT / "results/archive/issues/aten_c_kernels/paper_analysis"
 MFEM_C_ROOT = env_path(
     "POLYGEIST_MFEM_C_ROOT",
-    REPO_ROOT / "results/archive/issues/mfem_c_kernels",
+    REPO_ROOT / "mfem/inputs",
 )
 MFEM_RESULTS_DIR = env_path(
     "POLYGEIST_MFEM_RESULTS_DIR",
-    MFEM_C_ROOT / "results",
+    REPO_ROOT / "results/archive/issues/mfem_c_kernels/results",
 )
 MFEM_MATCH_RESULTS_DIR = env_path(
     "POLYGEIST_MFEM_MATCH_RESULTS_DIR",
-    MFEM_C_ROOT / "match_results",
+    REPO_ROOT / "results/archive/issues/mfem_c_kernels/match_results",
 )
 MFEM_SILICON_RESULTS_DIR = env_path(
     "POLYGEIST_MFEM_SILICON_RESULTS_DIR",
-    MFEM_C_ROOT / "silicon_results",
+    REPO_ROOT / "results/archive/issues/mfem_c_kernels/silicon_results",
 )
 MFEM_SECTION42_DIR = env_path(
     "POLYGEIST_MFEM_SECTION42_DIR",
-    MFEM_C_ROOT / "section42_campaign",
+    REPO_ROOT / "results/archive/issues/mfem_c_kernels/section42_campaign",
 )
 MFEM_APPLICATIONS_DIR = env_path(
     "POLYGEIST_MFEM_APPLICATIONS_DIR",
@@ -122,7 +122,7 @@ MFEM_APPLICATION_EXTRACTIONS_DIR = env_path(
 )
 MFEM_APPLICATION_EXTRACTION_RESULTS_DIR = env_path(
     "POLYGEIST_MFEM_APPLICATION_EXTRACTION_RESULTS_DIR",
-    MFEM_APPLICATION_EXTRACTIONS_DIR / "results",
+    REPO_ROOT / "results/archive/issues/mfem_c_kernels/application_extractions/results",
 )
 MFEM_UPSTREAM_ROOT = env_path(
     "POLYGEIST_MFEM_UPSTREAM_ROOT",
@@ -250,7 +250,7 @@ OUTPUT_DIR = env_path("POLYGEIST_IR_VIEWER_OUT", "/tmp/ir_viewer")
 LLAMA_PROTOCOL_RESULTS = env_path(
     "POLYGEIST_LLAMA_PROTOCOL_RESULTS",
     REPO_ROOT
-    / "results/archive/issues/llama_section42/protocol_1x5x5_20260908/performance.csv",
+    / "results/archive/issues/llama_section42/protocol_1x5x5_run-nffdmeefik/performance.csv",
 )
 SECTION42_RESULTS_DIR = env_path(
     "POLYGEIST_SECTION42_RESULTS_DIR",
@@ -261,47 +261,47 @@ EQUALITY_SATURATION_RESULTS_DIR = env_path(
     REPO_ROOT / "results/archive/issues/equality_saturation_eval",
 )
 EQUALITY_SATURATION_CAMPAIGN_DIR = (
-    EQUALITY_SATURATION_RESULTS_DIR / "campaign_20260908"
+    EQUALITY_SATURATION_RESULTS_DIR / "campaign_run-nffdmeefik"
 )
 EQUALITY_SATURATION_EGRAPH_DIR = (
-    EQUALITY_SATURATION_RESULTS_DIR / "egraph_benefit_20260908"
+    EQUALITY_SATURATION_RESULTS_DIR / "egraph_benefit_run-nffdmeefik"
 )
 BUILD_TIME_RESULTS_DIR = env_path(
     "POLYGEIST_BUILD_TIME_RESULTS_DIR",
-    EQUALITY_SATURATION_RESULTS_DIR / "polybench_whole_compile_20260909",
+    EQUALITY_SATURATION_RESULTS_DIR / "polybench_whole_compile_run-eiceoffcpj",
 )
 EQUALITY_SATURATION_POLYBENCH_DIR = (
-    EQUALITY_SATURATION_RESULTS_DIR / "polybench_variants_20260909"
+    EQUALITY_SATURATION_RESULTS_DIR / "polybench_variants_run-eiceoffcpj"
 )
 GINSBACH_SUMMARY = env_path(
     "POLYGEIST_GINSBACH_SUMMARY",
-    REPO_ROOT / "results/archive/issues/ginsbach_asplos18/program_summary_2026-09-05.csv",
+    REPO_ROOT / "results/archive/issues/ginsbach_asplos18/program_summary_run-nekdlooldc.csv",
 )
 GINSBACH_SILICON = env_path(
     "POLYGEIST_GINSBACH_SILICON",
-    REPO_ROOT / "results/archive/issues/ginsbach_asplos18/silicon_results_2026-09-05.csv",
+    REPO_ROOT / "results/archive/issues/ginsbach_asplos18/silicon_results_run-nekdlooldc.csv",
 )
 GINSBACH_CURRENT_RESULTS = env_path(
     "POLYGEIST_GINSBACH_CURRENT_RESULTS",
-    REPO_ROOT / "results/archive/issues/ginsbach_asplos18/current_match_results_2026-09-07.csv",
+    REPO_ROOT / "results/archive/issues/ginsbach_asplos18/current_match_results_run-kfibnbpmii.csv",
 )
 GINSBACH_EXACT_REGION_RESULTS = env_path(
     "POLYGEIST_GINSBACH_EXACT_REGION_RESULTS",
     REPO_ROOT
-    / "results/archive/issues/ginsbach_asplos18/orin_exact_region_results_2026-09-08.csv",
+    / "results/archive/issues/ginsbach_asplos18/orin_exact_region_results_run-pickficjkj.csv",
 )
 GINSBACH_AUDIT_ROOT = env_path(
     "POLYGEIST_GINSBACH_AUDIT_ROOT",
     "/tmp/ginsbach_external_hist_fact",
 )
-REWRITER = env_path("POLYGEIST_KERNEL_MATCH_REWRITER", SCRIPT_DIR / "kernel_match_rewrite.py")
+REWRITER = env_path("POLYGEIST_KERNEL_MATCH_REWRITER", COMPILER / "scripts/correctness/kernel_match_rewrite.py")
 PYTHON = os.environ.get("PYTHON", sys.executable)
 POLYGEIST_OPT = env_path("POLYGEIST_OPT", COMPILER / "build/bin/polygeist-opt")
 KERNEL_LIBRARY = env_path(
     "POLYGEIST_KERNEL_LIBRARY",
     COMPILER / "generic_solver/kernel_library_phase2.mlir",
 )
-INJECT_KERNEL_LIBRARY = SCRIPT_DIR / "inject_kernel_library.py"
+INJECT_KERNEL_LIBRARY = COMPILER / "scripts/correctness/inject_kernel_library.py"
 CPU_RUNTIME = COMPILER / "runtime/polygeist_cublas_rt_cpu.c"
 CUDA_RUNTIME = COMPILER / "runtime/polygeist_cublas_rt_cuda.c"
 
@@ -522,7 +522,7 @@ ATEN_C_PROVENANCE: dict[str, tuple[str, str | None]] = {
 # Mechanically generated scalar specializations keep their provenance in a
 # CSV so adding an extraction does not require editing this viewer by hand.
 for _aten_generated_provenance in sorted(
-    ATEN_C_ROOT.glob("generated*_provenance.csv")
+    (REPO_ROOT / "aten/metadata").glob("generated*_provenance.csv")
 ):
     with _aten_generated_provenance.open(newline="") as _stream:
         for _row in csv.DictReader(_stream):
@@ -2013,9 +2013,9 @@ def runtime_backend_status(abi_text: str | None) -> dict[str, object]:
     }
 
 
-_NATIVE_CUDA_CSV = ATEN_C_ROOT / "native_cuda_results" / "torch_aten_silicon.csv"
+_NATIVE_CUDA_CSV = REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "torch_aten_silicon.csv"
 _MATCH_CANDIDATES_JSON = (
-    ATEN_C_ROOT / "native_cuda_results" / "match_candidates.json"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "match_candidates.json"
 )
 
 
@@ -2032,7 +2032,7 @@ def _load_match_candidates():
 
 _MATCH_CANDIDATES = _load_match_candidates()
 _RESIDENCY_LEAKS_JSON = (
-    ATEN_C_ROOT / "native_cuda_results" / "residency_leaks.json"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "residency_leaks.json"
 )
 
 
@@ -2049,7 +2049,7 @@ def _load_residency_leaks():
 
 _RESIDENCY_LEAKS = _load_residency_leaks()
 _RESIDENT_SILICON_CSV = (
-    ATEN_C_ROOT / "native_cuda_results" / "resident_silicon.csv"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "resident_silicon.csv"
 )
 
 
@@ -2067,22 +2067,22 @@ def _load_resident_silicon():
 
 _RESIDENT_SILICON = _load_resident_silicon()
 _NATIVE_RESIDENT_CSV = (
-    ATEN_C_ROOT / "native_cuda_results" / "torch_aten_resident_sync_wall.csv"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "torch_aten_resident_sync_wall.csv"
 )
 _NATIVE_CPU_CSV = (
-    ATEN_C_ROOT / "native_cuda_results" / "torch_aten_cpu_sync_wall.csv"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "torch_aten_cpu_sync_wall.csv"
 )
 _NATIVE_CPU_ORIN_CSV = (
-    ATEN_C_ROOT / "native_cuda_results" / "torch_aten_orin_cpu_sync_wall.csv"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "torch_aten_orin_cpu_sync_wall.csv"
 )
 _NATIVE_PROVENANCE_CSV = (
-    ATEN_C_ROOT / "native_cuda_results" / "torch_aten_baseline_provenance.csv"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "torch_aten_baseline_provenance.csv"
 )
 _ATEN_BENCHMARK_STATUS_CSV = (
-    ATEN_C_ROOT / "native_cuda_results" / "aten_benchmark_status.csv"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "aten_benchmark_status.csv"
 )
 _ATEN_SECTION42_RESULTS_CSV = (
-    ATEN_C_ROOT / "native_cuda_results" / "section42_campaign" / "results.csv"
+    REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "section42_campaign" / "results.csv"
 )
 
 
@@ -3615,7 +3615,7 @@ def _aten_paper_analysis_page() -> str:
     current_strict = sum(current_verified(k) for k in kernels)
     legal_ratios = sum(has_legal_ratio(k) for k in kernels)
     resolved_specs_path = (
-        ATEN_C_ROOT / "native_cuda_results" / "resident_shape_specs.json"
+        REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "resident_shape_specs.json"
     )
     try:
         resolved_specs = json.loads(resolved_specs_path.read_text())
@@ -3902,7 +3902,7 @@ def _aten_paper_analysis_page() -> str:
         '<div class="section-header"><h2 class="section-title">'
         'Paper analysis: ATen (Section 4.2 draft)</h2></div>'
         '<div class="intro"><b>Strict-audit warning:</b> name-specific ATen '
-        'renderers were removed on 2026-09-07. Stored mapping-ledger and performance '
+        'renderers were removed on run-kfibnbpmii. Stored mapping-ledger and performance '
         'counts below were generated before that cleanup and are <b>stale, '
         'non-claimable planning data</b> until the complete ATen corpus and '
         'silicon cohort are regenerated. See the Ginsbach audit page and '
@@ -4055,7 +4055,7 @@ def _aten_section(aten_stats: dict[str, dict], kernels: list[str]) -> str:
         row.get("kernel", ""): row for row in _read_csv(ATEN_NATIVE_CUDA_AUDIT)
     }
     resident_specs_path = (
-        ATEN_C_ROOT / "native_cuda_results" / "resident_shape_specs.json"
+        REPO_ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "resident_shape_specs.json"
     )
     try:
         resident_specs = {
@@ -4536,22 +4536,22 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
 def _b300_results_page() -> str:
     """Render retained B300 precision and related-work measurements."""
     raised64 = _read_csv(
-        SECTION42_RESULTS_DIR / "b300_fp64_2026-09-09" / "summary.csv")
+        SECTION42_RESULTS_DIR / "b300_fp64_run-jlhcdpenjb" / "summary.csv")
     raised32 = _read_csv(
-        SECTION42_RESULTS_DIR / "b300_fp32_2026-09-09" / "summary.csv")
+        SECTION42_RESULTS_DIR / "b300_fp32_run-jlhcdpenjb" / "summary.csv")
     cpu64 = _read_csv(
-        SECTION42_RESULTS_DIR / "b300_fp64_2026-09-09" /
+        SECTION42_RESULTS_DIR / "b300_fp64_run-jlhcdpenjb" /
         "native_cpu_summary.csv")
     cpu32 = _read_csv(
-        SECTION42_RESULTS_DIR / "b300_fp32_2026-09-09" /
+        SECTION42_RESULTS_DIR / "b300_fp32_run-jlhcdpenjb" /
         "native_cpu_summary.csv")
     native32 = _read_csv(
-        SECTION42_RESULTS_DIR / "b300_polybenchgpu_fp32_2026-09-09" /
+        SECTION42_RESULTS_DIR / "b300_polybenchgpu_fp32_run-jlhcdpenjb" /
         "summary.csv")
     related = _read_csv(
-        SECTION42_RESULTS_DIR / "b300_related_work_2026-09-09.csv")
+        SECTION42_RESULTS_DIR / "b300_related_work_run-jlhcdpenjb.csv")
     x86_related = _read_csv(
-        SECTION42_RESULTS_DIR / "related_work_x86_2026-09-09.csv")
+        SECTION42_RESULTS_DIR / "related_work_x86_run-jlhcdpenjb.csv")
 
     artifact_root = "polybench_section42_artifacts"
 
@@ -4688,11 +4688,11 @@ def _b300_results_page() -> str:
         '<th>minimum</th><th>claim boundary</th></tr></thead><tbody>' +
         ''.join(x86_rows) + '</tbody></table></div>'
         '<div class="paper-notes"><div><b>Raw data</b><span>' + ' &middot; '.join((
-            artifact("b300_fp64_2026-09-09/summary.csv", "Polygeist FP64 CSV"),
-            artifact("b300_fp32_2026-09-09/summary.csv", "Polygeist FP32 CSV"),
-            artifact("b300_polybenchgpu_fp32_2026-09-09/summary.csv", "native FP32 CSV"),
-            artifact("b300_related_work_2026-09-09.csv", "B300 related-work CSV"),
-            artifact("related_work_x86_2026-09-09.csv", "x86 related-work CSV"),
+            artifact("b300_fp64_run-jlhcdpenjb/summary.csv", "Polygeist FP64 CSV"),
+            artifact("b300_fp32_run-jlhcdpenjb/summary.csv", "Polygeist FP32 CSV"),
+            artifact("b300_polybenchgpu_fp32_run-jlhcdpenjb/summary.csv", "native FP32 CSV"),
+            artifact("b300_related_work_run-jlhcdpenjb.csv", "B300 related-work CSV"),
+            artifact("related_work_x86_run-jlhcdpenjb.csv", "x86 related-work CSV"),
         )) + '</span></div><div><b>Protocol boundary</b><span>Headline values '
         'are minima. Median, maximum, and IQR are shown wherever retained. '
         'Correctness failures are not performance results.</span></div></div>')
@@ -5280,7 +5280,7 @@ def write_polybench_results_page() -> None:
             f'<td>{" &middot; ".join(x for x in ir_links if x) or "&mdash;"}</td></tr>')
 
     precision_rows = []
-    precision_dir = SECTION42_RESULTS_DIR / "logs" / "gemm_fp32_fp64_20260908"
+    precision_dir = SECTION42_RESULTS_DIR / "logs" / "gemm_fp32_fp64_run-nffdmeefik"
     for datatype in ("double", "float"):
         native_device, native_e2e = gpu_times(
             "gemm", datatype, ("polybenchgpu", "native_gpu"))
@@ -5487,7 +5487,7 @@ def _modified_kernels_page() -> tuple[str, int]:
     # Every faithful MFEM form reaches the frontend and raising pass, but all
     # retain imperative loops.  The paired normalized forms are the honest
     # place to record structural changes made for complete Linalg recovery.
-    mfem_all_rows = _read_csv(MFEM_C_ROOT / "results/summary.csv")
+    mfem_all_rows = _read_csv(REPO_ROOT / "results/archive/issues/mfem_c_kernels/results/summary.csv")
     mfem_rows = [
         row for row in mfem_all_rows
         if row.get("variant") == "normalized"
@@ -5518,8 +5518,8 @@ def _modified_kernels_page() -> tuple[str, int]:
             )
         add(
             "MFEM", row["id"],
-            f'results/archive/issues/mfem_c_kernels/{original_row.get("source", "original/")}',
-            f'results/archive/issues/mfem_c_kernels/{row["source"]}',
+            f'mfem/inputs/{original_row.get("source", "original/")}',
+            f'mfem/inputs/{row["source"]}',
             "raising normalization",
             f'The faithful source reached cgeist/raise but retained '
             f'{original_row.get("residual_loops", "one or more")} imperative loop(s).',
@@ -5631,7 +5631,7 @@ def _modified_kernels_page() -> tuple[str, int]:
     add(
         "PyTorch ATen", f"{len(ATEN_C_ORDER)} standalone C specializations",
         f"third_party/pytorch at {ATEN_UPSTREAM_COMMIT}",
-        "results/archive/issues/aten_c_kernels/aten_*.c",
+        "aten/inputs/aten_*.c",
         "framework/frontend boundary",
         "The direct 224-file ATen C/C++ translation-unit sweep produced zero Linalg "
         "operations: numerical loops are hidden behind TensorIterator, templates, "
@@ -5640,7 +5640,7 @@ def _modified_kernels_page() -> tuple[str, int]:
         "while preserving the selected scalar or loop algorithm.",
         "Not one blanket frontend bug. It measures an unsupported framework abstraction "
         "boundary; each C file is an extracted specialization, not upstream ATen text.",
-        "results/archive/issues/aten_c_kernels/extraction_inventory.csv and generated*_provenance.csv",
+        "aten/metadata/extraction_inventory.csv and generated*_provenance.csv",
         "Each fixture has provenance; raising/matching/correctness are reported on the "
         "ATen pages. Expand the complete inventory below.",
     )
@@ -5781,7 +5781,7 @@ def build_mfem_pages() -> list[dict]:
     workspace_rows = {
         row["id"]: row
         for row in _read_csv(
-            MFEM_SILICON_RESULTS_DIR / "persistent_workspace_ab_20260907.csv"
+            MFEM_SILICON_RESULTS_DIR / "persistent_workspace_ab_run-ankajfhgoo.csv"
         )
     }
     stats = []
@@ -6051,7 +6051,7 @@ def build_mfem_application_extraction_pages() -> list[dict]:
     # historical mixed-protocol ledger. These remain derived hot paths, not
     # untouched end-to-end MFEM applications.
     for current in _read_csv(
-        MFEM_SECTION42_DIR / "application_performance_20260908.csv"
+        MFEM_SECTION42_DIR / "application_performance_run-nffdmeefik.csv"
     ):
         comparison_rows[current["function"]] = {
             "correctness": current.get("correctness", "NOT RUN"),
@@ -6471,22 +6471,22 @@ def _mfem_application_extraction_section(stats: list[dict]) -> str:
 
 def _mfem_latest_paper_analysis_page(stats: list[dict]) -> str:
     """Render the current four-runtime NE=1024 MFEM publication analysis."""
-    rows = _read_csv(MFEM_SECTION42_DIR / "performance_20260908.csv")
+    rows = _read_csv(MFEM_SECTION42_DIR / "performance_run-nffdmeefik.csv")
     coverage_rows = _read_csv(MFEM_SECTION42_DIR / "coverage_fixed_matcher.csv")
     checksum_rows = _read_csv(
-        MFEM_SECTION42_DIR / "native_checksum_audit_20260908.csv"
+        MFEM_SECTION42_DIR / "native_checksum_audit_run-nffdmeefik.csv"
     )
     postfix_validation_rows = _read_csv(
-        MFEM_SECTION42_DIR / "postfix_full_output_validation_20260908.csv"
+        MFEM_SECTION42_DIR / "postfix_full_output_validation_run-nffdmeefik.csv"
     )
     application_library_rows = _read_csv(
         MFEM_SECTION42_DIR / "application_library_matches.csv"
     )
     application_performance_rows = _read_csv(
-        MFEM_SECTION42_DIR / "application_performance_20260908.csv"
+        MFEM_SECTION42_DIR / "application_performance_run-nffdmeefik.csv"
     )
     pa_family_compile_rows = _read_csv(
-        MFEM_C_ROOT / "pa_family_compile" / "results" / "summary.csv"
+        REPO_ROOT / "results/archive/issues/mfem_c_kernels/pa_family_compile" / "results" / "summary.csv"
     )
     if not rows:
         return (
@@ -6733,7 +6733,7 @@ def _mfem_latest_paper_analysis_page(stats: list[dict]) -> str:
     )
 
     # Log-scale absolute runtime chart. Every plotted value comes directly from
-    # performance_20260908.csv; no result is hardcoded into the SVG.
+    # performance_run-nffdmeefik.csv; no result is hardcoded into the SVG.
     width, height = 1180, 590
     left, right, top, bottom = 78, 24, 34, 170
     plot_w, plot_h = width - left - right, height - top - bottom
@@ -7002,25 +7002,25 @@ def _mfem_latest_paper_analysis_page(stats: list[dict]) -> str:
         '<code>5464d8898667dbb9278f461336cc7ecec28f94ef</code>; rerunning from '
         'a clean committed revision remains required before final publication.</div>'
         '<div class="paper-notes">'
-        f'<div><b>Concise result ledger</b><span><a href="{artifact}/performance_20260908.csv">'
-        'performance_20260908.csv</a></span></div>'
-        f'<div><b>Derived-application result ledger</b><span><a href="{artifact}/application_performance_20260908.csv">'
-        'application_performance_20260908.csv</a></span></div>'
+        f'<div><b>Concise result ledger</b><span><a href="{artifact}/performance_run-nffdmeefik.csv">'
+        'performance_run-nffdmeefik.csv</a></span></div>'
+        f'<div><b>Derived-application result ledger</b><span><a href="{artifact}/application_performance_run-nffdmeefik.csv">'
+        'application_performance_run-nffdmeefik.csv</a></span></div>'
         f'<div><b>Application-only library matches</b><span><a href="{artifact}/application_library_matches.csv">'
         'application_library_matches.csv</a></span></div>'
-        f'<div><b>Detailed four-way comparison</b><span><a href="{artifact}/comparison_with_native_20260908.csv">'
-        'comparison_with_native_20260908.csv</a></span></div>'
-        f'<div><b>Native distribution summary</b><span><a href="{artifact}/native_summary_20260908.csv">'
-        'native_summary_20260908.csv</a></span></div>'
-        f'<div><b>Native checksum audit</b><span><a href="{artifact}/native_checksum_audit_20260908.csv">'
-        'native_checksum_audit_20260908.csv</a></span></div>'
+        f'<div><b>Detailed four-way comparison</b><span><a href="{artifact}/comparison_with_native_run-nffdmeefik.csv">'
+        'comparison_with_native_run-nffdmeefik.csv</a></span></div>'
+        f'<div><b>Native distribution summary</b><span><a href="{artifact}/native_summary_run-nffdmeefik.csv">'
+        'native_summary_run-nffdmeefik.csv</a></span></div>'
+        f'<div><b>Native checksum audit</b><span><a href="{artifact}/native_checksum_audit_run-nffdmeefik.csv">'
+        'native_checksum_audit_run-nffdmeefik.csv</a></span></div>'
         f'<div><b>Standalone paper figures</b><span><a href="{artifact}/mfem_four_runtime_log.svg">'
         f'four-runtime SVG</a> &middot; <a href="{artifact}/mfem_raised_gpu_vs_native.svg">'
         'slowdown SVG</a></span></div>'
-        f'<div><b>Publication analysis</b><span><a href="{artifact}/MFEM_PAPER_ANALYSIS_20260908.md">'
-        'MFEM_PAPER_ANALYSIS_20260908.md</a></span></div>'
-        f'<div><b>Post-campaign correctness fix</b><span><a href="{artifact}/PENDING_CASES_RESOLUTION_20260908.md">'
-        f'resolution report</a> &middot; <a href="{artifact}/postfix_full_output_validation_20260908.csv">'
+        f'<div><b>Publication analysis</b><span><a href="{artifact}/MFEM_PAPER_ANALYSIS_run-nffdmeefik.md">'
+        'MFEM_PAPER_ANALYSIS_run-nffdmeefik.md</a></span></div>'
+        f'<div><b>Post-campaign correctness fix</b><span><a href="{artifact}/PENDING_CASES_RESOLUTION_run-nffdmeefik.md">'
+        f'resolution report</a> &middot; <a href="{artifact}/postfix_full_output_validation_run-nffdmeefik.csv">'
         f'validation CSV</a> &middot; <a href="{artifact}/integrate_value_3d_fixed_orin.log">'
         'raw Orin log</a></span></div>'
         '</div>'
@@ -7045,7 +7045,7 @@ def _mfem_paper_analysis_page(stats: list[dict]) -> str:
         for row in stats
     )
     paper_ready = sum(
-        ("median_of_5_process_means_20260907" in
+        ("median_of_5_process_means_run-ankajfhgoo" in
          (row.get("comparison") or {}).get("measurement_statistic", "") or
          "median_of_5_gpu_and_5_cpu_process_medians" in
          (row.get("comparison") or {}).get("measurement_statistic", ""))
@@ -7068,7 +7068,7 @@ def _mfem_paper_analysis_page(stats: list[dict]) -> str:
         evidence = comparison.get("measurement_statistic", "")
         evidence_label = (
             "paper-ready repeated session"
-            if ("median_of_5_process_means_20260907" in evidence or
+            if ("median_of_5_process_means_run-ankajfhgoo" in evidence or
                 "median_of_5_gpu_and_5_cpu_process_medians" in evidence)
             else "single-process diagnostic"
         )
@@ -7836,7 +7836,7 @@ def _llama_forward_runtime_summary() -> str:
         'FP32 fixture—not full 32-layer inference or quantized GGUF execution. '
         'It uses split even/odd RoPE and branchless masking because the exact '
         'interleaved and branchy forms remain raising gaps. Current data: '
-        '<code>results/archive/issues/llama_section42/protocol_1x5x5_20260908/performance.csv</code>.</div>'
+        '<code>results/archive/issues/llama_section42/protocol_1x5x5_run-nffdmeefik/performance.csv</code>.</div>'
     )
 
 
@@ -8097,7 +8097,7 @@ def _llama_paper_analysis_page() -> str:
         'all 32,000 logits, then rerun this exact 1&times;5+5 protocol.</span></div>'
         '</div>'
         '<div class="intro"><b>Authoritative artifacts:</b> '
-        '<code>results/archive/issues/llama_section42/protocol_1x5x5_20260908/performance.csv</code>, '
+        '<code>results/archive/issues/llama_section42/protocol_1x5x5_run-nffdmeefik/performance.csv</code>, '
         '<code>RUN_STATUS.md</code>, and the complete output dumps under '
         '<code>full_outputs/</code>. This page deliberately does not reuse the '
         'older 2-warm-up/10-iteration or 100-forward aggregate numbers.</div>'
@@ -8165,7 +8165,7 @@ FUSION_OPT_KERNELS: dict[str, tuple[str, str]] = {
 
 
 EXTRACTED_DARKNET_RUNTIMES: dict[str, list[dict]] = {
-    # Jetson Orin silicon runs (2026-05-25). All FP32 NCHW. The MINI
+    # Jetson Orin silicon runs (run-ppobmpdkjj). All FP32 NCHW. The MINI
     # shapes are overhead-bound (cuDNN descriptor + workspace setup
     # dominates a sub-ms kernel). LARGE conv2d is where cuDNN's
     # tensor-core kernels shine — 23.8× over the CPU 3-loop reference.
@@ -8233,7 +8233,7 @@ EXTRACTED_DARKNET_RUNTIMES: dict[str, list[dict]] = {
 
 
 # Silicon numbers for the four fusion-optimization kernels (Jetson Orin,
-# 2026-05-25). All FP32. The "vs naive" column says what we'd be doing
+# run-ppobmpdkjj). All FP32. The "vs naive" column says what we'd be doing
 # without the rewrite — e.g. running the standalone op chain through
 # separate cuDNN launches, or routing K=1 conv through cuDNN's generic
 # path, or computing AᵀA as a full gemm.
@@ -8284,7 +8284,7 @@ FUSION_OPT_RUNTIMES: dict[str, list[dict]] = {
 
 # ------------------------------------------------------------------
 # PVA backend — kernels lowered through --lower-kernel-launch-to-pva
-# to NVIDIA PVA Solutions' libpva_operator on the Jetson Orin
+# to NVIDIA PVA runtime' libpva_operator on the Jetson Orin
 # Programmable Vision Accelerator. PVA-only datapoints; no CPU compare.
 # ------------------------------------------------------------------
 
@@ -8447,7 +8447,7 @@ def _multi_backend_story() -> str:
         '<code>cuBLAS &middot; cuDNN &middot; cuSPARSE &middot; cuTensorNet</code>'
         '<span>CUDA runtime shims call existing optimized vendor libraries</span></div>'
         '<div class="backend-card pva"><b>&#128065; NVIDIA PVA</b>'
-        '<code>PVA Solutions: pva*Create / pva*Submit</code>'
+        '<code>PVA runtime: pva*Create / pva*Submit</code>'
         '<span>The backend shim hides allocator, tensor, submit, synchronization, '
         'and DMA-facing setup from the original C program</span></div>'
         '</div>'
@@ -8456,7 +8456,7 @@ def _multi_backend_story() -> str:
         'exposes the convolution access pattern; equivalence reasoning tolerates '
         'different arithmetic spelling; matching names the operation. An FP '
         'variant can lower to cuDNN on the GPU, while supported integer variants '
-        'can lower to PVA Solutions <code>OpConv2d</code>. The algorithm remains '
+        'can lower to PVA runtime <code>OpConv2d</code>. The algorithm remains '
         'recognizable C; the backend-specific ABI lives below the match.</div>'
         '<div class="pva-proof"><b>The important boundary.</b> Egglog proves '
         'equivalence&mdash;it does not invent an implementation. A branch is usable '
@@ -8469,7 +8469,7 @@ def _multi_backend_story() -> str:
 
 
 def _pva_section() -> str:
-    """Polygeist → PVA Solutions kernels retained as executable matches."""
+    """Polygeist → PVA runtime kernels retained as executable matches."""
     rows = []
     for spec in PVA_KERNELS:
         first = True
@@ -9246,7 +9246,7 @@ def _ginsbach_exact_region_results_section() -> str:
         'writeback, and CUTCP is blocked at struct-pointer lowering. Exact '
         'native-GPU baselines are unavailable for the extracted NPB regions. '
         'Full min/max/IQR data: <code>results/archive/issues/ginsbach_asplos18/'
-        'orin_exact_region_results_2026-09-08.csv</code>.</div>'
+        'orin_exact_region_results_run-pickficjkj.csv</code>.</div>'
     )
 
 
@@ -9551,7 +9551,7 @@ def _saturation_paper_study_page() -> str:
     variants = _read_csv(variants_path)
     cpu_rows = _read_csv(cpu_results_path)
     cpu = summary.get("cpu_execution_pilot", {})
-    artifact = "equality_saturation_artifacts/polybench_variants_20260909"
+    artifact = "equality_saturation_artifacts/polybench_variants_run-eiceoffcpj"
     primary_variants = summary["primary_inputs"] - summary["source_kernels"]
 
     common_egg = summary["egglog_common_baseline_recovery_pct"]
@@ -9919,12 +9919,12 @@ def _legacy_saturation_paper_study_page() -> str:
         '<div class="paper-notes">'
         f'<div><b>Interpretation</b><span><a href="{artifact}/LEO_REPORT.md">'
         'Leo-ready report</a></span></div>'
-        f'<div><b>Primary campaign</b><span><a href="{artifact}/campaign_20260908/runs.csv">'
-        f'raw CSV</a> &middot; <a href="{artifact}/campaign_20260908/summary.json">'
-        f'summary JSON</a> &middot; <a href="{artifact}/campaign_20260908/manifest.resolved.json">'
+        f'<div><b>Primary campaign</b><span><a href="{artifact}/campaign_run-nffdmeefik/runs.csv">'
+        f'raw CSV</a> &middot; <a href="{artifact}/campaign_run-nffdmeefik/summary.json">'
+        f'summary JSON</a> &middot; <a href="{artifact}/campaign_run-nffdmeefik/manifest.resolved.json">'
         'resolved manifest + hashes</a></span></div>'
-        f'<div><b>E-graph diagnostic</b><span><a href="{artifact}/egraph_benefit_20260908/runs.csv">'
-        f'raw CSV</a> &middot; <a href="{artifact}/egraph_benefit_20260908/SUMMARY.md">'
+        f'<div><b>E-graph diagnostic</b><span><a href="{artifact}/egraph_benefit_run-nffdmeefik/runs.csv">'
+        f'raw CSV</a> &middot; <a href="{artifact}/egraph_benefit_run-nffdmeefik/SUMMARY.md">'
         'summary</a></span></div></div>')
 
 

@@ -1,3 +1,8 @@
-# Pva
+# PVA
 
-PVA coverage and correctness experiments are retained under `results/archive/issues/mfem_pva_v3_20261111` and the PVA drivers in `scripts/correctness`. Fresh compiler-to-PVA reproduction remains incomplete. An external PVA SDK installation is required. No PVA timing claim is required.
+Public synthetic fixture results are retained under
+[`results/archive/issues/pva_semantic_matchers`](../results/archive/issues/pva_semantic_matchers),
+with harnesses in `scripts/correctness`. Fresh compiler-to-PVA reproduction
+remains incomplete. External SDK headers and libraries must be installed
+separately; see the fixture README for configuration variables.
+No PVA timing claim is required.

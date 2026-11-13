@@ -42,9 +42,9 @@ scripts/correctness/polygeist_build.sh --target=jetson --whole-program \
 
 The fresh silicon evidence is summarized in `silicon_results.csv`.  Raw logs
 are retained under `scripts/correctness/logs/` with
-`*_fp32_{strict,tf32}_selector_timing_5x5_20260909_*.silicon.log`,
-`*_tf32_selector_correctness_20260909_*.silicon.log`, and
-`*_fp32_native_reference_20260909_*.silicon.log` names.
+`*_fp32_{strict,tf32}_selector_timing_5x5_run-eiceoffcpj_*.silicon.log`,
+`*_tf32_selector_correctness_run-eiceoffcpj_*.silicon.log`, and
+`*_fp32_native_reference_run-eiceoffcpj_*.silicon.log` names.
 
 ## Results
 

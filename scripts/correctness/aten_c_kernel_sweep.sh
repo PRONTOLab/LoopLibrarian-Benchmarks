@@ -5,11 +5,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common_env.sh"
 
-SRC_DIR="$REPO_ROOT/results/archive/issues/aten_c_kernels"
+SRC_DIR="$REPO_ROOT/aten/inputs"
 OUT="${ATEN_C_SWEEP_OUT:-$SRC_DIR/results}"
 CGEIST="$POLYGEIST_ROOT/build/bin/cgeist"
 OPT="$POLYGEIST_ROOT/build/bin/polygeist-opt"
-MATCHER="$SCRIPT_DIR/kernel_match_rewrite.py"
+MATCHER="$POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py"
 MATCH_PYTHON="${ATEN_C_MATCH_PYTHON:-/usr/bin/python3}"
 RESOURCE_DIR="$($POLYGEIST_ROOT/llvm-project/build/bin/clang -print-resource-dir)"
 mkdir -p "$OUT"

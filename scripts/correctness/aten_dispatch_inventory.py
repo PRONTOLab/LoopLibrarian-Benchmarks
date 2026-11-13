@@ -11,7 +11,7 @@ from pathlib import Path
 from aten_extraction_inventory import DEFAULT_PYTORCH, DEFAULT_SOURCES, ROOT
 
 
-DEFAULT_OUTPUT = ROOT / "results/archive/issues/aten_c_kernels/dispatch_kernel_inventory.csv"
+DEFAULT_OUTPUT = ROOT / "aten/metadata/dispatch_kernel_inventory.csv"
 
 REGISTER_RE = re.compile(
     r"(?:REGISTER_DISPATCH|ALSO_REGISTER_AVX512_DISPATCH)\s*\(\s*"

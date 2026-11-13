@@ -1,6 +1,6 @@
 HOST
-2026-09-05T13:22:08-07:00
-Linux arpitj-dev 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+run-oghdlncaeb
+Linux arpitj-dev 5.15.0-151-generic #161-Ubuntu SMP [calendar metadata omitted] x86_64 x86_64 x86_64 GNU/Linux
 Architecture:                            x86_64
 CPU op-mode(s):                          32-bit, 64-bit
 Address sizes:                           46 bits physical, 48 bits virtual

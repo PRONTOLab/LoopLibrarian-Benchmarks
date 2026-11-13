@@ -17,9 +17,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
-ATEN = ROOT / "results/archive/issues/aten_c_kernels"
+ATEN = ROOT / "aten/inputs"
 BUILDER = ROOT / "scripts/correctness/polygeist_build.sh"
-RESIDENT_RESULTS = ATEN / "native_cuda_results" / "resident_silicon.csv"
+RESIDENT_RESULTS = ROOT / "results/archive/issues/aten_c_kernels/native_cuda_results" / "resident_silicon.csv"
 
 
 def _known_resident_kernels() -> set[str]:
@@ -1077,7 +1077,7 @@ def build_one(kernel: str, cfg: dict, output: Path) -> dict:
             abi)))
         return matched, abi, unsafe, calls, bool(calls) and not unsafe
 
-    matched_text, abi_text, residual, library_calls, resident_safe = \
+    matched_text, abi_text, residual, library_calls, resident_safe =\
         inspect_artifacts()
     # One-shot pre-ABI bufferization can materialize a tensor result through a
     # host memref.alloc/memref.copy shell.  That shell is illegal when the C
@@ -1090,7 +1090,7 @@ def build_one(kernel: str, cfg: dict, output: Path) -> dict:
         legacy_env["POLYGEIST_BUFFERIZE_BEFORE_ABI"] = "0"
         run(build_command, work / "raised.resident_tensor_abi_rebuild.log",
             legacy_env)
-        matched_text, abi_text, residual, library_calls, resident_safe = \
+        matched_text, abi_text, residual, library_calls, resident_safe =\
             inspect_artifacts()
     # Auto-discovered compositions may become fully device-safe as matcher and
     # ABI lowering coverage grows. The first build intentionally suppresses
@@ -1099,7 +1099,7 @@ def build_one(kernel: str, cfg: dict, output: Path) -> dict:
     if resident_safe and not supports_resident:
         resident_command = build_command[:-1] + ["-DBENCH_RESIDENT_ONLY"]
         run(resident_command, work / "raised.resident_rebuild.log", env)
-        matched_text, abi_text, residual, library_calls, resident_safe = \
+        matched_text, abi_text, residual, library_calls, resident_safe =\
             inspect_artifacts()
     return {"kernel": kernel,
             "problem": " ".join(f"{k}={v}" for k,v in cfg["dims"].items()),
@@ -1113,7 +1113,7 @@ def build_one(kernel: str, cfg: dict, output: Path) -> dict:
 def _matched_kernels() -> list[str]:
     """Every kernel whose matched.mlir emits a library kernel.launch."""
     out = []
-    for mm in sorted((ATEN / "results").glob("*/matched.mlir")):
+    for mm in sorted((ROOT / "results/archive/issues/aten_c_kernels/results").glob("*/matched.mlir")):
         try:
             if "kernel.launch @" in mm.read_text():
                 out.append(mm.parent.name)
@@ -1160,7 +1160,7 @@ def _device_unsafe_residuals(abi_text: str) -> list[str]:
 
 def _complete_library_missing() -> list[str]:
     """Complete genuine-library matches without a passing resident result."""
-    audit = ATEN / "cuda_library_audit.csv"
+    audit = ROOT / "aten/metadata/cuda_library_audit.csv"
     if not audit.exists():
         return []
     with audit.open(newline="") as stream:

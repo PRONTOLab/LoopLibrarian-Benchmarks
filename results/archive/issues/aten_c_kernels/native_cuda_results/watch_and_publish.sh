@@ -24,7 +24,7 @@ for line in open(resp):
         w,r=float(m.group(2)),float(m.group(3))
         existing[m.group(1)]={"kernel":m.group(1),"resident_us":f"{r:.3f}",
             "warm_us":f"{w:.3f}","device_speedup":f"{w/r:.3f}","shape":m.group(5),
-            "errors":"0","hardware":"Jetson_AGX_Orin_sm87_CUDA12.6","date":"2026-08-30"}
+            "errors":"0","hardware":"Jetson_AGX_Orin_sm87_CUDA12.6","date":"run-jhfekghdho"}
 rows=sorted(existing.values(),key=lambda x:x["kernel"])
 with open(csvp,"w",newline="") as f:
     w=csv.DictWriter(f,fieldnames=["kernel","resident_us","warm_us","device_speedup","shape","errors","hardware","date"])

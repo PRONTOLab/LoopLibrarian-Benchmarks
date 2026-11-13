@@ -15,12 +15,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "issues" / "mfem_c_kernels"
-SURVEY = CORPUS / "pa_family_compile"
+CORPUS = ROOT / "mfem" / "inputs"
+SURVEY = ROOT / "results/archive/issues/mfem_c_kernels/pa_family_compile"
 RESULTS = SURVEY / "results"
 CGEIST = COMPILER / "build" / "bin" / "cgeist"
 OPT = COMPILER / "build" / "bin" / "polygeist-opt"
-MATCHER = ROOT / "scripts" / "correctness" / "kernel_match_rewrite.py"
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 RESOURCE = COMPILER / "llvm-project" / "build" / "lib" / "clang" / "18"
 KERNEL_LIBRARY = COMPILER / "generic_solver" / "kernel_library_phase2.mlir"
 

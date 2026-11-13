@@ -20,9 +20,9 @@ NE=1024
 ITERS=${ITERS:-200}
 REPS=${REPS:-5}
 FLAGS=(-O3 -march=native)
-BENCH=$REPO/issues/mfem_c_kernels/benchmarks
+BENCH=$REPO/mfem/inputs/benchmarks
 BENCH_DEF=${BENCH_DEF:-BENCH_MASS_2D}
-KERNEL_SRC=${KERNEL_SRC:-$REPO/issues/mfem_c_kernels/normalized/mass_stage_sliced.c}
+KERNEL_SRC=${KERNEL_SRC:-$REPO/mfem/inputs/normalized/mass_stage_sliced.c}
 REF_INTERP=${REF_INTERP:-1}
 mkdir -p "$BIN"
 # The normalised 3-D sources keep per-element scratch arrays on the stack

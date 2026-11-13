@@ -83,7 +83,7 @@ def build(args):
               "polybench/sources/utilities/polybench.h"]
     manifest = {"tool_hashes": {name: {"path": str(path), "sha256": sha(path)}
                                 for name, path in tools.items()},
-        "input_hashes": {name: sha(ROOT / name) for name in inputs},
+        "input_hashes": {name: sha((ROOT if name.startswith("polybench/") else COMPILER) / name) for name in inputs},
         "git_head": subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "target": args.target, "size": args.size, "dtype": args.dtype,
@@ -204,7 +204,7 @@ def run(args, manifest):
             raise RuntimeError("Library deployment failed")
     write_json(args.output / "run-metadata.json", {
         "script_sha256": sha(__file__), "cpu": args.cpu,
-        "rtol": args.rtol, "atol": args.atol, "started": time.time(),
+        "rtol": args.rtol, "atol": args.atol,
         "target": args.target, "warmups": 5, "samples": 5,
         "statistic": "minimum of five", "thread_count": 1})
     shutil.copyfile(__file__, args.output / "run-script.py")
@@ -240,7 +240,7 @@ def run(args, manifest):
                        "timeout " + str(args.timeout) + " taskset -c " + str(args.cpu) +
                        " " + shlex.quote(target))
                 write_json(args.output / "state.json", {"state": "running", "kernel": name,
-                                                        "variant": variant, "started": time.time()})
+                                                        "variant": variant})
                 monitor = shlex.quote(target + "-thermal.log")
                 measured_cmd = ("tegrastats --interval 100 > " + monitor +
                     " 2>&1 & monitor_pid=$!; " + cmd +

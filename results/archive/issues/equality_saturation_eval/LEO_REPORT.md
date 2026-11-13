@@ -1,6 +1,6 @@
 # Equality saturation versus exact syntactic matching
 
-Date: 2026-09-08/09 PDT
+Date: run-pickficjkj/09 PDT
 
 ## Question
 
@@ -134,11 +134,11 @@ compilation time.
 
 ## Artifacts
 
-- Primary raw runs: `campaign_20260908/runs.csv`
-- Primary machine-readable summary: `campaign_20260908/summary.json`
-- Primary generated summary: `campaign_20260908/SUMMARY.md`
-- Resolved input paths and hashes: `campaign_20260908/manifest.resolved.json`
-- E-graph diagnostic raw runs: `egraph_benefit_20260908/runs.csv`
-- E-graph diagnostic summary: `egraph_benefit_20260908/SUMMARY.md`
+- Primary raw runs: `campaign_run-nffdmeefik/runs.csv`
+- Primary machine-readable summary: `campaign_run-nffdmeefik/summary.json`
+- Primary generated summary: `campaign_run-nffdmeefik/SUMMARY.md`
+- Resolved input paths and hashes: `campaign_run-nffdmeefik/manifest.resolved.json`
+- E-graph diagnostic raw runs: `egraph_benefit_run-nffdmeefik/runs.csv`
+- E-graph diagnostic summary: `egraph_benefit_run-nffdmeefik/SUMMARY.md`
 - Canonical corpus manifest: `manifest.csv`
 - Benefit-case manifest: `benefit_manifest.csv`

@@ -12,7 +12,7 @@ ROOT=${1:-/tmp/mfem_cpu/all}
 OUT=${2:-$REPO/issues/mfem_cpu_experiment/all_kernels}
 JOBS=${JOBS:-6}
 HERE=$REPO/scripts/correctness/mfem_cpu
-N=$REPO/issues/mfem_c_kernels/normalized
+N=$REPO/mfem/inputs/normalized
 export COMPOSE_OPT=${COMPOSE_OPT:-$REPO/build-v2/bin/polygeist-opt}
 mkdir -p "$ROOT" "$OUT"
 

@@ -9,8 +9,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FP32_CSV = ROOT / "b300_fp32_2026-09-09" / "summary.csv"
-FP64_CSV = ROOT / "b300_fp64_2026-09-09" / "summary.csv"
+FP32_CSV = ROOT / "b300_fp32_run-jlhcdpenjb" / "summary.csv"
+FP64_CSV = ROOT / "b300_fp64_run-jlhcdpenjb" / "summary.csv"
 OUTPUT = ROOT / "paper_analysis" / "polybench_fp32_fp64_kernel_comparison.svg"
 
 KERNELS = [

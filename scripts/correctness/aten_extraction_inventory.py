@@ -18,11 +18,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SOURCES = (
-    ROOT / "notes/polygeist_raise_to_linalg/aten_raise_sweep_2026_07_21/sources.txt"
+    ROOT / "notes/polygeist_raise_to_linalg/aten_raise_sweep_run-lhhecjicah/sources.txt"
 )
 DEFAULT_PYTORCH = ROOT / "third_party/pytorch"
-DEFAULT_OUTPUT = ROOT / "results/archive/issues/aten_c_kernels/extraction_inventory.csv"
-OPERATOR_ADJUDICATION = ROOT / "results/archive/issues/aten_c_kernels/operator_adjudication.csv"
+DEFAULT_OUTPUT = ROOT / "aten/metadata/extraction_inventory.csv"
+OPERATOR_ADJUDICATION = ROOT / "aten/metadata/operator_adjudication.csv"
 GENERATED_PROVENANCE_GLOB = "generated*_provenance.csv"
 SOURCE_ACCOUNTING = {
     "aten/src/ATen/native/AdaptiveMaxPooling2d.cpp":
@@ -48,7 +48,7 @@ def read_provenance() -> dict[str, list[str]]:
     for fixture, source in pattern.findall(block):
         by_source[source].append(fixture)
     for manifest in sorted(
-        (ROOT / "results/archive/issues/aten_c_kernels").glob(GENERATED_PROVENANCE_GLOB)
+        (ROOT / "aten/metadata").glob(GENERATED_PROVENANCE_GLOB)
     ):
         with manifest.open(newline="") as stream:
             for row in csv.DictReader(stream):

@@ -19,10 +19,11 @@ import tempfile
 import time
 from collections import defaultdict
 from pathlib import Path
+from ll_paths import COMPILER
 
 
 ROOT = Path(__file__).resolve().parents[2]
-MATCHER = ROOT / "scripts/correctness/kernel_match_rewrite.py"
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 
 
 def file_hash(path: Path) -> str:

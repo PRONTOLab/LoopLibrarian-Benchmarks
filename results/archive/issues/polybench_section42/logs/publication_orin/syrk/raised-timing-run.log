@@ -1,10 +1,10 @@
-[jetson] uname -a: Linux configured-host.invalid 6.8.12-1021-tegra #1 SMP PREEMPT Tue Jun 9 09:16:45 PDT 2026 aarch64 aarch64 aarch64 GNU/Linux
+[jetson] uname -a: Linux jetson-orin 6.8.12-1021-tegra #1 SMP PREEMPT [calendar metadata omitted] aarch64 aarch64 aarch64 GNU/Linux
 [jetson] nvcc version:
   (nvcc not found)
 [jetson] accelerator status:
 [N/A]
 
-[jetson] running /tmp/polygeist_jetson_runs/publication_syrk_raised_timing_5x5_20260908_092104/raised-timing run 1 ...
+[jetson] running /tmp/polygeist_jetson_runs/publication_syrk_raised_timing_5x5_run-epmkcgpofe/raised-timing run 1 ...
 POLYGEIST_BENCHMARK_ITERATION phase=warmup index=0 total=10
 POLYGEIST_GPU_REGION_TIMING region=15863120278365164422 compute_device_ms=51.140095 memory_device_ms=13.046784 e2e_host_ms=130.855264 compute_wall_ms=28.909824 memory_wall_ms=12.732096 host_device_ms=0.100320 host_wall_ms=88.926176 alloc_device_ms=0.672832 alloc_wall_ms=1.050016 free_device_ms=1.843744 free_wall_ms=1.531648 h2d_device_ms=3.145920 h2d_wall_ms=3.086880 d2h_device_ms=7.384288 d2h_wall_ms=7.063552 d2d_device_ms=0.000000 d2d_wall_ms=0.000000 h2h_device_ms=0.000000 h2h_wall_ms=0.000000 markers=20
 POLYGEIST_RAISED_GPU_E2E_MS 130.916416004

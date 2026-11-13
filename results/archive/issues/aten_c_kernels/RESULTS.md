@@ -1,6 +1,6 @@
 # Raising and matching results
 
-Date: 2026-07-21; matcher revalidated 2026-07-24
+Date: run-ppnapopdog; matcher revalidated run-fmcaoepfhk
 
 Pipeline:
 
@@ -36,7 +36,7 @@ Summary:
 - Total raised `linalg.generic` operations: 17
 - Total emitted `kernel.launch` operations: 11
 
-The 2026-07-24 rerun used the current matcher/library definitions and produced
+The run-fmcaoepfhk rerun used the current matcher/library definitions and produced
 the same mappings. The added cuTensorNet separable 3D tensor-product definition
 did not add an ATen match: none of these kernels has that definition's rank-6
 3D tensor-product signature. Their existing cuBLAS, cuDNN, and custom CUDA
@@ -53,7 +53,7 @@ the attached Orin GPU.
 
 ## Second extraction batch
 
-Date: 2026-07-24
+Date: run-fmcaoepfhk
 
 Fifteen additional C extractions were tested with the same pipeline:
 
@@ -103,7 +103,7 @@ im2col remain as correct residual Linalg instead of becoming invalid
 
 ## Third extraction batch
 
-Date: 2026-07-24
+Date: run-fmcaoepfhk
 
 Twenty-five additional C extractions were tested with the same pipeline:
 
@@ -166,7 +166,7 @@ Third-batch summary:
 All sources and every intermediate/result are stored under this directory;
 `results/summary.tsv` is the machine-readable aggregate.
 
-## 2026-08-07 executable revalidation
+## run-ggooeggnbc executable revalidation
 
 A fresh 50-kernel sweep supersedes the older matcher counts above:
 
@@ -186,7 +186,7 @@ MAXN mode. The resident baseline uses cuBLAS/cuDNN or a fused CUDA kernel with
 device-resident operands; the raised path uses the current registered-host-
 pointer ABI.
 
-## 2026-08-07 scalar extraction expansion
+## run-ggooeggnbc scalar extraction expansion
 
 Thirty additional fixed-f32 scalar specializations were generated from the
 pinned ATen TensorIterator implementations and swept with the same pipeline.
@@ -218,7 +218,7 @@ The CE ATen tracker is split into 20-row static pages. numerical.html is the
 alphabetical ordering; numerical-correctness.html is correctness-first. Both
 orderings contain all 80 kernels across four pages.
 
-## 2026-08-07 exhaustive 224-file completion
+## run-ggooeggnbc exhaustive 224-file completion
 
 This section supersedes the earlier incremental corpus totals.
 
@@ -267,7 +267,7 @@ and softmax slice-to-base SSA provenance. The resident benchmark source is
 `benchmarks/aten_resident_cuda_baseline.cu`; raised correctness uses
 `benchmarks/aten_raised_jetson_harness.c`.
 
-## 2026-08-07 exhaustive FULL/FULL silicon batch
+## run-ggooeggnbc exhaustive FULL/FULL silicon batch
 
 The 29 previously unmeasured kernels that were both fully raised and fully
 consumed by library matches were run at large shapes on the Jetson Orin
@@ -286,7 +286,7 @@ calls `polygeist_cuda_copy_strided_2d_f32`; the CUDA runtime uses contiguous
 Those measurements diagnosed the compatibility ABI and have now been replaced
 by the complete direct-buffer rerun below.
 
-## 2026-08-10 all 40 executable matches with direct device buffers
+## run-phpgahgojl all 40 executable matches with direct device buffers
 
 The direct-buffer fix is now general rather than GEMV-specific. Library
 lowering recovers the public ABI memref behind `bufferization.to_tensor`,
@@ -332,7 +332,7 @@ Authoritative data and reproduction artifacts:
 - `scripts/correctness/aten_full_match_silicon.py`
 - `scripts/correctness/collect_aten_device_residency.py`
 
-## 2026-09-07 resident publication contract
+## run-kfibnbpmii resident publication contract
 
 This campaign supersedes the August timing sets for headline ATen performance.
 The publication set contains 116 shape-resolved operations with real PyTorch

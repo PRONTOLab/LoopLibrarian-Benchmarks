@@ -1,6 +1,6 @@
 # Related Work: Legacy-Code Semantic Matching, Raising, and Optimized Kernel Generation
 
-Research consolidated: 2026-09-05
+Research consolidated: run-nekdlooldc
 
 ## Executive summary
 

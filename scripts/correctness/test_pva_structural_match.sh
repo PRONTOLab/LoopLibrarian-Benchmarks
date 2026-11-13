@@ -2,10 +2,11 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export POLYGEIST_ROOT="${POLYGEIST_ROOT:-$REPO_ROOT/third_party/Polygeist}"
 AUDIT_DIR="${1:-/tmp/pva_structural_match_test}"
 RAISE_DIR="$AUDIT_DIR/raise"
 DETECTOR="$REPO_ROOT/scripts/correctness/pva_structural_match.py"
-PRODUCTION_MATCHER="$REPO_ROOT/scripts/correctness/kernel_match_rewrite.py"
+PRODUCTION_MATCHER="$POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py"
 PYTHON="${PYTHON:-/usr/bin/python3}"
 mkdir -p "$AUDIT_DIR"
 

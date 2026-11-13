@@ -9,7 +9,7 @@ import statistics
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CAMPAIGN = ROOT / "results/archive/issues/equality_saturation_eval/polybench_whole_compile_20260909"
+CAMPAIGN = ROOT / "results/archive/issues/equality_saturation_eval/polybench_whole_compile_run-eiceoffcpj"
 
 
 def median(values):

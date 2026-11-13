@@ -8,7 +8,6 @@ disable the handwritten semantic fallback.
 
 import argparse
 import csv
-import datetime as dt
 import hashlib
 import json
 import os
@@ -20,11 +19,11 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 PRIMARY = Path("/home/arjaiswal/Polygeist")
-DEFAULT_OUTPUT = ROOT / "results/archive/issues/equality_saturation_eval/polybench_whole_compile_20260909"
+DEFAULT_OUTPUT = ROOT / "results/archive/issues/equality_saturation_eval/polybench_whole_compile_run-eiceoffcpj"
 FIELDS = (
     "kernel", "mode", "repetition", "status", "returncode", "timed_out",
     "wall_seconds", "user_seconds", "system_seconds", "peak_rss_kib",
-    "started_utc", "finished_utc", "source", "source_sha256",
+    "source", "source_sha256",
     "executable_sha256", "log", "time_log", "telemetry", "command",
 )
 
@@ -204,11 +203,9 @@ def main():
         })
 
         print(f"[{job_index}/{len(jobs)}] {kernel} {mode} r{repetition}", flush=True)
-        started = dt.datetime.now(dt.timezone.utc)
         with log.open("w") as stream:
             process = subprocess.run(command, cwd=ROOT, env=env,
                                      stdout=stream, stderr=subprocess.STDOUT)
-        finished = dt.datetime.now(dt.timezone.utc)
         timing = parse_time(time_log)
         row = {
             "kernel": kernel,
@@ -221,8 +218,6 @@ def main():
             "user_seconds": timing.get("user_seconds", ""),
             "system_seconds": timing.get("system_seconds", ""),
             "peak_rss_kib": timing.get("peak_rss_kib", ""),
-            "started_utc": started.isoformat(),
-            "finished_utc": finished.isoformat(),
             "source": str(source.relative_to(ROOT)),
             "source_sha256": sha256(source),
             "executable_sha256": sha256(executable) if executable.exists() else "",

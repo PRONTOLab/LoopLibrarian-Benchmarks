@@ -31,7 +31,7 @@ class PublicPoolingMatch(unittest.TestCase):
             wrapper.write_text('#define NETLIB_SPEC '+name+'\n#include "'+
                                str(spec.ref_c)+'"\n')
             sources = [('library', wrapper, name),
-                       ('app', REPO/'results/archive/issues/aten_c_kernels/aten_avg_pool3d_backward_cpu.c',
+                       ('app', REPO/'aten/inputs/aten_avg_pool3d_backward_cpu.c',
                         'aten_avg_pool3d_backward_cpu')]
             for stem, source, function in sources:
                 result = recipe.raise_c(recipe.PRODUCTION, str(source), function,

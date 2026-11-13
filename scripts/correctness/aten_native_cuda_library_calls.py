@@ -17,10 +17,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "results/archive/issues/aten_c_kernels"
+CORPUS = ROOT / "aten/inputs"
 PYTORCH = ROOT / "third_party/pytorch"
-OUTPUT = CORPUS / "native_cuda_external_library_calls.csv"
-REPORT = CORPUS / "NATIVE_CUDA_EXTERNAL_LIBRARY_CALLS.md"
+OUTPUT = ROOT / "aten/metadata/native_cuda_external_library_calls.csv"
+REPORT = ROOT / "aten/metadata/NATIVE_CUDA_EXTERNAL_LIBRARY_CALLS.md"
 
 
 def external(libraries: str, form: str, source: str, symbol: str, note: str):
@@ -112,7 +112,7 @@ TEMPLATE_PATTERNS = {
 
 def cuda_dispatch_sources():
     dispatch = defaultdict(set)
-    with (CORPUS / "dispatch_kernel_inventory.csv").open(newline="") as stream:
+    with (ROOT / "aten/metadata/dispatch_kernel_inventory.csv").open(newline="") as stream:
         for row in csv.DictReader(stream):
             for kernel in filter(None, row["fixtures"].split(",")):
                 dispatch[kernel].add(row["stub"].split("::")[-1])
@@ -137,7 +137,7 @@ def main() -> None:
     from build_ce_viewer import ATEN_C_PROVENANCE
 
     native_rows = {}
-    with (CORPUS / "native_cuda_audit.csv").open(newline="") as stream:
+    with (ROOT / "aten/metadata/native_cuda_audit.csv").open(newline="") as stream:
         native_rows = {row["kernel"]: row for row in csv.DictReader(stream)}
     dispatch = cuda_dispatch_sources()
     rows = []

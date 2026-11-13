@@ -69,9 +69,8 @@ def provenance(out):
     save(Path(out) / "provenance.json", dict(
         compiler_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=COMPILER, text=True).strip(),
         git_head=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-        utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         uptime=subprocess.check_output(["uptime"], text=True).strip(),
-        machine=subprocess.check_output(["uname", "-a"], text=True).strip(),
+        machine=subprocess.check_output(["uname", "-srm"], text=True).strip(),
         tools={str(p.relative_to(COMPILER)): sha(p) for p in
                [COMPILER / "build/bin/cgeist", COMPILER / "build/bin/polygeist-opt"] if p.exists()},
         suite=os.environ.get("LL_ARTIFACT_SUITE"), specification_suite="lib_v3"))

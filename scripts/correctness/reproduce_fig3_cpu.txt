@@ -12,7 +12,7 @@ Build on the x86 host:
 
 The OpenBLAS sysroot must provide the AArch64 OpenBLAS pthread library and
 headers under usr/lib/aarch64-linux-gnu/openblas-pthread and
-usr/include/aarch64-linux-gnu/openblas-pthread. The 2026-11-10 campaign uses
+usr/include/aarch64-linux-gnu/openblas-pthread. The run-begkgcdkme campaign uses
 Ubuntu's OpenBLAS 0.3.20 package and aarch64-linux-gnu-gcc 11.4.0.
 The native build records its actual compiler version and all flags.
 

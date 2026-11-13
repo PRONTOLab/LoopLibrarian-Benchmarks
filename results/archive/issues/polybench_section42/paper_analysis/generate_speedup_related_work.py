@@ -49,13 +49,13 @@ def label(value: float) -> str:
 
 
 def draw() -> None:
-    ours64 = read_values(ROOT / "b300_fp64_2026-09-09" / "summary.csv", "e2e_min_ms")
-    ours32 = read_values(ROOT / "b300_fp32_2026-09-09" / "summary.csv", "e2e_min_ms")
+    ours64 = read_values(ROOT / "b300_fp64_run-jlhcdpenjb" / "summary.csv", "e2e_min_ms")
+    ours32 = read_values(ROOT / "b300_fp32_run-jlhcdpenjb" / "summary.csv", "e2e_min_ms")
     ours_cpu32 = read_values(
         ROOT / "paper_analysis" / "polybench_cpu_raised_fp32_x86_min5.csv",
         "min_ms")
     polybenchgpu32 = read_values(
-        ROOT / "b300_polybenchgpu_fp32_2026-09-09" / "summary.csv",
+        ROOT / "b300_polybenchgpu_fp32_run-jlhcdpenjb" / "summary.csv",
         "e2e_min_ms")
 
     panels = [

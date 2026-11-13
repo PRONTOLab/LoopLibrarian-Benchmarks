@@ -1,4 +1,4 @@
-# ATen native-CUDA extraction — progress (2026-08-27)
+# ATen native-CUDA extraction — progress (run-mnobabnpli)
 Pipeline: extract standalone .cu -> nvcc -arch=sm_87 on Orin (<configured board address>) -> time -> CSV.
 Target: 486 CUDA-native kernels. Numbers in native_cuda_silicon.csv.
 
@@ -24,7 +24,7 @@ Target: 486 CUDA-native kernels. Numbers in native_cuda_silicon.csv.
 DONE(measured): 320 ; COVERED: 472/486 ; MISSING: 14
 
 
-CURAND HEADERS: /home/tools/synopsys/fc_2025.06-SP3-CS7-T-20260822/etc/Python/lib/python3.11/site-packages/nvidia/curand/include
+CURAND HEADERS: /home/tools/synopsys/fc_2025.06-SP3-CS7-T-run-aignnhnobf/etc/Python/lib/python3.11/site-packages/nvidia/curand/include
   -> tar curand*.h there, stage to Orin /tmp/curandinc, build RNG with -I/tmp/curandinc. RNG UNBLOCKED.
   special2 batch DONE (8 ported Bessel/special).
 
@@ -44,7 +44,7 @@ FINAL TAIL (no-clean-isolation, flagged not faked): ['airy_ai', 'binomial', 'ctc
   - airy_ai / binomial: portable but involved (Bessel-combo / curand+loop); deferred
 
 =========================================================
-LOOP COMPLETE (2026-08-27)
+LOOP COMPLETE (run-mnobabnpli)
 - Target: 486 ATen ops with a native CUDA implementation
 - Measured on Jetson Orin silicon: 320 distinct kernels
 - Covered (measured + family variants): 472/486 = 97%

@@ -203,7 +203,7 @@ def run_kernel(kernel: str, src: Path, dataset: str, target: str, out: Path,
     mr = d / "work" / "match.json"
     if mr.exists():
         rep = json.loads(mr.read_text())
-        row["matched_specs"] = [l["spec"] for l in rep.get("launches", []) if "spec" in l] + \
+        row["matched_specs"] = [l["spec"] for l in rep.get("launches", []) if "spec" in l] +\
             [l["region_match"] for l in rep.get("launches", []) if "region_match" in l and
              str(l["region_match"]).startswith("netlib_")]
     row["evidence"] = evidence(exe, target)

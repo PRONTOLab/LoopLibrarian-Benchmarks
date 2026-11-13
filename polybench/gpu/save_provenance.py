@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Preserve the exact source inputs and tools supporting this campaign."""
 from ll_paths import COMPILER
-import datetime
 import hashlib
 import json
 import shutil
@@ -37,8 +36,7 @@ for path in files:
 for name in ('build/bin/cgeist','build/bin/polygeist-opt','llvm-project/build/bin/mlir-opt',
              'llvm-project/build/bin/mlir-translate','llvm-project/build/bin/clang'):
     hashes[name] = hashlib.sha256((R/name).read_bytes()).hexdigest()
-record = dict(timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip(),
+record = dict(head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip(),
     host_uptime=subprocess.check_output(['uptime'],text=True).strip(), hashes=hashes,
     upstream_polybench_gpu_commit=subprocess.check_output(
         ['git','-C',str(R/'third_party/polybenchGpu'),'rev-parse','HEAD'],text=True).strip(),

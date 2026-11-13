@@ -8,8 +8,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "results/archive/issues/aten_c_kernels"
-MANIFEST = OUT / "generated_additional_provenance.csv"
+OUT = ROOT / "aten/inputs"
+MANIFEST = ROOT / "aten/metadata/generated_additional_provenance.csv"
 ENTRIES: list[tuple[str, str, str, str]] = []
 
 

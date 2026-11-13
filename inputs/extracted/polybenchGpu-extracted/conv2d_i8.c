@@ -3,8 +3,7 @@
  * agnostic encoding, the rewriter sniffs the operand element type
  * (i8) and emits @cudnnConvolution2D_9tap_i8, and the ABI lowering
  * routes to the polygeist_pva_conv2d_3x3_i8 runtime shim (NOT to
- * cuDNN — cuDNN doesn't accept INT8 standalone conv, but PVA Solutions'
- * cupva-backed pvaConv2d does).
+ * cuDNN; this fixture exercises the PVA runtime's integer convolution).
  *
  * Weights are the polybench 9-tap pattern scaled to INT8 range. Product
  * widths (8b weight * 8b pixel) need a wider accumulator — the C body

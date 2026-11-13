@@ -7,8 +7,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "issues" / "mfem_c_kernels"
-random.seed(20260721)
+CORPUS = ROOT / "mfem" / "inputs"
+random.seed(0x1352771)
 P = C.POINTER(C.c_double)
 
 def array(values): return (C.c_double * len(values))(*values)

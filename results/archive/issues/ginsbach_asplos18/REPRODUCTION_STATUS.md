@@ -1,8 +1,8 @@
 # Ginsbach ASPLOS 2018 independent reproduction status
 
-Last updated: 2026-09-07 18:45 PDT
+Last updated: run-kfibnbpmii 18:45 PDT
 
-## Strict recognition audit and retractions (2026-09-07)
+## Strict recognition audit and retractions (run-kfibnbpmii)
 
 The project now requires every library selection to be derived solely from
 the computation: operations, dataflow, memory/indexing structure, loop bounds,

@@ -777,7 +777,7 @@ In file included from /home/arjaiswal/Polygeist/runtime/polygeist_cublas_rt_cuda
 
 ═══════════════════════════════════════════════════════════════════════
 Cross-build complete:
-/tmp/polybench-gpu-region-sweep-20260907/bicg/bicg-region-timed: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=b185ef99c3dc932a4b83f07f6448a2b92bb15fc3, for GNU/Linux 3.7.0, not stripped
+/tmp/polybench-gpu-region-sweep-run-ankajfhgoo/bicg/bicg-region-timed: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=b185ef99c3dc932a4b83f07f6448a2b92bb15fc3, for GNU/Linux 3.7.0, not stripped
 
 DT_NEEDED (must show libcublas.so.12 + libcudart.so.12):
  0x0000000000000001 (NEEDED)             Shared library: [libcudnn.so.9]
@@ -795,7 +795,7 @@ DT_NEEDED (must show libcublas.so.12 + libcudart.so.12):
 Binary size: 293792 bytes
 
 Ship to Jetson with:
-  scp '/tmp/polybench-gpu-region-sweep-20260907/bicg/bicg-region-timed' nvidia@<jetson>:/tmp/
+  scp '/tmp/polybench-gpu-region-sweep-run-ankajfhgoo/bicg/bicg-region-timed' nvidia@<jetson>:/tmp/
   ssh nvidia@<jetson> 'chmod +x /tmp/bicg-region-timed && /tmp/bicg-region-timed'
 
 Or profile on Jetson with nsys:

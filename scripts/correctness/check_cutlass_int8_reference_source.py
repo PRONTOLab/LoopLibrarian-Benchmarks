@@ -1,1 +1,0 @@
-../../third_party/Polygeist/scripts/correctness/check_cutlass_int8_reference_source.py

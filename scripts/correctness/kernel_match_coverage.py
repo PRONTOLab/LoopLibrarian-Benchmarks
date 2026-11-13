@@ -3,6 +3,9 @@
 import argparse
 import json
 from pathlib import Path
+from ll_paths import COMPILER
+import sys
+sys.path.insert(0, str(COMPILER / "scripts/correctness"))
 import spec_match
 
 

@@ -777,7 +777,7 @@ In file included from /home/arjaiswal/Polygeist/runtime/polygeist_cublas_rt_cuda
 
 ═══════════════════════════════════════════════════════════════════════
 Cross-build complete:
-/tmp/polybench-gpu-region-sweep-20260907/mvt/mvt-region-timed: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=cd5d1b0ce9c967529332e3415dc52be9f1d9bf4e, for GNU/Linux 3.7.0, not stripped
+/tmp/polybench-gpu-region-sweep-run-ankajfhgoo/mvt/mvt-region-timed: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=cd5d1b0ce9c967529332e3415dc52be9f1d9bf4e, for GNU/Linux 3.7.0, not stripped
 
 DT_NEEDED (must show libcublas.so.12 + libcudart.so.12):
  0x0000000000000001 (NEEDED)             Shared library: [libcudnn.so.9]
@@ -795,7 +795,7 @@ DT_NEEDED (must show libcublas.so.12 + libcudart.so.12):
 Binary size: 293792 bytes
 
 Ship to Jetson with:
-  scp '/tmp/polybench-gpu-region-sweep-20260907/mvt/mvt-region-timed' nvidia@<jetson>:/tmp/
+  scp '/tmp/polybench-gpu-region-sweep-run-ankajfhgoo/mvt/mvt-region-timed' nvidia@<jetson>:/tmp/
   ssh nvidia@<jetson> 'chmod +x /tmp/mvt-region-timed && /tmp/mvt-region-timed'
 
 Or profile on Jetson with nsys:

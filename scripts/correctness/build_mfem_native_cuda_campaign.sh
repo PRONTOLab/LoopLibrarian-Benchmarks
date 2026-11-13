@@ -7,7 +7,7 @@ mfem_build=${MFEM_AARCH64_BUILD:-/home/arjaiswal/mfem-section42-aarch64-build4}
 out=${OUT:-/home/arjaiswal/mfem-ne1024-native}
 nvcc="$cuda/bin/nvcc"
 host_cxx=${AARCH64_CXX:-/usr/bin/aarch64-linux-gnu-g++}
-src="$repo/results/archive/issues/mfem_c_kernels/benchmarks/mfem_native_cuda_publication_bench.cpp"
+src="$repo/mfem/inputs/benchmarks/mfem_native_cuda_publication_bench.cpp"
 
 mkdir -p "$out/bin" "$out/obj" "$out/logs"
 
@@ -37,7 +37,7 @@ for spec in "${kernels[@]}"; do
     -DMFEM_CONFIG_FILE="\"$mfem_build/config/_config.hpp\"" \
     -DMFEM_BENCH_NE=1024 "${defs[@]}" \
     -I"$mfem_build" -I"$repo/third_party/mfem" \
-    -I"$repo/results/archive/issues/mfem_c_kernels/benchmarks" \
+    -I"$repo/mfem/inputs/benchmarks" \
     -x cu -c "$src" -o "$out/obj/$short.o" \
     >"$out/logs/$short.compile.log" 2>&1
   "$nvcc" -forward-unknown-to-host-compiler -ccbin="$host_cxx" \

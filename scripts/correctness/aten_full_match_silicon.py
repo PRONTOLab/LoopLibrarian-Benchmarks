@@ -17,10 +17,10 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
-ATEN = ROOT / "results/archive/issues/aten_c_kernels"
-HARNESS = ATEN / "benchmarks/aten_full_match_raised_harness.c"
-LEGACY_HARNESS = ATEN / "benchmarks/aten_raised_jetson_harness.c"
-RESIDENT = ATEN / "benchmarks/aten_full_match_resident_baseline.c"
+ATEN = ROOT / "aten/inputs"
+HARNESS = ROOT / "aten/harnesses/aten_full_match_raised_harness.c"
+LEGACY_HARNESS = ROOT / "aten/harnesses/aten_raised_jetson_harness.c"
+RESIDENT = ROOT / "aten/harnesses/aten_full_match_resident_baseline.c"
 BUILDER = ROOT / "scripts/correctness/polygeist_build.sh"
 
 

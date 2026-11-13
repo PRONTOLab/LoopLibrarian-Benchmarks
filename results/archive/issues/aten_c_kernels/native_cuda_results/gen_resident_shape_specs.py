@@ -7,7 +7,7 @@ import csv, hashlib, importlib.util, json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-NATIVE_RECIPE_VERSION = "2026-09-08-v3"
+NATIVE_RECIPE_VERSION = "run-pickficjkj-v3"
 NATIVE_RECIPE_V4_KERNELS = {
     "aten_angle_complex_scalarized", "aten_as_complex_cpu",
     "aten_complex_scalarized", "aten_conj_complex_scalarized",
@@ -136,7 +136,7 @@ def main():
                       "comparison_scope": (
                           "WHOLE_OR_EXPLICITLY_ADJUDICATED" if cat != "native_fixture"
                           else "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER")}
-        recipe_version = ("2026-09-08-v4"
+        recipe_version = ("run-pickficjkj-v4"
                           if kernel in NATIVE_RECIPE_V4_KERNELS
                           else NATIVE_RECIPE_VERSION)
         fingerprint_payload = {

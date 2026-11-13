@@ -81,5 +81,5 @@ scripts/correctness/polygeist_build.sh --target=jetson \
   -DLARGE_DATASET -DDATA_TYPE_IS_DOUBLE -DPOLYBENCH_DUMP_ARRAYS
 ```
 
-Execution used the configured `configured-host` silicon profile.  CPU execution
+Execution used the configured `manual` silicon profile.  CPU execution
 used `taskset -c 0`, `OPENBLAS_NUM_THREADS=1`, and `OMP_NUM_THREADS=1`.

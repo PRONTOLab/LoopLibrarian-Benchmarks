@@ -12,7 +12,7 @@ implementations. These are the local CUDA adaptations used for the published
 Figure 4 baselines and must be labelled accordingly. Upstream covariance also
 lacks the canonical PolyBench/C division by `N-1`.
 
-The Figure 4 reproduction in `../../fig4_gpu_20261110/` retains these paper
+The Figure 4 reproduction in `../../fig4_gpu_run-ignecjbdac/` retains these paper
 baselines separately from an audit using verbatim upstream CUDA kernel bodies.
 That audit configures correlation's constants for canonical C and adds timed
 cuBLAS normalization to covariance; the latter is explicitly labelled upstream

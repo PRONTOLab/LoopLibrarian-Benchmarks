@@ -14,10 +14,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "results/archive/issues/aten_c_kernels"
-INPUT = CORPUS / "cuda_library_audit.csv"
-OUTPUT = CORPUS / "cuda_library_gap_detailed.csv"
-REPORT = CORPUS / "CUDA_LIBRARY_GAP_DETAILED.md"
+CORPUS = ROOT / "aten/inputs"
+INPUT = ROOT / "aten/metadata/cuda_library_audit.csv"
+OUTPUT = ROOT / "aten/metadata/cuda_library_gap_detailed.csv"
+REPORT = ROOT / "aten/metadata/CUDA_LIBRARY_GAP_DETAILED.md"
 
 DOC = {
     "cuBLAS": "https://docs.nvidia.com/cuda/cublas/contents.html",

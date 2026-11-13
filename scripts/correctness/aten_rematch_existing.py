@@ -9,10 +9,11 @@ import re
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from ll_paths import COMPILER
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS = ROOT / "results/archive/issues/aten_c_kernels/results"
-MATCHER = ROOT / "scripts/correctness/kernel_match_rewrite.py"
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 
 
 def count(pattern: str, text: str) -> int:

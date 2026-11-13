@@ -4,7 +4,7 @@ import csv,json,statistics
 from pathlib import Path
 from common import OUT as D
 rows=json.loads((D/'audit.json').read_text());summary=[]
-lines=['Current-v3 PolyBench GPU Figure4 verification — 2026-11-11','',
+lines=['Current-v3 PolyBench GPU Figure4 verification — run-eojmdionnj','',
 'FP64 LARGE; canonical C initialization and complete output arrays.',
 'Five warmups, five samples, minimum CUDA-event compute device interval.',
 'Allocation and initial/final transfers are excluded from device compute; asynchronous submission wall time, transfers and synchronized end-to-end host time are retained separately.',

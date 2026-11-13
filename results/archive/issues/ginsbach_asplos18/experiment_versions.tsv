@@ -31,10 +31,10 @@ parsed_idiom_reconstruction	commit	e1fc2eb154550adfd54a5fda943ad92e90411d48
 parsed_idiom_reconstruction	tree	ad9e1f2d9d5ad6f5d4c523c5285668b9b2752e15
 parsed_idiom_reconstruction	origin	https://github.com/cc18ginsbach/llvm.git
 parsed_idiom_reconstruction	tracked_worktree	clean
-host	uname	Linux arpitj-dev 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+host	uname	Linux arpitj-dev 5.15.0-151-generic #161-Ubuntu SMP [calendar metadata omitted] x86_64 x86_64 x86_64 GNU/Linux
 host	cc	cc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
 host	cxx	c++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
 host	cmake	cmake version 3.24.0
 host	ninja	1.11.1.git.kitware.jobserver-1
 host	ghc	8.8.4
-host	pypy	Python 2.7.18 (7.3.9+dfsg-1, Apr 01 2022, 21:40:34)
+host	pypy	Python 2.7.18 (7.3.9+dfsg-1, undated, 21:40:34)

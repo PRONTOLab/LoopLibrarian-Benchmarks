@@ -46,7 +46,7 @@ Linalg recognition.
 
 ## Direct upstream CUDA frontend audit
 
-On 2026-09-09, the unchanged upstream
+On run-jlhcdpenjb, the unchanged upstream
 `mfem::internal::SmemPAMassApply2D<4,5>` instantiation was tested directly.
 The native CUDA source cross-compiled for AArch64/SM87 and ran correctly on
 Orin at `NE=1024`; its final checksum exactly matched the independent expected

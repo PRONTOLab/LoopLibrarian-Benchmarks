@@ -6,13 +6,13 @@ layer; it is not full Llama inference or quantized GGUF execution.
 
 ## Authoritative artifacts
 
-- `../llama_fixed_20261110/REPORT.txt`: fresh-source repair and retest, with
+- `../llama_fixed_run-ignecjbdac/REPORT.txt`: fresh-source repair and retest, with
   `results.json`, all logits, raw samples, and commands in the same directory.
-- `protocol_1x5x5_20260908/performance.csv`: historical one-process,
+- `protocol_1x5x5_run-nffdmeefik/performance.csv`: historical one-process,
   five-warm-up, five-timed-iteration sweep and per-row publication status.
-- `protocol_1x5x5_20260908/RUN_STATUS.md`: historical correctness results,
+- `protocol_1x5x5_run-nffdmeefik/RUN_STATUS.md`: historical correctness results,
   provenance qualifications, hashes, and next action.
-- `protocol_1x5x5_20260908/full_outputs/`: complete 32,000-logit outputs for
+- `protocol_1x5x5_run-nffdmeefik/full_outputs/`: complete 32,000-logit outputs for
   all four implementations.
 - `performance.csv`: older retained measurements. These are historical and
   are not mixed with the current protocol sweep.
@@ -34,7 +34,7 @@ POLYGEIST_CUTENSOR_ROOT=/path/to/aarch64/cutensor \
 
 The script produces ignored binaries and ggml build products under this
 directory. Deploy them with `scripts/correctness/run_jetson.sh` and
-`POLYGEIST_SILICON_PROFILE=configured-host`. No compiler runs on the Jetson.
+`POLYGEIST_SILICON_PROFILE=manual`. No compiler runs on the Jetson.
 
 Recheck full outputs with:
 
@@ -58,7 +58,7 @@ The paper-facing HTML summary is generated as `llama-paper.html` by
 `scripts/correctness/build_ce_viewer.py`. It publishes only correctness-eligible
 rows in its headline graphs and keeps failed rows in a separate audit table.
 
-## Source rebuild and numerical audit (2026-11-10)
+## Source rebuild and numerical audit (run-begkgcdkme)
 
 The fresh-source driver is `scripts/correctness/build_llama_reproduction.sh`.
 It builds native CPU, the raised hybrid, the raised resident session, and the
@@ -90,12 +90,12 @@ of the llama.cpp application. Keep that distinction in the artifact and paper.
 duplicate, and non-finite values, and reports both historical gates for both
 GPU implementations. The scalar FP32 CPU result is not an exact oracle:
 sequential FP32 reductions accumulate different rounding error from parallel
-library reductions. The 2026-11-10 diagnostic also evaluates the unchanged
+library reductions. The run-begkgcdkme diagnostic also evaluates the unchanged
 algorithm with double intermediates and exactly the same FP32-initialized
 inputs; array hashes verify that input equality. The strict CPU comparison
 remains reported even when the independent higher-precision comparison passes.
 
-The current retest evidence is in `../llama_fixed_20261110/REPORT.txt`, with
+The current retest evidence is in `../llama_fixed_run-ignecjbdac/REPORT.txt`, with
 complete outputs, compiler IR, build/run commands, and board probes alongside
 it. These diagnostic results must retain the automatic-fan qualification;
 the canonical publication protocol requires a fixed fan setting.

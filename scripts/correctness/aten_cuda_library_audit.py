@@ -17,10 +17,10 @@ from pathlib import Path
 from build_ce_viewer import ATEN_C_PROVENANCE
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "results/archive/issues/aten_c_kernels"
-SUMMARY = CORPUS / "results/summary.tsv"
-OUTPUT = CORPUS / "cuda_library_audit.csv"
-REPORT = CORPUS / "CUDA_LIBRARY_AUDIT.md"
+CORPUS = ROOT / "aten/inputs"
+SUMMARY = ROOT / "results/archive/issues/aten_c_kernels/results/summary.tsv"
+OUTPUT = ROOT / "aten/metadata/cuda_library_audit.csv"
+REPORT = ROOT / "aten/metadata/CUDA_LIBRARY_AUDIT.md"
 
 EVIDENCE = {
     "cuBLAS": "https://docs.nvidia.com/cuda/cublas/",
@@ -352,7 +352,7 @@ def classify(name: str, source: str, token: str) -> dict[str, str]:
                 "resampling", "cuDNN Resample", "ResampleFwd/ResampleBwd",
                 "PARTIAL_API", "exact_2x_subset",
                 "cuDNN bilinear upsampling requires FP32, 2x spatial output, half-pixel coordinates, edge padding, and NHWC-compatible layout")
-        if ("nearest2d" in n or "bicubic2d" in n or "lanczos" in n) and \
+        if ("nearest2d" in n or "bicubic2d" in n or "lanczos" in n) and\
                 "backward" not in n:
             return result(
                 "resampling", "NPP", "nppiResize",
@@ -710,7 +710,7 @@ def main() -> None:
         audit = classify(row["kernel"], source, token)
         launches = int(row["kernel_launches"])
         current = row["matched_symbols"] if row["matched_symbols"] != "-" else ""
-        matched_path = CORPUS / "results" / row["kernel"] / "matched.mlir"
+        matched_path = ROOT / "results/archive/issues/aten_c_kernels/results" / row["kernel"] / "matched.mlir"
         matched_text = matched_path.read_text() if matched_path.exists() else ""
         remaining_linalg = len(re.findall(r"\blinalg\.(?:generic|matmul|conv)", matched_text))
         remaining_loops = len(re.findall(

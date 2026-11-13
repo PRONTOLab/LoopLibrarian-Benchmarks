@@ -1,10 +1,10 @@
-[jetson] uname -a: Linux configured-host.invalid 6.8.12-1021-tegra #1 SMP PREEMPT Tue Jun 9 09:16:45 PDT 2026 aarch64 aarch64 aarch64 GNU/Linux
+[jetson] uname -a: Linux jetson-orin 6.8.12-1021-tegra #1 SMP PREEMPT [calendar metadata omitted] aarch64 aarch64 aarch64 GNU/Linux
 [jetson] nvcc version:
   (nvcc not found)
 [jetson] accelerator status:
 [N/A]
 
-[jetson] running /tmp/polygeist_jetson_runs/mfem_iv3_fixed_correctness_20260908_202557/iv3_fixed_matched_jetson run 1 ...
+[jetson] running /tmp/polygeist_jetson_runs/mfem_iv3_fixed_correctness_run-bklbpaoeco/iv3_fixed_matched_jetson run 1 ...
 POLYGEIST_RT_TIMING\top=cutensornetContraction2_f64\tm=1024\tn=5\tk=5\thost_ms=265.265824\tdevice_ms=0.000000
 POLYGEIST_RT_TIMING\top=cudaCopy_f64\tm=102400\tn=1\tk=0\thost_ms=0.403168\tdevice_ms=0.000000
 POLYGEIST_RT_TIMING\top=cutensornetContraction2_f64\tm=1024\tn=4\tk=5\thost_ms=1.153504\tdevice_ms=0.000000

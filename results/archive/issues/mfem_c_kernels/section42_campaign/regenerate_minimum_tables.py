@@ -79,7 +79,7 @@ def ms(stats: dict[str, float], statistic: str) -> float:
 
 def regenerate_kernels(kernel_summary: Path, kernel_samples: Path,
                        native_summary: Path, native_samples: Path) -> None:
-    existing = read_csv(ROOT / "performance_20260908.csv")
+    existing = read_csv(ROOT / "performance_run-nffdmeefik.csv")
     distributions = summary_distributions(kernel_summary, kernel_samples)
     distributions.update(summary_distributions(native_summary, native_samples))
     implementation = {
@@ -118,11 +118,11 @@ def regenerate_kernels(kernel_summary: Path, kernel_samples: Path,
             "notes": row["notes"],
         })
         output.append(result)
-    write_csv(ROOT / "performance_20260908.csv", output)
+    write_csv(ROOT / "performance_run-nffdmeefik.csv", output)
 
 
 def regenerate_applications(application_root: Path) -> None:
-    existing = read_csv(ROOT / "application_performance_20260908.csv")
+    existing = read_csv(ROOT / "application_performance_run-nffdmeefik.csv")
     gpu = parse_application_samples(application_root / "raw")
     cpu = parse_application_samples(application_root / "raw-raised-cpu")
     output = []
@@ -146,7 +146,7 @@ def regenerate_applications(application_root: Path) -> None:
         result["headline_statistic"] = (
             "minimum_of_retained_legacy_campaign_samples")
         output.append(result)
-    write_csv(ROOT / "application_performance_20260908.csv", output)
+    write_csv(ROOT / "application_performance_run-nffdmeefik.csv", output)
 
 
 def main() -> None:

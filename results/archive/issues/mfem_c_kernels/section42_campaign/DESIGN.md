@@ -106,7 +106,7 @@ campaign.
 ```
 export CAMPAIGN_COMMIT=<full-40-character-commit>
 export CAMPAIGN_PARENT=/home/arjaiswal/mfem-section42-runs
-export CAMPAIGN_ID="mfem-section42-$(date -u +%Y%m%dT%H%M%SZ)-$(printf '%s' "$CAMPAIGN_COMMIT" | cut -c1-12)"
+export CAMPAIGN_ID="mfem-section42-$(python3 -c 'import uuid; print(uuid.uuid4().hex[:12])')-$(printf '%s' "$CAMPAIGN_COMMIT" | cut -c1-12)"
 export CAMPAIGN_ROOT="$CAMPAIGN_PARENT/$CAMPAIGN_ID"
 export CAMPAIGN_SRC="$CAMPAIGN_ROOT/src"
 mkdir -p "$CAMPAIGN_ROOT"/{metadata,logs,coverage,correctness,performance/raw}

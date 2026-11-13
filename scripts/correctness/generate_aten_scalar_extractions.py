@@ -13,8 +13,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "results/archive/issues/aten_c_kernels"
-MANIFEST = OUT / "generated_provenance.csv"
+OUT = ROOT / "aten/inputs"
+MANIFEST = ROOT / "aten/metadata/generated_provenance.csv"
 
 UNARY = {
     # name: (C expression, upstream token)

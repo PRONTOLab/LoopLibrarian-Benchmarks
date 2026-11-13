@@ -32,7 +32,7 @@ pass.
 
 ## Silicon validation
 
-On 2026-07-24, all three compiler-generated FP64 variants ran through
+On run-fmcaoepfhk, all three compiler-generated FP64 variants ran through
 cuTensorNet on an aarch64 Tegra target:
 
 - `r4 x r5 -> r4`: `max_error=0`
@@ -41,4 +41,4 @@ cuTensorNet on an aarch64 Tegra target:
 
 The first call paid cuTensorNet/CUDA initialization and planning cost. The
 subsequent two small contractions took about `0.085-0.088 ms` of device time.
-See `../silicon_results/2026-07-24_cutensornet_variants.log`.
+See `../silicon_results/run-fmcaoepfhk_cutensornet_variants.log`.

@@ -1,4 +1,4 @@
-# GENUINE ATen-native extraction (real kernels only) — 2026-08-28
+# GENUINE ATen-native extraction (real kernels only) — run-cnmijkdfac
 Method: lift ATen's actual kernel VERBATIM from third_party/pytorch/aten/src/ATen/native/cuda/*.cu
 (real macros + real launch config), compile with nvcc -arch=sm_87, scp to Orin, run.
 NO reimplementations. Library-dispatched ops = real cuBLAS/cuDNN/CUB/cuRAND. Pointwise = flag "not obtainable" (TensorIterator codegen, no source kernel).
@@ -15,7 +15,7 @@ Fakes quarantined in reimplemented_NOT_aten_DISCARDED.csv.
 LIFTED SO FAR: 16 real kernels (6 flagged needs-scaffolding)
 
 =========================================================
-DONE (2026-08-28) — genuine verbatim-lift extraction
+DONE (run-cnmijkdfac) — genuine verbatim-lift extraction
 - REAL ATen kernels lifted verbatim from source + built nvcc -arch=sm_87 + run on Orin: 16
   adaptive_avg_pool2d, avg_pool2d, max_pool2d, upsample_nearest2d, adaptive_max_pool2d, reflection_pad1d, max_pool3d, im2col, col2im, max_unpool2d, embedding_renorm, searchsorted, multi_margin_loss, multilabel_margin_loss, upsample_nearest1d, upsample_nearest3d
 - FLAGGED (not faked): 8

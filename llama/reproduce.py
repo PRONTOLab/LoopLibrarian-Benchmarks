@@ -7,11 +7,11 @@ from pathlib import Path
 import shlex
 import statistics
 import sys
-from common import ROOT, OUT, INPUTS, command, environment, save, setting, sha
+from common import ROOT, OUT, command, environment, save, setting, sha
 from coverage import campaign
 import remote
 
-INPUT=INPUTS/'llama'
+INPUT=ROOT/'llama/inputs'
 BINARIES=['llama_native','llama_resident','llama_ggml']
 
 def build():

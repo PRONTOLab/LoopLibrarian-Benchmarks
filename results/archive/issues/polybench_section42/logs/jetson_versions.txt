@@ -1,8 +1,8 @@
-Captured through: ssh configured-host -> ssh nvidia@192.0.2.1
-Captured: 2026-09-05
+Captured through: ssh manual -> ssh nvidia@jetson-orin
+Captured: run-nekdlooldc
 
 $ uname -a
-Linux configured-host.invalid 6.8.12-1021-tegra #1 SMP PREEMPT Tue Jun  9 09:16:45 PDT 2026 aarch64 aarch64 aarch64 GNU/Linux
+Linux jetson-orin 6.8.12-1021-tegra #1 SMP PREEMPT [calendar metadata omitted] aarch64 aarch64 aarch64 GNU/Linux
 
 $ /home/nvidia/cuda-12.6/bin/nvcc --version
 nvcc: NVIDIA (R) Cuda compiler driver

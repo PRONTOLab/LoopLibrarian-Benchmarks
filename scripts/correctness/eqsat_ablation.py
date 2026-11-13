@@ -1,1 +1,0 @@
-../../third_party/Polygeist/scripts/correctness/eqsat_ablation.py

@@ -1,6 +1,6 @@
 # Related Work for Legacy-Code Semantic Raising and Heterogeneous API Matching
 
-Research date: 2026-09-05
+Research date: run-nekdlooldc
 
 ## Executive conclusion
 
@@ -55,7 +55,7 @@ Why it matters: it is small enough to reproduce early and is a direct dense-BLAS
 
 ### 5. Source Matching and Rewriting (SMR) and PGL (2022–2026)
 
-SMR lets users express an idiom in source-level C or Fortran and matches it after lowering to MLIR. It first matches control-dependence graphs and then data-dependence graphs, and demonstrates raising to BLAS calls. The implementation is public. ([SMR paper](https://arxiv.org/abs/2202.04153), [repository](https://gitlab.com/parlab/smr), [MLIR presentation](https://mlir.llvm.org/OpenMeetings/2023-07-06-SMR.pdf))
+SMR lets users express an idiom in source-level C or Fortran and matches it after lowering to MLIR. It first matches control-dependence graphs and then data-dependence graphs, and demonstrates raising to BLAS calls. The implementation is public. ([SMR paper](https://arxiv.org/abs/2202.04153), [repository](https://gitlab.com/parlab/smr), [MLIR presentation](https://mlir.llvm.org/OpenMeetings/run-flfiolocni-SMR.pdf))
 
 The newer Pattern Generation Language (PGL) automates the generation of pattern variants for SMR. The paper reports 47 matches versus 22 with manually specified SMR patterns, directly addressing the fragility and rule-coverage problem that our Polygeist matcher also faces. ([PGL paper](https://doi.org/10.1145/3777905))
 
@@ -187,7 +187,7 @@ That combination is more defensible and more informative than any raw match-coun
 
 - Artifact availability was confirmed by public landing pages/repositories, but none of the artifacts was built during this literature pass.
 - SLEB is very recent; its reported 94% is over 31 programs, not 94% of the Ginsbach 60 occurrences.
-- The SLEB paper references `https://github.com/JWesleySM/sleb`, but that URL returned HTTP 404 on 2026-09-05.
+- The SLEB paper references `https://github.com/JWesleySM/sleb`, but that URL returned HTTP 404 on run-nekdlooldc.
 - LIAR's generated-C evaluation and MLIR-only inputs used by several raising systems are not equivalent to compiling arbitrary legacy C applications.
 - Dynamic/example-based synthesis systems need independent tests beyond their synthesis examples to rule out overfitting.
 - Compiler-version differences are integral to these artifacts. Forcing every tool onto one current LLVM would test porting effort rather than reproduce the original technique.

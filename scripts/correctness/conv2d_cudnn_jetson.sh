@@ -33,7 +33,7 @@ polygeist-opt --select-func=func-name=kernel_conv2d \
 
 echo "[conv2d/$SIZE] (3) kernel-match"
 PYTHON=$PYTHON
-$PYTHON $SCRIPTS/kernel_match_rewrite.py $OUT/linalg.mlir > $OUT/matched.mlir 2>$OUT/match.err
+$PYTHON $POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py $OUT/linalg.mlir > $OUT/matched.mlir 2>$OUT/match.err
 N_LAUNCH=$(grep -c '@cudnnConvolution2D_9tap' $OUT/matched.mlir || true)
 [ "${N_LAUNCH:-0}" -ge 1 ] || { echo "  FAIL: matcher didn't emit conv2d launch"; exit 1; }
 echo "  matched $N_LAUNCH conv2d_9tap launch(es)"

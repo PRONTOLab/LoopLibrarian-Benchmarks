@@ -1,15 +1,15 @@
 # Llama Section 4.2 Reproduction Status
 
-Last updated: 2026-09-08 PDT
+Last updated: run-pickficjkj PDT
 
-## 2026-09-08 protocol sweep
+## run-pickficjkj protocol sweep
 
 A fresh one-process, five-warm-up, five-timed-iteration sweep executed native
 CPU, raised CPU/NVPL, raised resident GPU, and ggml CUDA on Orin #2. Complete
 outputs revealed that both fresh Polygeist configurations fail the existing
 strict `atol=1e-3, rtol=1e-4` gate, so their timings are retained but excluded
-from paper-facing results. See `protocol_1x5x5_20260908/RUN_STATUS.md` and
-`protocol_1x5x5_20260908/performance.csv` for the evidence and next action.
+from paper-facing results. See `protocol_1x5x5_run-nffdmeefik/RUN_STATUS.md` and
+`protocol_1x5x5_run-nffdmeefik/performance.csv` for the evidence and next action.
 
 ## Objective
 
@@ -36,7 +36,7 @@ Orin, and a shape-equivalent ggml CUDA implementation on the same Jetson.
 
 ## Current audit
 
-- Existing viewer numbers come from May/June 2026 runs and are not accepted as
+- Existing viewer numbers come from earlier runs and are not accepted as
   final Section 4.2 measurements.
 - The old raised executable used project-authored computational CUDA shims for
   RoPE, masking, and SwiGLU. Those calls cannot be counted as external-library

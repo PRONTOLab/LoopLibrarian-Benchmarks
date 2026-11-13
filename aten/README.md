@@ -1,4 +1,4 @@
-# ATen checkpoint — 2026-11-12
+# ATen checkpoint — run-maplolfahi
 
 The paper cohort contains 115 non-pointwise cases. This checkpoint has 106
 complete library matches and 102 strict GPU correctness passes. Nine cases
@@ -7,13 +7,13 @@ Matching coverage, correctness, and performance are tracked separately.
 
 ## Evidence
 
-- [Current status](../results/archive/issues/aten_paper29_followup_20261112/runtime-validation-status.json)
-- [Per-case results and timing samples](../results/archive/issues/aten_paper29_followup_20261112/runtime-validation-ledger.json)
-- [Failure diagnoses](../results/archive/issues/aten_paper29_followup_20261112/runtime-failure-diagnoses.json)
+- [Current status](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/runtime-validation-status.json)
+- [Per-case results and timing samples](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/runtime-validation-ledger.json)
+- [Failure diagnoses](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/runtime-failure-diagnoses.json)
 - [Historical paper data](../results/archive/issues/aten_c_kernels/paper_analysis/aten_gpu_nonpointwise_115.csv)
-- [Pinned dimensions](../results/archive/issues/aten_paper86_correctness_20261112/shapes.json)
-- [COO baseline attribution](../results/archive/issues/aten_paper29_followup_20261112/coo-native-attribution/paper-comparisons.json)
-- [Latest reference imports and runtime improvements](../results/archive/issues/aten_paper13_followup_20261112/runtime-report.md)
+- [Pinned dimensions](../results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/shapes.json)
+- [COO baseline attribution](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-native-attribution/paper-comparisons.json)
+- [Latest reference imports and runtime improvements](../results/archive/issues/aten_paper13_followup_run-nhcdgielcn/runtime-report.md)
 
 The retained records include correctness output, timing samples, build metadata,
 proof receipts, and machine snapshots. Absolute paths record the original run
@@ -48,7 +48,10 @@ pending work and does not increase the completed GPU counts above.
 
 ## Reproduction drivers
 
-The source fixtures in `issues/aten_c_kernels` remain unchanged. The drivers
+The 598 source fixtures are ordinary files in `aten/inputs/`. The paper cohort
+is `aten/paper_cases.csv`, its dimensions are `aten/paper_shapes.json`, and
+extraction provenance is retained in `aten/metadata/`. These inputs do not
+require `results/archive/`. The drivers
 materialize separate copies with the recorded paper dimensions, raise both
 application and library references through the established pipeline, prove
 matches against `lib_v3`, and emit the corresponding library calls.

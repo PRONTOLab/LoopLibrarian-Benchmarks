@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent
 
 
 def rows():
-    with (ROOT / "performance_20260908.csv").open(newline="") as stream:
+    with (ROOT / "performance_run-nffdmeefik.csv").open(newline="") as stream:
         return list(csv.DictReader(stream))
 
 

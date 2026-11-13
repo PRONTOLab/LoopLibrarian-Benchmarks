@@ -132,7 +132,7 @@ Run a built executable on Orin using the documented profile; credentials stay
 outside the repository:
 
 ```
-POLYGEIST_SILICON_PROFILE=configured-host POLYGEIST_JETSON_RUNS=3 \
+POLYGEIST_SILICON_PROFILE=manual POLYGEIST_JETSON_RUNS=3 \
   scripts/correctness/run_jetson.sh --exe \
   /tmp/aten-resident/aten_sum/aten_sum aten_sum_resident
 ```

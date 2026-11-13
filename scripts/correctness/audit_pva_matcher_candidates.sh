@@ -2,10 +2,11 @@
 set -u -o pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export POLYGEIST_ROOT="${POLYGEIST_ROOT:-$REPO_ROOT/third_party/Polygeist}"
 AUDIT_DIR="${1:?usage: audit_pva_matcher_candidates.sh AUDIT_DIR}"
 PYTHON="${PYTHON:-/usr/bin/python3}"
 TIMEOUT="${PVA_MATCH_TIMEOUT:-30}"
-MATCHER="$REPO_ROOT/scripts/correctness/kernel_match_rewrite.py"
+MATCHER="$POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py"
 
 printf 'source,function,linalg_bodies,selected_matches,candidates,status,symbols\n' \
   >"$AUDIT_DIR/matcher_summary.csv"

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
-from datetime import datetime
+import uuid
 import os
 from pathlib import Path
 import re
@@ -131,7 +131,7 @@ def jetson_run(wrapper: Path, extras: list[Path], args: str, tag: str,
                 log: Path, dry_run: bool) -> int:
     env = os.environ.copy()
     env.update({
-        "POLYGEIST_SILICON_PROFILE": env.get("POLYGEIST_SILICON_PROFILE", "configured-host"),
+        "POLYGEIST_SILICON_PROFILE": env.get("POLYGEIST_SILICON_PROFILE", "manual"),
         "POLYGEIST_JETSON_RUNS": "1",
         "POLYGEIST_JETSON_RUN_ARGS": args,
         "POLYGEIST_JETSON_EXTRA_LIBS": " ".join(str(path) for path in extras),
@@ -276,7 +276,7 @@ def main() -> int:
                     continue
             extras = [binaries[kernel] for kernel in kernels]
             backend = "run"
-        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        stamp = uuid.uuid4().hex[:12]
         log = log_dir / f"batch_{args.batch:02d}_{args.phase}_{kind}_{stamp}.log"
         rc = jetson_run(wrapper, extras, f"{backend} {','.join(kernels)}",
                         f"aten_s42_b{args.batch:02d}_{args.phase}_{kind}", log,

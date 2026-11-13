@@ -25,13 +25,8 @@
 #        POLYGEIST_JETSON_EXTRA_LIBS='/path/libA.so /path/libB.so' \
 #          ./scripts/correctness/run_jetson.sh --exe ...
 #
-# Silicon profiles:
-#
-#   New PVA lab route:
-#        POLYGEIST_SILICON_PROFILE=configured-host ./scripts/correctness/run_jetson.sh ...
-#      This stages through arjaiswal@configured-host and then reaches Orin #2 at
-#      nvidia@192.0.2.1. Its development toolkit is installed on the 1 TB
-#      /home filesystem rather than the small root filesystem.
+# Connection setup: set POLYGEIST_JETSON_HOST to an SSH alias.
+# Configure authentication and any ProxyJump routing in ~/.ssh/config.
 #
 # Pipeline (this script glues together):
 #   1. LOCAL  — run gemm_cublas_e2e.sh up through step (e) so that
@@ -50,11 +45,6 @@
 # (default: ~/Polygeist on the Jetson user's home). If not, run
 # scripts/build_polygeist.sh on the Jetson once before using this script.
 #
-# Direct SSH from this VM → Jetson is the default (ssh-copy-id already done).
-# If you need to bounce through a dev host, set ST_TRACKER_DEV_HOST or use a
-# named POLYGEIST_SILICON_PROFILE, and the script will go DEV → JETSON like the
-# exp_silicon.sh pattern.
-
 set -euo pipefail
 
 if [[ $# -lt 1 ]]; then
@@ -109,26 +99,8 @@ else
 fi
 
 # ─── Configuration (override via env) ─────────────────────────────────────
-JETSON_CREDENTIALS_FILE="${POLYGEIST_JETSON_CREDENTIALS_FILE:-${HOME}/.config/polygeist/jetson.env}"
-if [[ -r "$JETSON_CREDENTIALS_FILE" ]]; then
-  # Local, permission-restricted configuration; never commit credentials.
-  # shellcheck disable=SC1090
-  source "$JETSON_CREDENTIALS_FILE"
-fi
-SILICON_PROFILE="${POLYGEIST_SILICON_PROFILE:-${ST_TRACKER_PROFILE:-}}"
-JETSON_HOST="${POLYGEIST_JETSON_HOST:-jetson-orin}"
-JETSON_USER="${POLYGEIST_JETSON_USER:-nvidia}"
+JETSON_HOST="${POLYGEIST_JETSON_HOST:-${LL_SSH_HOST:-jetson-orin}}"
 JETSON_STAGE="${POLYGEIST_JETSON_STAGE:-/tmp/polygeist_jetson_runs}"
-
-# Dev-host bounce (mirrors exp_silicon.sh). With ST_TRACKER_DEV_HOST set,
-# this VM key-auths into the dev box, which then uses sshpass with
-# JETSON_PASS to reach the attached Jetson. When ST_TRACKER_DEV_HOST is unset,
-# use direct SSH/SCP to POLYGEIST_JETSON_USER@POLYGEIST_JETSON_HOST.
-DEV_HOST="${ST_TRACKER_DEV_HOST:-}"
-DEV_USER="${ST_TRACKER_DEV_USER:-arjaiswal}"
-DEV_DIR="${ST_TRACKER_DEV_DIR:-/colossus/workspace}"
-JETSON_PASS="${ST_TRACKER_JETSON_PASS:?set in local configuration}"
-JETSON_HOST_USB="${ST_TRACKER_JETSON_HOST:-192.0.2.1}"
 JETSON_RUNS="${POLYGEIST_JETSON_RUNS:-1}"
 JETSON_RUN_ARGS="${POLYGEIST_JETSON_RUN_ARGS:-}"
 JETSON_EXE_PREFIX="${POLYGEIST_JETSON_EXE_PREFIX:-}"
@@ -141,29 +113,8 @@ JETSON_CUDNN_PLAN_CACHE_DIAGNOSTICS="${POLYGEIST_CUDNN_PLAN_CACHE_DIAGNOSTICS:-0
 JETSON_GENERATED_GPU_DIAGNOSTICS="${POLYGEIST_GENERATED_GPU_DIAGNOSTICS:-0}"
 JETSON_GENERATED_GPU_SYNCHRONOUS="${POLYGEIST_GENERATED_GPU_SYNCHRONOUS:-0}"
 
-case "$SILICON_PROFILE" in
-  ""|manual)
-    ;;
-  direct)
-    DEV_HOST=""
-    ;;
-  configured-host)
-    DEV_HOST="${ST_TRACKER_DEV_HOST:-configured-host}"
-    DEV_USER="${ST_TRACKER_DEV_USER:-arjaiswal}"
-    DEV_DIR="${ST_TRACKER_DEV_DIR:-/tmp}"
-    JETSON_USER="${POLYGEIST_JETSON_USER:-nvidia}"
-    JETSON_HOST_USB="${ST_TRACKER_JETSON_HOST:-192.0.2.1}"
-    JETSON_PASS="${ST_TRACKER_JETSON_PASS:?set in local configuration}"
-    ;;
-  *)
-    echo "ERROR: unknown POLYGEIST_SILICON_PROFILE='$SILICON_PROFILE'" >&2
-    echo "       Supported profiles: configured-host, direct, manual" >&2
-    exit 1
-    ;;
-esac
-
-JETSON_POLYGEIST="${POLYGEIST_JETSON_DIR:-/home/${JETSON_USER}/Polygeist}"
-JETSON_LD_LIBRARY_PATH="${POLYGEIST_JETSON_LD_LIBRARY_PATH:-/home/${JETSON_USER}/jetson-cuda-libs:/home/${JETSON_USER}/cuda-12.6/lib64:/home/${JETSON_USER}/cuda-12.6/targets/aarch64-linux/lib:/home/${JETSON_USER}/polygeist_cuda_libs:/usr/local/cuda/lib64:/usr/local/cuda/targets/aarch64-linux/lib:/usr/lib/aarch64-linux-gnu:/lib/aarch64-linux-gnu:/home/${JETSON_USER}/venv/lib/python3.12/site-packages/nvidia/cudnn/lib:/home/${JETSON_USER}/cuda-12.6/targets/sbsa-linux/lib}"
+JETSON_POLYGEIST="${POLYGEIST_JETSON_DIR:-Polygeist}"
+JETSON_LD_LIBRARY_PATH="${POLYGEIST_JETSON_LD_LIBRARY_PATH:-/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu}"
 
 # Where this script lives + where to drop logs locally.
 SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -230,84 +181,35 @@ else
 fi
 echo "═══════════════════════════════════════════════════════════════════════"
 echo "  Experiment:    $EXP"
-echo "  Profile:       ${SILICON_PROFILE:-manual}"
 if [[ "$MODE" == "exe" ]]; then
   echo "  Local EXE:     $LOCAL_EXE ($LOCAL_BYTES bytes)"
 else
   echo "  Local MLIR:    $LOCAL_MLIR ($LOCAL_BYTES bytes)"
 fi
-if [[ -n "$DEV_HOST" ]]; then
-  echo "  Jetson:        ${JETSON_USER}@${JETSON_HOST_USB}"
-else
-  echo "  Jetson:        ${JETSON_USER}@${JETSON_HOST}"
-fi
+echo "  Jetson SSH alias: $JETSON_HOST"
 if [[ "$MODE" != "exe" ]]; then
   echo "  Polygeist on Jetson: $JETSON_POLYGEIST"
 fi
-if [[ -n "$DEV_HOST" ]]; then
-  echo "  SSH mode:      bounce via ${DEV_USER}@${DEV_HOST}"
-else
-  echo "  SSH mode:      direct"
-fi
+echo "  SSH mode:      configured alias"
 echo "  Runs:          $JETSON_RUNS"
 echo "═══════════════════════════════════════════════════════════════════════"
 
 # ─── 2. SCP the .mlir to the Jetson ───────────────────────────────────────
-STAGE_NAME="${EXP}_$(date +%Y%m%d_%H%M%S)"
+STAGE_NAME="${EXP}_$(python3 -c 'import uuid; print(uuid.uuid4().hex[:12])')"
 REMOTE_DIR="${JETSON_STAGE}/${STAGE_NAME}"
 LOG_NAME="${STAGE_NAME}.silicon.log"
 
-# Helper: run a command on the Jetson via dev-host bounce + sshpass.
-# Path: this VM --key--> dev box --sshpass+password--> Orin #2 (192.0.2.1).
-# Matches the exp_silicon.sh access pattern.
+# Authentication, host verification, and jump hosts use the SSH configuration.
 jetson_ssh() {
-  local cmd="$1"
-  if [[ -n "$DEV_HOST" ]]; then
-    printf '%s\n' "$cmd" | ssh -o BatchMode=yes "${DEV_USER}@${DEV_HOST}" \
-      "sshpass -p '${JETSON_PASS}' ssh \
-         -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-         -o LogLevel=ERROR -o ConnectTimeout=10 \
-         '${JETSON_USER}@${JETSON_HOST_USB}' bash -s"
-  else
-    printf '%s\n' "$cmd" | ssh -o BatchMode=yes -o ConnectTimeout=10 \
-      "${JETSON_USER}@${JETSON_HOST}" bash -s
-  fi
+  printf '%s\n' "$1" | ssh -o BatchMode=yes -o ConnectTimeout=10 "$JETSON_HOST" bash -s
 }
 
-# Helper: scp a file to the Jetson. Two hops:
-#   1. scp local file → dev box (key auth)
-#   2. ssh into dev box, sshpass-scp from dev box → Jetson
 jetson_scp_to() {
-  local src="$1" dst="$2"
-  local base
-  base=$(basename "$src")
-  if [[ -n "$DEV_HOST" ]]; then
-    scp -q "$src" "${DEV_USER}@${DEV_HOST}:${DEV_DIR}/"
-    ssh "${DEV_USER}@${DEV_HOST}" \
-      "sshpass -p '${JETSON_PASS}' scp \
-         -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-         -o LogLevel=ERROR \
-         '${DEV_DIR}/${base}' '${JETSON_USER}@${JETSON_HOST_USB}:${dst}'"
-  else
-    scp -q "$src" "${JETSON_USER}@${JETSON_HOST}:${dst}"
-  fi
+  scp -q -o BatchMode=yes "$1" "${JETSON_HOST}:$2"
 }
 
-# Helper: scp a file FROM the Jetson back to this VM (two-hop reverse).
 jetson_scp_from() {
-  local src="$1" dst="$2"
-  local base
-  base=$(basename "$src")
-  if [[ -n "$DEV_HOST" ]]; then
-    ssh "${DEV_USER}@${DEV_HOST}" \
-      "sshpass -p '${JETSON_PASS}' scp \
-         -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-         -o LogLevel=ERROR \
-         '${JETSON_USER}@${JETSON_HOST_USB}:${src}' '${DEV_DIR}/${base}'"
-    scp -q "${DEV_USER}@${DEV_HOST}:${DEV_DIR}/${base}" "$dst"
-  else
-    scp -q "${JETSON_USER}@${JETSON_HOST}:${src}" "$dst"
-  fi
+  scp -q -o BatchMode=yes "${JETSON_HOST}:$1" "$2"
 }
 
 if [[ "$DRY_RUN" == "1" ]]; then

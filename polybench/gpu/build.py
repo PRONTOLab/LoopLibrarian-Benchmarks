@@ -2,7 +2,7 @@
 """Fresh C kernel builds with separately declared, algorithm-neutral harnesses."""
 from ll_paths import COMPILER
 import csv
-import datetime
+import uuid
 import hashlib
 import json
 import os
@@ -48,7 +48,7 @@ def build(name):
     d = OUT / name
     d.mkdir(exist_ok=True)
     if (d/'build.json').exists():
-        stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+        stamp = uuid.uuid4().hex[:12]
         archive = d/'attempts'/stamp
         archive.mkdir(parents=True, exist_ok=True)
         paths = [d/n for n in ('export', 'gpu', 'build.json', 'raised', 'fresh-build.log')]

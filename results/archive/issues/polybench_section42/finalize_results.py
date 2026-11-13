@@ -262,7 +262,7 @@ def gpu_samples(path: Path) -> tuple[list[float], list[float]]:
     return device_values, end_to_end_values
 
 
-existing_gpu = read_rows(ROOT / "performance_gpu.csv") \
+existing_gpu = read_rows(ROOT / "performance_gpu.csv")\
     if (ROOT / "performance_gpu.csv").exists() else []
 gpu_records = []
 for kernel in sorted(PBGPU_PASS):

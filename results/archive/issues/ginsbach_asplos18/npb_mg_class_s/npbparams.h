@@ -13,7 +13,7 @@
 #define ONE            1
 
 #define CONVERTDOUBLE  false
-#define COMPILETIME "05 Sep 2026"
+#define COMPILETIME "undated"
 #define NPBVERSION "3.3.1"
 #define CS1 "aarch64-linux-gnu-gcc"
 #define CS2 "aarch64-linux-gnu-gcc"

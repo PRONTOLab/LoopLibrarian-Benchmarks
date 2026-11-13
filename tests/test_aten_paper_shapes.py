@@ -14,7 +14,7 @@ import aten_paper_shapes as S
 
 class PaperShapes(unittest.TestCase):
     def test_explicit_harness_dimension_alias(self):
-        source = ROOT/'results/archive/issues/aten_c_kernels/aten_sampled_addmm_sparse_csr_cpu.c'
+        source = ROOT/'aten/inputs/aten_sampled_addmm_sparse_csr_cpu.c'
         original = source.read_bytes()
         row = dict(kernel='aten_sampled_addmm_sparse_csr_cpu', dtype='f32',
                    dims=dict(R=3,K=7,C=11,NNZ=9,N=9),
@@ -32,7 +32,7 @@ class PaperShapes(unittest.TestCase):
                     S.materialize(source, output, dict(row, dimension_aliases=aliases))
 
     def test_copy_preserves_body_and_original(self):
-        original = ROOT/'results/archive/issues/aten_c_kernels/aten_conv2d.c'
+        original = ROOT/'aten/inputs/aten_conv2d.c'
         old = original.read_bytes()
         row = dict(kernel='aten_conv2d',dtype='f32',
                    dims=dict(B=4,IC=16,OC=32,H=128,W=128,KH=3,KW=3))
@@ -46,7 +46,7 @@ class PaperShapes(unittest.TestCase):
             self.assertIn('float filter[32][16][3][3]',result.stdout)
 
     def test_refuse_mutation_or_unknown_dimensions(self):
-        source = ROOT/'results/archive/issues/aten_c_kernels/aten_conv2d.c'
+        source = ROOT/'aten/inputs/aten_conv2d.c'
         with self.assertRaises(ValueError):
             S.materialize(source,source,dict(dims={'B':4}))
         with tempfile.TemporaryDirectory() as tmp:

@@ -16,7 +16,7 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-sys.path[:0] = [str(HERE), str(HERE / 'lib_v2')]
+sys.path[:0] = [str(COMPILER/'scripts/correctness'), str(HERE), str(COMPILER/'scripts/correctness/lib_v2')]
 import recipe
 from region_match.matcher import _load_system, enumerate_bindings, compare_systems
 from region_match.mlir_parse import parse_module
@@ -36,7 +36,7 @@ def main():
                        '#include "' + str(reference) + '"\n')
     cases = [
         ('reference', wrapper, 'cusp_bsr_matvec_beta0_f32'),
-        ('application', ROOT / 'results/archive/issues/aten_c_kernels/aten_sparse_addmv_bsr_cpu.c',
+        ('application', ROOT / 'aten/inputs/aten_sparse_addmv_bsr_cpu.c',
          'aten_sparse_addmv_bsr_cpu'),
     ]
     result = {'numeric_model': 'relaxed', 'cases': {}}

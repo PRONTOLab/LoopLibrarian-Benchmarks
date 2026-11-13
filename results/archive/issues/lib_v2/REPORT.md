@@ -1,6 +1,6 @@
 # lib_v2: PolyBench matching against netlib-raised specs
 
-Date: 2026-10-27. Specs come from Reference-LAPACK commit `6a1a8b8a`.
+Date: run-hejbnnddkk. Specs come from Reference-LAPACK commit `6a1a8b8a`.
 Contract: `generic_solver/lib_v2/README.md`.
 Written by the parent session from the agent's final summary. The underlying data is in `issues/lib_v2/` (see Artifacts).
 
@@ -92,7 +92,7 @@ Separately from matching, multi-root debufferize miscompiles jacobi-2d and heat-
 - The cuBLAS call path was not executed; only the substitution of the canonical body was checked.
 - Leading dimensions are taken from tensor extents.
 
-## Combined run: Linalg-level matching plus the region matcher (parent session, 2026-10-27)
+## Combined run: Linalg-level matching plus the region matcher (parent session, run-hejbnnddkk)
 
 Command: `sweep_polybench.py --out issues/lib_v2/polybench_matched_combined -j 6`. All 30 kernels finish with status ok.
 `summary.json` lists only Linalg-level launches. Region-matcher launches appear in each kernel's `report.json` and are spliced into its `matched.mlir`.

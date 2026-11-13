@@ -1,1 +1,0 @@
-../../third_party/Polygeist/scripts/correctness/check_cub_integer_reference_source.py

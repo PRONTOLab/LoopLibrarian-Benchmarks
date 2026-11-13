@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 CPU_LOGS = ROOT / "logs" / "publication_orin_cpu"
 GPU_LOGS = ROOT / "logs" / "publication_orin"
-GEMM_PRECISION_LOGS = ROOT / "logs" / "gemm_fp32_fp64_20260908"
+GEMM_PRECISION_LOGS = ROOT / "logs" / "gemm_fp32_fp64_run-nffdmeefik"
 OUT = ROOT / "paper_analysis"
 
 

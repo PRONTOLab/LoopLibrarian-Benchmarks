@@ -132,9 +132,9 @@ def main():
     write_csv(args.native_root / "comparison_with_native.csv", merged)
     if args.publication_dir:
         args.publication_dir.mkdir(parents=True, exist_ok=True)
-        write_csv(args.publication_dir / "native_summary_20260908.csv", summaries)
-        write_csv(args.publication_dir / "native_checksum_audit_20260908.csv", audits)
-        write_csv(args.publication_dir / "comparison_with_native_20260908.csv", merged)
+        write_csv(args.publication_dir / "native_summary_run-nffdmeefik.csv", summaries)
+        write_csv(args.publication_dir / "native_checksum_audit_run-nffdmeefik.csv", audits)
+        write_csv(args.publication_dir / "comparison_with_native_run-nffdmeefik.csv", merged)
     failures = sum(row["status"] != "PASS" for row in audits)
     print(f"validated_logs={len(logs)} raw_samples={len(samples)} "
           f"kernels={len(summaries)} checksum_failures={failures}")

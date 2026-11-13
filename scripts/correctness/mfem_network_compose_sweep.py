@@ -15,7 +15,7 @@ from mfem_network_compose import compose_file, launch_symbols, network_symbols
 
 
 ROOT = Path(__file__).resolve().parents[2]
-MFEM = ROOT / "issues" / "mfem_c_kernels"
+MFEM = ROOT / "results/archive/issues/mfem_c_kernels"
 
 
 def compose_rows(summary_path: Path, results_dir: Path, application: bool):

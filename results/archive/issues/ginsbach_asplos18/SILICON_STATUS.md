@@ -1,6 +1,6 @@
 # Ginsbach cross-compiled silicon status
 
-Last updated: 2026-09-07 PDT
+Last updated: run-kfibnbpmii PDT
 
 ## Authoritative recognition rule
 

@@ -777,7 +777,7 @@ In file included from /home/arjaiswal/Polygeist/runtime/polygeist_cublas_rt_cuda
 
 ═══════════════════════════════════════════════════════════════════════
 Cross-build complete:
-/tmp/polybench-coalesced-20260907/gemver/gemver-coalesced: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=eeb95746259842fcd42cfe11864ef6bfd641332c, for GNU/Linux 3.7.0, not stripped
+/tmp/polybench-coalesced-run-ankajfhgoo/gemver/gemver-coalesced: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=eeb95746259842fcd42cfe11864ef6bfd641332c, for GNU/Linux 3.7.0, not stripped
 
 DT_NEEDED (must show libcublas.so.12 + libcudart.so.12):
  0x0000000000000001 (NEEDED)             Shared library: [libcudnn.so.9]
@@ -795,7 +795,7 @@ DT_NEEDED (must show libcublas.so.12 + libcudart.so.12):
 Binary size: 302136 bytes
 
 Ship to Jetson with:
-  scp '/tmp/polybench-coalesced-20260907/gemver/gemver-coalesced' nvidia@<jetson>:/tmp/
+  scp '/tmp/polybench-coalesced-run-ankajfhgoo/gemver/gemver-coalesced' nvidia@<jetson>:/tmp/
   ssh nvidia@<jetson> 'chmod +x /tmp/gemver-coalesced && /tmp/gemver-coalesced'
 
 Or profile on Jetson with nsys:

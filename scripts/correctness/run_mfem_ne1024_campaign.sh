@@ -13,11 +13,11 @@ completed=0
 
 export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
-export LD_LIBRARY_PATH="$bin_dir:/home/nvidia/polygeist-results/mfem-section42-20260907:/home/nvidia/cuda-12.6/lib64:/home/nvidia/cuda-12.6/lib/aarch64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$bin_dir:/home/nvidia/polygeist-results/mfem-section42-run-ankajfhgoo:/home/nvidia/cuda-12.6/lib64:/home/nvidia/cuda-12.6/lib/aarch64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 ulimit -s unlimited
 
 {
-  printf 'start_utc=%s\n' "$(date -u +%FT%TZ)"
+  printf 'start_utc=%s\n' "omitted"
   printf 'hostname=%s\n' "$(hostname)"
   uname -a
   nvidia-smi --query-gpu=driver_version,name --format=csv,noheader
@@ -36,14 +36,14 @@ run_one() {
       "$completed" "$total" "$process" "$id" "$suffix" | tee -a "$campaign_root/progress.log"
     return
   fi
-  start=$(date -u +%FT%TZ)
+  start=omitted
   printf 'START completed=%d/%d process=%d executable=%s_%s utc=%s\n' \
     "$completed" "$total" "$process" "$id" "$suffix" "$start" | tee -a "$campaign_root/progress.log"
   {
     printf 'process=%d\nexecutable=%s_%s\nstart_utc=%s\n' "$process" "$id" "$suffix" "$start"
     timeout --signal=TERM --kill-after=10s 15m "$bin_dir/${id}_${suffix}"
     status=$?
-    end=$(date -u +%FT%TZ)
+    end=omitted
     printf 'exit_code=%d\nend_utc=%s\n' "$status" "$end"
     samples=$(grep -c '^implementation=' "$temporary" 2>/dev/null || true)
     if [[ $status -eq 0 && $samples -eq 20 ]]; then
@@ -79,7 +79,7 @@ for process in 0 1 2 3 4; do
 done
 
 {
-  printf 'end_utc=%s\n' "$(date -u +%FT%TZ)"
+  printf 'end_utc=%s\n' "omitted"
   nvidia-smi --query-gpu=driver_version,name --format=csv,noheader
 } > "$metadata_dir/board-end.txt"
 printf 'CAMPAIGN_COMPLETE completed=%d/%d\n' "$completed" "$total" | tee -a "$campaign_root/progress.log"

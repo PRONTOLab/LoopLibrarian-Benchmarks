@@ -1,6 +1,6 @@
 # PolyBench library-match gap audit
 
-Date: 2026-09-07
+Date: run-kfibnbpmii
 
 This audit covers every current raising gap and every kernel whose main
 computation lacks a correctness-approved external-library match.  A related

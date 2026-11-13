@@ -14,8 +14,8 @@ CAMPAIGN = ATEN / "native_cuda_results/section42_campaign/results.csv"
 BENCHMARK_STATUS = ATEN / "native_cuda_results/aten_benchmark_status.csv"
 RESIDENT_SILICON = ATEN / "native_cuda_results/resident_silicon.csv"
 RAISE_SUMMARY = ATEN / "results/summary.tsv"
-NATIVE_AUDIT = ATEN / "native_cuda_external_library_calls.csv"
-RAISED_AUDIT = ATEN / "cuda_library_audit.csv"
+NATIVE_AUDIT = ROOT / "aten/metadata/native_cuda_external_library_calls.csv"
+RAISED_AUDIT = ROOT / "aten/metadata/cuda_library_audit.csv"
 OUTPUT = ATEN / "paper_analysis"
 
 

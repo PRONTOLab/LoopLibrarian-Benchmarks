@@ -22,7 +22,7 @@ Result for every manifest row: unavailable (no equivalent unmodified source).
 Result for a potentially modified canonical port: blocked by unavailable CUDA
 device before implementation; no value is present in performance_gpu.csv.
 
-2026-09-05 recovery addendum
+run-nekdlooldc recovery addendum
 ---------------------------
 The device recovered. Canonical modified-source adapters were subsequently
 created for GEMM, 2MM, 3MM, GESUMMV, and GEMVER. They retain the computational

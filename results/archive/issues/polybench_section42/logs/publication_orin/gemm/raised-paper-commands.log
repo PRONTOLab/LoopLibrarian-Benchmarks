@@ -1,4 +1,4 @@
-GEMM raised-GPU publication commands (2026-09-08)
+GEMM raised-GPU publication commands (run-pickficjkj)
 
 All compilation and linking ran on the x86 host. The Jetson AGX Orin only
 executed the cross-compiled AArch64 binaries.
@@ -35,7 +35,7 @@ scripts/correctness/build_jetson.sh \
 
 3. Execute correctness on Orin
 
-POLYGEIST_SILICON_PROFILE=configured-host \
+POLYGEIST_SILICON_PROFILE=manual \
 scripts/correctness/run_jetson.sh --exe \
   /tmp/polybench-publication-orin/gemm/raised-paper-correctness \
   publication_gemm_raised_paper_correctness
@@ -58,7 +58,7 @@ scripts/correctness/build_jetson.sh \
 
 5. Execute one-process five-warmup/five-sample timing on Orin
 
-POLYGEIST_SILICON_PROFILE=configured-host \
+POLYGEIST_SILICON_PROFILE=manual \
 scripts/correctness/run_jetson.sh --exe \
   /tmp/polybench-publication-orin/gemm/raised-paper-timing \
   publication_gemm_raised_paper_timing_5x5

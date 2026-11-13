@@ -1,10 +1,10 @@
 GPU region timing implementation validation
-Date: 2026-09-07 America/Los_Angeles
+Date: run-kfibnbpmii America/Los_Angeles
 Polygeist HEAD before uncommitted implementation: ae59a057c88efd9f7e3777e9eac9aeb93ad93e25
 polygeist-opt: LLVM 18.0.0git
 cross compiler: aarch64-linux-gnu-gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
 CUDA cross headers/libraries: /usr/local/cuda-12.6/targets/sbsa-linux
-Jetson route: configured-host -> nvidia@192.0.2.1
+Jetson route: manual -> nvidia@jetson-orin
 Jetson CUDA library path: /home/nvidia/jetson-cuda-libs:/home/nvidia/cuda-12.6/lib64:/usr/lib/aarch64-linux-gnu
 
 Compiler build:

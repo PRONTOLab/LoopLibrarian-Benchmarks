@@ -42,6 +42,13 @@ def counts(text):
                 launches=re.findall(r'\bkernel\.launch\s+@([\w.$-]+)', text))
 
 
+def complete_variant(variant):
+    """A recognized initializer alone does not cover the computation."""
+    residual = variant.get('counts', {})
+    return bool(variant.get('emitted') and variant.get('abi_ok') and
+                residual.get('linalg') == 0 and residual.get('loops') == 0)
+
+
 def worker(request):
     req = json.loads(request.read_text())
     dest = request.parent
@@ -132,6 +139,7 @@ def summarize(output):
                 remaining_loops=best.get('counts', {}).get('loops'), abi_ok=best.get('abi_ok'),
                 legacy_match=r.get('legacy_match'), correctness=r['correctness'], performance=r['performance']))
     summary = dict(cases=len(rows), recognized=sum(r.get('status') == 'recognized' for r in rows),
+        complete_matches=sum(any(complete_variant(v) for v in r['variants']) for r in rows),
         abi_ok=sum(any(v.get('abi_ok') for v in r['variants']) for r in rows),
         no_proven_match=sum(r.get('status') == 'no_proven_match' for r in rows),
         raising_recoveries=sum(any(v.get('recovery') for v in r.get('stages', {}).values()) for r in rows),
@@ -145,7 +153,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--worker', type=Path)
     p.add_argument('--output', type=Path)
-    p.add_argument('--checklist', type=Path, default=ROOT / 'results/archive/issues/aten_remaining_v3_20261111/paper115-reproduction-backlog.csv')
+    p.add_argument('--checklist', type=Path, default=ROOT / 'aten/paper_cases.csv')
     p.add_argument('--jobs', type=int, default=3)
     p.add_argument('--ranks', type=int, nargs='+', default=[0])
     p.add_argument('--specifications', nargs='+', help='Optional library catalog subset; all proofs and ABI checks remain required')
@@ -173,7 +181,7 @@ def main():
         print(json.dumps(summarize(args.output))); return
     if (args.output / 'provenance.json').exists():
         p.error('use a fresh output directory to preserve previous evidence')
-    old = {r['kernel']: r for r in csv.DictReader((ROOT / 'results/archive/issues/aten_c_kernels/cuda_library_audit.csv').open())}
+    old = {r['kernel']: r for r in csv.DictReader((ROOT / 'aten/metadata/cuda_library_audit.csv').open())}
     rows = [r for r in csv.DictReader(args.checklist.open())
             if args.include_validated or r['status'] == 'not_in_current_validated_aggregate']
     for row in rows:

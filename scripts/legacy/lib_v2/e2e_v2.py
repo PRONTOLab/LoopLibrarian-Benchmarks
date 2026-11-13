@@ -264,7 +264,7 @@ def run_kernel(kernel: str, src: Path, dataset: str, out: Path) -> dict:
         row["status"] = "ok"
         return row
     report = json.loads(rep.read_text())
-    row["v2_launches"] = [l["spec"] for l in report["launches"] if "spec" in l] + \
+    row["v2_launches"] = [l["spec"] for l in report["launches"] if "spec" in l] +\
         [l["region_match"] for l in report["launches"] if "region_match" in l and not l.get("recognition_only")]
     row["v2_bindings"] = [{"spec": l["spec"], "binding": l["binding"]}
                           for l in report["launches"] if "spec" in l]

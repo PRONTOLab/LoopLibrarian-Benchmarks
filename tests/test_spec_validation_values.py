@@ -7,7 +7,9 @@ import tempfile
 import unittest
 
 HERE = Path(__file__).resolve().parents[1] / 'scripts/correctness'
-sys.path.insert(0, str(HERE / 'lib_v2'))
+sys.path.insert(0, str(HERE))
+from ll_paths import COMPILER
+sys.path.insert(0, str(COMPILER / "scripts/correctness/lib_v2"))
 import validate_specs as V
 
 
@@ -57,7 +59,7 @@ int main(int argc, char **argv) {
         expr, _, fn = module.MATH_UNARY['abs']
         text = module.body('abs', 'float x[N], float out[N]', f'out[i] = {expr};', extern=fn)
         root = HERE.parents[1]
-        self.assertEqual(text, (root / 'results/archive/issues/aten_c_kernels/aten_abs.c').read_text())
+        self.assertEqual(text, (root / 'aten/inputs/aten_abs.c').read_text())
 
 
 if __name__ == '__main__':

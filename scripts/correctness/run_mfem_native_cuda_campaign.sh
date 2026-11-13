@@ -13,7 +13,7 @@ completed=0
 export LD_LIBRARY_PATH="$bin_dir:/home/nvidia/cuda-12.6/lib64:/home/nvidia/cuda-12.6/lib/aarch64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 {
-  printf 'start_utc=%s\n' "$(date -u +%FT%TZ)"
+  printf 'start_utc=%s\n' "omitted"
   printf 'hostname=%s\n' "$(hostname)"
   uname -a
   nvidia-smi --query-gpu=driver_version,name --format=csv,noheader
@@ -33,11 +33,11 @@ for process in 0 1 2 3 4; do
       "$completed" "$total" "$process" "$id" | tee -a "$campaign_root/progress.log"
     {
       printf 'process=%d\nexecutable=%s_mfem_native_cuda\nstart_utc=%s\n' \
-        "$process" "$id" "$(date -u +%FT%TZ)"
+        "$process" "$id" "omitted"
       timeout --signal=TERM --kill-after=10s 15m \
         "$bin_dir/${id}_mfem_native_cuda"
       status=$?
-      printf 'exit_code=%d\nend_utc=%s\n' "$status" "$(date -u +%FT%TZ)"
+      printf 'exit_code=%d\nend_utc=%s\n' "$status" "omitted"
       samples=$(grep -c '^implementation=' "$temporary" 2>/dev/null || true)
       if [[ $status -eq 0 && $samples -eq 20 ]]; then
         printf 'RUN_STATUS=PASS\n'
@@ -60,7 +60,7 @@ for process in 0 1 2 3 4; do
 done
 
 {
-  printf 'end_utc=%s\n' "$(date -u +%FT%TZ)"
+  printf 'end_utc=%s\n' "omitted"
   nvidia-smi --query-gpu=driver_version,name --format=csv,noheader
 } >"$metadata_dir/board-end.txt"
 printf 'CAMPAIGN_COMPLETE completed=%d/%d\n' "$completed" "$total" | tee -a "$campaign_root/progress.log"

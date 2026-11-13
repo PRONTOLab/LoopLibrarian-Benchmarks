@@ -1,5 +1,10 @@
 # Mfem
 
+Sources and harnesses are ordinary files in `mfem/inputs/`.
+`mfem/inputs/manifest.json` selects the 18 supported fixtures; the driver also
+includes the integrated PCG application. The full-output harness is under
+`mfem/inputs/benchmarks/`.
+
 From the repository root:
 
 ```

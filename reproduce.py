@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 sys.path[:0] = [str(Path(__file__).resolve().parent / 'scripts/artifact'), str(Path(__file__).resolve().parent / 'scripts/correctness')]
 import argparse
-import datetime
+import uuid
 import os
 from pathlib import Path
 import subprocess
@@ -24,7 +24,7 @@ def main():
     a, extra = p.parse_known_args()
     if a.stage in ('run', 'summarize') and a.output is None:
         p.error('--output is required when resuming a built experiment')
-    stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    stamp = uuid.uuid4().hex[:12]
     out = (a.output or ROOT/'results/runs'/f'{a.suite}-{stamp}').resolve()
     directories = {'polybench_cpu': 'polybench/cpu', 'polybench_gpu': 'polybench/gpu', 'llama': 'llama', 'mfem': 'mfem', 'eqsat': 'eqsat', 'graph_sizes': 'graph_sizes', 'ginsbach': 'ginsbach', 'kernelfarer': 'kernelfarer', 'aten': 'aten', 'library_inventory': 'library_inventory'}
     script = ROOT/directories[a.suite]/'reproduce.py'

@@ -17,8 +17,8 @@ from pathlib import Path
 from aten_extraction_inventory import DEFAULT_PYTORCH, DEFAULT_SOURCES, ROOT
 
 
-DEFAULT_OUTPUT = ROOT / "results/archive/issues/aten_c_kernels/operator_inventory.csv"
-DISPATCH_INVENTORY = ROOT / "results/archive/issues/aten_c_kernels/dispatch_kernel_inventory.csv"
+DEFAULT_OUTPUT = ROOT / "aten/metadata/operator_inventory.csv"
+DISPATCH_INVENTORY = ROOT / "aten/metadata/dispatch_kernel_inventory.csv"
 
 CONTROL_NAMES = {"if", "for", "while", "switch", "catch"}
 MANUAL_COVERED_HELPERS: dict[str, set[str]] = {

@@ -60,7 +60,7 @@ match_symbol() {
     echo "-"
     return
   fi
-  "$PYTHON" "$SCRIPTS/kernel_match_rewrite.py" "$file" --dry-run \
+  "$PYTHON" "$POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py" "$file" --dry-run \
     2>&1 |
     tee "$file.match.err" |
     awk '/match[[:space:]]+body#/ {print $3}' |
@@ -114,7 +114,7 @@ for entry in "${KERNELS[@]}"; do
     match_ir="$OUT/${tag}_debuf.mlir"
   fi
 
-  "$PYTHON" "$SCRIPTS/kernel_match_rewrite.py" "$match_ir" \
+  "$PYTHON" "$POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py" "$match_ir" \
     > "$OUT/${tag}_matched.mlir" 2>"$OUT/${tag}.match.err"
 
   lg=$(count_pattern "linalg\\.generic" "$match_ir")

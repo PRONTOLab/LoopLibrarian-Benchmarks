@@ -8,11 +8,11 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "issues" / "mfem_c_kernels"
-RAISE_RESULTS = CORPUS / "results"
-OUT = CORPUS / "match_results"
+CORPUS = ROOT / "mfem" / "inputs"
+RAISE_RESULTS = ROOT / "results/archive/issues/mfem_c_kernels/results"
+OUT = ROOT / "results/archive/issues/mfem_c_kernels/match_results"
 OPT = COMPILER / "build" / "bin" / "polygeist-opt"
-MATCHER = ROOT / "scripts" / "correctness" / "kernel_match_rewrite.py"
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 PYTHON = Path("/usr/bin/python3")
 
 MATCH_RE = re.compile(r"^\s+match\s+body#.*?\s{2,}(\S+)\s*$")
@@ -134,7 +134,7 @@ pass.
 
 ## Silicon validation
 
-On 2026-07-24, all three compiler-generated FP64 variants ran through
+On run-fmcaoepfhk, all three compiler-generated FP64 variants ran through
 cuTensorNet on an aarch64 Tegra target:
 
 - `r4 x r5 -> r4`: `max_error=0`
@@ -143,7 +143,7 @@ cuTensorNet on an aarch64 Tegra target:
 
 The first call paid cuTensorNet/CUDA initialization and planning cost. The
 subsequent two small contractions took about `0.085-0.088 ms` of device time.
-See `../silicon_results/2026-07-24_cutensornet_variants.log`.
+See `../silicon_results/run-fmcaoepfhk_cutensornet_variants.log`.
 """)
 
 if __name__ == "__main__": main()

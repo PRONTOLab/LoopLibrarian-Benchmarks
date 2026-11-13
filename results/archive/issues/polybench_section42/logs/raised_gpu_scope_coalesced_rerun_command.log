@@ -1,10 +1,10 @@
-timestamp=2026-09-07T12:12:05-07:00
+timestamp=run-hhnggdkbhf
 host_commit=c376ba8dff5d250a3c87444a7b0606de845d716d
-device=nvidia@192.0.2.1 via configured-host
+device=nvidia@jetson-orin via manual
 gpu=Jetson Orin sm_87
 cuda=12.6.85 (/home/nvidia/cuda-12.6 on device; /usr/local/cuda-12.6 host cross toolkit)
 common_environment=POLYGEIST_GPU_DATA_RESIDENCY_ASSUME_NO_ALIAS=1 POLYGEIST_GPU_REGION_TIMING=1 POLYGEIST_MINIMAL_RUNTIME=0
-build_template=POLYGEIST_GPU_RESIDUAL_FUNCTION=kernel_<kernel> POLYGEIST_GPU_DATA_RESIDENCY_FUNCTION=kernel_<kernel> POLYGEIST_GPU_REGION_TIMING_FUNCTION=kernel_<kernel> POLYGEIST_BUILD_WORK_DIR=/tmp/polybench-coalesced-rerun-20260907/<kernel>/work scripts/correctness/build_jetson.sh /tmp/polybench-resident/<kernel>/export/abi.mlir /tmp/polybench-coalesced-rerun-20260907/<kernel>/<kernel>-coalesced /tmp/polybench-resident/<kernel>/export/wrapper.o /tmp/polybench-resident/<kernel>/export/harness.o /tmp/polybench-resident/<kernel>/polybench.o
+build_template=POLYGEIST_GPU_RESIDUAL_FUNCTION=kernel_<kernel> POLYGEIST_GPU_DATA_RESIDENCY_FUNCTION=kernel_<kernel> POLYGEIST_GPU_REGION_TIMING_FUNCTION=kernel_<kernel> POLYGEIST_BUILD_WORK_DIR=/tmp/polybench-coalesced-rerun-run-ankajfhgoo/<kernel>/work scripts/correctness/build_jetson.sh /tmp/polybench-resident/<kernel>/export/abi.mlir /tmp/polybench-coalesced-rerun-run-ankajfhgoo/<kernel>/<kernel>-coalesced /tmp/polybench-resident/<kernel>/export/wrapper.o /tmp/polybench-resident/<kernel>/export/harness.o /tmp/polybench-resident/<kernel>/polybench.o
 sampling=one correctness run followed by six timing runs; first timing run discarded as warmup and median of remaining five accepted
 correctness=scripts/correctness/compare_polybench_dumps.py <native_reference.out> <candidate.out> --rtol 5e-4 --atol 1.1e-2
 3mm_input_sha256=0746e78aeceb4cd65289df2a9db8453916990326444260745148901a45cb5b39

@@ -6,6 +6,8 @@ with no residual host computation. None of these counts implies runtime
 correctness. This uses the older phase-2 matcher, not the lib_v3 pipeline.
 """
 from ll_paths import COMPILER
+import sys
+sys.path.insert(0, str(COMPILER / "scripts/correctness"))
 import argparse
 import concurrent.futures
 import csv
@@ -21,10 +23,10 @@ from aten_pointwise_graph_silicon import _device_unsafe_residuals
 from inject_kernel_library import inject
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / 'results/archive/issues/aten_c_kernels'
+CORPUS = ROOT / 'aten/inputs'
 OPT = COMPILER / 'build/bin/polygeist-opt'
 CGEIST = COMPILER / 'build/bin/cgeist'
-MATCHER = ROOT / 'scripts/correctness/kernel_match_rewrite.py'
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 LIBRARY = COMPILER / 'generic_solver/kernel_library_phase2.mlir'
 LOOPS = r'\blinalg\.|\b(?:affine|scf)\.(?:for|parallel|while)\b|\bkernel\.launch\b'
 
@@ -52,13 +54,13 @@ def main():
     sources = ([CORPUS / (name + '.c') for name in args.kernel] if args.kernel
                else sorted(CORPUS.glob('aten_*.c')))
     tracked = [OPT, CGEIST, MATCHER, LIBRARY,
-               ROOT / 'scripts/correctness/kernel_match.py', Path(__file__)]
-    before = {str(p.relative_to(ROOT)): digest(p) for p in tracked}
+               COMPILER / "scripts/correctness/kernel_match.py", Path(__file__)]
+    before = {str(p): digest(p) for p in tracked}
     library = LIBRARY.read_text()
     resource = subprocess.check_output(
         [COMPILER / 'llvm-project/build/bin/clang', '-print-resource-dir'], text=True).strip()
     census = {r['kernel']: r for r in csv.DictReader(
-        (CORPUS / 'native_cuda_external_library_calls.csv').open())}
+        (ROOT / "aten/metadata/native_cuda_external_library_calls.csv").open())}
 
     def build(source):
         name = source.stem
@@ -138,7 +140,7 @@ def main():
             ('gpu_safe_candidates', lambda c: c.get('gpu_safe_candidate', False))]:
         summary[label] = sum(predicate(r.get('selected', {})) for r in rows)
         summary['native_' + label] = sum(r['native_external'] and predicate(r.get('selected', {})) for r in rows)
-    summary['stable'] = before == {str(p.relative_to(ROOT)): digest(p) for p in tracked}
+    summary['stable'] = before == {str(p): digest(p) for p in tracked}
     report = dict(scope=__doc__, summary=summary, compiler_inputs=before, cases=rows)
     (args.output / 'summary.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(summary, indent=2))

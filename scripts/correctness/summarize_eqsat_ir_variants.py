@@ -302,7 +302,7 @@ def main() -> None:
             f"{row['matcher_delta_median_ms']:.3f} |")
     matcher = summary["paired_matcher_delta_ms"]
     rss = summary["paired_peak_rss_delta_kib"]
-    if cpu_summary and cpu_summary.get("passed", 0) > 0 and \
+    if cpu_summary and cpu_summary.get("passed", 0) > 0 and\
             cpu_summary.get("failed", 0) == 0:
         cpu_validation = (
             f"All {cpu_summary['passed']} extracted-kernel CPU pilot variants "

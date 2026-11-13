@@ -36,7 +36,7 @@ cp "$root/repos/ginsbach-snu-npb/NPB3.3-SER-C/CG/replace-report-cg.c.json" \
 cp "$root/patches/ginsbach-linearalgebra-cuda13.patch" "$result"/
 
 {
-  echo "utc=$(date -u +%FT%TZ)"
+  echo "utc=omitted"
   echo "hostname=$(hostname)"
   echo "architecture=$(uname -m)"
   echo "cpu=$(lscpu | sed -n 's/^Model name:[[:space:]]*//p' | head -1)"

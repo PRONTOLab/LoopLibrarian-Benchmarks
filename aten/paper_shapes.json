@@ -18,7 +18,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full regular 2x2 uniform-window convolution",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "1a91e610dab8183b"
   },
   {
@@ -39,7 +39,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full regular adaptive average 3d forward",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "b3c8e383067677ef"
   },
   {
@@ -61,7 +61,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full FP64 GEMM with alpha and beta",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "ffd39b2736a01291"
   },
   {
@@ -81,7 +81,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full dynamic CUB segmented all-or-any reduction",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "35a61ce54804f951"
   },
   {
@@ -99,7 +99,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full CUB segmented logical-and reduction",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "0926a61c1f3908b6"
   },
   {
@@ -116,7 +116,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "dea8f1b7b7cfa157"
   },
   {
@@ -133,7 +133,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "95d705a24393ccd9"
   },
   {
@@ -153,7 +153,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full fixed average pool 2d forward",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "f8994b10d0786ea2"
   },
   {
@@ -173,7 +173,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full fixed average pool 2d backward",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "871518045875f207"
   },
   {
@@ -194,7 +194,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full fixed average pool 3d forward",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "64727eb4df598924"
   },
   {
@@ -214,7 +214,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "7293a8afa214b89c"
   },
   {
@@ -234,7 +234,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full inference batch normalization through cuDNN",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "eb541b0999f1f551"
   },
   {
@@ -253,7 +253,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "6052b858c06bd41d"
   },
   {
@@ -270,7 +270,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "360a1fed35fdcb46"
   },
   {
@@ -289,7 +289,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "cf3d9e50f32fba45"
   },
   {
@@ -309,7 +309,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "c132d6acaaae7ca9"
   },
   {
@@ -328,7 +328,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "8969bf611c743094"
   },
   {
@@ -348,7 +348,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "06523ec9a7d45565"
   },
   {
@@ -369,7 +369,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "f199c08db2dbc190"
   },
   {
@@ -389,7 +389,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "9c0f4efa20ff5874"
   },
   {
@@ -408,7 +408,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "20afe51bff9319b3"
   },
   {
@@ -427,7 +427,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "79cad4471d373dda"
   },
   {
@@ -444,7 +444,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "4aae25a1eecb3239"
   },
   {
@@ -464,7 +464,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full dense-to-block-major layout conversion via cuTENSOR permutation",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "5d2934fd76b7e9c2"
   },
   {
@@ -481,7 +481,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "cc9eb5896e00ae5b"
   },
   {
@@ -504,7 +504,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full valid NCHW 2d convolution through cuDNN",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "3b3bcbef73116a11"
   },
   {
@@ -524,7 +524,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "8e27c2648231bcd4",
     "recorded_dims": {
       "C": 11,
@@ -552,7 +552,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full TBC convolution through cuDNN transform plus convolution",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "a18bfcf1a32ece09"
   },
   {
@@ -574,7 +574,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "bounded full transposed-conv3d input-gradient convolution; avoids an intractable scalar reference while preserving all reduction and layout dimensions",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "conv3d-backward-k3-simple-v1"
   },
   {
@@ -591,7 +591,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "bfde07a5167fb20d"
   },
   {
@@ -609,7 +609,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "763d2776dbad0967"
   },
   {
@@ -627,7 +627,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full segmented CUB transformed count-nonzero reduction",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "c958ea502e1138a8"
   },
   {
@@ -647,7 +647,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "57f08d687ae9d16b"
   },
   {
@@ -666,7 +666,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "acf1ac1e761ae7e6"
   },
   {
@@ -686,7 +686,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "eb3e1fa75831476a"
   },
   {
@@ -703,7 +703,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "three graph stages",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "b42870c4d04b959c"
   },
   {
@@ -720,7 +720,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "three graph stages",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "9291ba8d1ebe364f"
   },
   {
@@ -738,7 +738,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "8c78205482ac384d"
   },
   {
@@ -755,7 +755,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full forward adjacent difference via CUB",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "58729da87b52269a"
   },
   {
@@ -777,7 +777,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full constant-dilation 2d convolution through cuDNN",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "150518b7cd72cf01"
   },
   {
@@ -794,7 +794,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "da3f5b26d6de3d29"
   },
   {
@@ -816,7 +816,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "feature-wise broadcast multiply through cuDNN OpTensor",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "bdd5f8a7dcb35084"
   },
   {
@@ -835,7 +835,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "d9049720b153acf8"
   },
   {
@@ -855,7 +855,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "0b73d0504d7a7d38"
   },
   {
@@ -872,7 +872,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "34b5c13f042ca274"
   },
   {
@@ -891,7 +891,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "92885ae4cc3b4ba8"
   },
   {
@@ -913,7 +913,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full im2col tensor transformation",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "a4c2fa550faa122e"
   },
   {
@@ -932,7 +932,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full i8 by i8 to i32 matrix multiplication through cuBLAS GemmEx",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "2ee5f09162f73db9"
   },
   {
@@ -952,7 +952,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full Kronecker product through mode-based cuTENSOR multiply",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "71b58bc9f4730368"
   },
   {
@@ -972,7 +972,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full Kronecker product through mode-based cuTENSOR multiply",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "7607a09d96787dbe"
   },
   {
@@ -992,7 +992,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full graph",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "d4eb4b9a2ee86ce7"
   },
   {
@@ -1011,7 +1011,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full FP64 matrix multiplication",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "cd8356bf8629a037"
   },
   {
@@ -1029,7 +1029,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full NaN-filtered row reduction through CUB transform plus segmented sum",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "0085284cb82ca0db"
   },
   {
@@ -1048,7 +1048,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "031841e44ca18076"
   },
   {
@@ -1068,7 +1068,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "052a884874109c4d"
   },
   {
@@ -1086,7 +1086,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "fe71788a5bee6f5d"
   },
   {
@@ -1106,7 +1106,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "7a9f8d11436e5a37"
   },
   {
@@ -1124,7 +1124,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "f6aafb8065321582"
   },
   {
@@ -1142,7 +1142,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "ac753cd95b469a53"
   },
   {
@@ -1160,7 +1160,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "132e688af89d8697"
   },
   {
@@ -1180,7 +1180,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full graph",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "4e2166c8e95ad7bf"
   },
   {
@@ -1198,7 +1198,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "bb8a8744433bfaf3"
   },
   {
@@ -1219,7 +1219,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "387681cd9544c530"
   },
   {
@@ -1240,7 +1240,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "72310b3d9814d0ad"
   },
   {
@@ -1261,7 +1261,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "30ac9ab652691610"
   },
   {
@@ -1278,7 +1278,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "42696ee2f414f4f7"
   },
   {
@@ -1298,7 +1298,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full signed-int8 column reduction and zero-point offset via CUB",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "631a6e71f23a4e5e"
   },
   {
@@ -1317,7 +1317,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "e42601bd48d63c94"
   },
   {
@@ -1335,7 +1335,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "8de495d9b009aa55"
   },
   {
@@ -1353,7 +1353,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "c950974bab2c20a2"
   },
   {
@@ -1372,7 +1372,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "292b2dfa977dd624"
   },
   {
@@ -1392,7 +1392,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "aad760bb7051755a"
   },
   {
@@ -1409,7 +1409,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "89f3237065efa7c1"
   },
   {
@@ -1426,7 +1426,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "64bc2211b27d81d9"
   },
   {
@@ -1443,7 +1443,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "cc84c109e16c002e"
   },
   {
@@ -1460,7 +1460,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full Euclidean norm through cuBLAS Snrm2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "2ed1a182be1a2c6b"
   },
   {
@@ -1479,7 +1479,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "b4586baaae66626e"
   },
   {
@@ -1496,7 +1496,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "573bd945902d8ca4"
   },
   {
@@ -1514,7 +1514,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full segmented CUB f64 sum reduction",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "8323a8b552b16506"
   },
   {
@@ -1534,7 +1534,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "b1d208ea182a8abc"
   },
   {
@@ -1556,7 +1556,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "three full QKV slice-bias-permute stages through cuDNN OpTensor",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "85dffc2ee1e0bb1f"
   },
   {
@@ -1574,7 +1574,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "5d0809aea12f7880"
   },
   {
@@ -1592,7 +1592,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v4",
+    "recipe_version": "run-pickficjkj-v4",
     "recipe_fingerprint": "8eb65b902214f090"
   },
   {
@@ -1612,7 +1612,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full graph",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "58b2b03dd6dd4cd3"
   },
   {
@@ -1630,7 +1630,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "4b1d238a23a58eb4"
   },
   {
@@ -1647,7 +1647,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "8396a59034c783b2"
   },
   {
@@ -1665,7 +1665,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full row-wise first-index argmax through CUB segmented reduction",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "8b87dc0870be83c0"
   },
   {
@@ -1683,7 +1683,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full row-wise first-index argmin through CUB segmented reduction",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "927e47c252552e8f"
   },
   {
@@ -1704,7 +1704,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full fixed average pool 3d backward",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "5be05477d0f38b1d"
   },
   {
@@ -1725,7 +1725,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full bias plus valid 1d convolution through cuDNN",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "a345c29492c9ca0c"
   },
   {
@@ -1746,7 +1746,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full TBC input-gradient convolution through cuDNN backward-data",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "f6e9bcda5af283f9"
   },
   {
@@ -1768,7 +1768,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full overlap-add transposed convolution through cuDNN backward-data",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "c294507cdb3f054e"
   },
   {
@@ -1790,7 +1790,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full 3d transposed convolution through cuDNN backward-data",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "cb3ec4a1c6f08eb8"
   },
   {
@@ -1812,7 +1812,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full transposed-conv3d filter gradient through cuDNN backward-filter",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "1b77db7d015c2eee"
   },
   {
@@ -1830,7 +1830,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full COO-to-CSR index conversion via cuSPARSE",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "88b6f49f4ce53c69"
   },
   {
@@ -1848,7 +1848,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full CSR-to-COO row-index conversion via cuSPARSE",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "0d00042f447ff6a2"
   },
   {
@@ -1868,7 +1868,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "bias plus same-padding depthwise convolution through grouped cuDNN",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "54680f0482adafca"
   },
   {
@@ -1886,7 +1886,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full bounded embedding-index histogram via CUB",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "476b49cbfd2ea4c9"
   },
   {
@@ -1905,7 +1905,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full Linalg-fill plus structured-loop COO SpMM via cuSPARSE",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "259b92fa65811255"
   },
   {
@@ -1922,7 +1922,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "two max-absolute reductions through cuBLAS Isamax",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "0f1d1b10e91e7c68"
   },
   {
@@ -1944,7 +1944,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full 2x2 stride-2 max pooling through cuDNN",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "a2ade0d34a8c60b6"
   },
   {
@@ -1962,7 +1962,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "39273232cbbc40e2"
   },
   {
@@ -1980,7 +1980,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full FP64 outer product",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "090827df12946d14"
   },
   {
@@ -2004,7 +2004,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full CSR sampled dense product via cuSPARSE SDDMM",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "3c077624966ff30d",
     "dimension_aliases": {
       "N": "NNZ"
@@ -2030,7 +2030,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full slow-conv3d input gradient through cuDNN backward-data",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "4d639b53fac7f809"
   },
   {
@@ -2052,7 +2052,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full slow-conv3d filter gradient through cuDNN backward-filter",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "db2258fecb148026"
   },
   {
@@ -2071,7 +2071,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full Linalg-fill plus structured-loop COO SpMM via cuSPARSE",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "af6a5bc645cf7bab"
   },
   {
@@ -2092,7 +2092,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full structured-loop square-BSR SpMV via cuSPARSE SpMM",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "f38e82d0726094a7"
   },
   {
@@ -2111,7 +2111,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full structured-loop CSR SpMV via cuSPARSE",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "29b9ab46cce946f3"
   },
   {
@@ -2129,7 +2129,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full COO-to-CSR index conversion via cuSPARSE",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "4cda79027c69d4df"
   },
   {
@@ -2149,7 +2149,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full structured-loop CSR SpMM via cuSPARSE",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "ceb60fb7c03704d8"
   },
   {
@@ -2168,7 +2168,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "2d2accc210a10238"
   },
   {
@@ -2186,7 +2186,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full CSR-to-COO row-index conversion via cuSPARSE",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "52305022b28e724d"
   },
   {
@@ -2206,7 +2206,7 @@
     "shape_selection": "AUTO_SCALE_LARGEST_ARRAY_APPROX_4194304",
     "shape_selection_note": "uniformly scale extracted dimensions; preserve ratios; minimum dimension 2",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "68d23c3c19429b5c"
   },
   {
@@ -2226,7 +2226,7 @@
     "shape_selection": "EXPLICIT_STRUCTURED_SHAPE",
     "shape_selection_note": "full cuDNN bilinear 2x resample",
     "comparison_scope": "REQUIRES_EXPLICIT_NATIVE_FIXTURE_ADAPTER",
-    "recipe_version": "2026-09-08-v3",
+    "recipe_version": "run-pickficjkj-v3",
     "recipe_fingerprint": "750b2c42ff4d936c"
   }
 ]

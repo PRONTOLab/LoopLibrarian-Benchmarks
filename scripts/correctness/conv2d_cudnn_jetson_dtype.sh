@@ -57,7 +57,7 @@ polygeist-opt --select-func=func-name=kernel_conv2d \
 
 echo "[conv2d/$DTYPE/$SIZE] (3) kernel-match"
 PYTHON=$PYTHON
-$PYTHON $SCRIPTS/kernel_match_rewrite.py $OUT/linalg.mlir > $OUT/matched.mlir 2>$OUT/match.err
+$PYTHON $POLYGEIST_ROOT/scripts/correctness/kernel_match_rewrite.py $OUT/linalg.mlir > $OUT/matched.mlir 2>$OUT/match.err
 SYM="@cudnnConvolution2D_9tap${SYM_SUFFIX}"
 N_LAUNCH=$(grep -c "$SYM" $OUT/matched.mlir || true)
 [ "${N_LAUNCH:-0}" -ge 1 ] || { echo "  FAIL: matcher didn't emit $SYM launch"; exit 1; }
@@ -105,11 +105,9 @@ echo "[conv2d/$DTYPE/$SIZE] (7) cross-compile harness + wrapper + runtimes"
 ARCH_FLAGS="-march=armv8.2-a+fp16+bf16"
 DEFS="-DNI=$SIZE -DNJ=$SIZE -DCTYPE=$CTY $KIND_DEF"
 
-# PVA Solutions paths used for the i8/i16 dtypes (the PVA backend shim
-# polygeist_pva_rt.c needs the gated-SDK headers; the .so libraries are
-# staged on the Jetson at /tmp/pva_libs/ from the dev box copies).
-PVASOL_INC=${PVASOL_INC:-$PVASOL_ROOT/public/src/operator/include}
-NVCV_INC=${NVCV_INC:-$CV_CUDA_ROOT/src/nvcv/src/include}
+# Separately installed SDK headers used only for the PVA integer dtypes.
+PVA_OPERATOR_INC=${PVA_OPERATOR_INCLUDE:-}
+NVCV_INC=${NVCV_INCLUDE:-}
 CUPVA_INC=${CUPVA_INC:-$CUPVA_SDK_ROOT/include}
 PVA_LIB_STAGE=${PVA_LIB_STAGE:-$HOME/pva_libs}  # contains libpva_operator/libcupva_host/libnvcv_types/libcvcuda
 JET_PVA_LIB=/tmp/pva_libs           # where the harness expects them at runtime
@@ -124,16 +122,16 @@ aarch64-linux-gnu-gcc -O3 $ARCH_FLAGS -c $RT/polygeist_cublas_rt_cpu.c -o $OUT/r
 # in for those dtypes (and add the .so dependency to the link line below).
 PVA_OBJ=""; PVA_LINK=""
 if [ "$DTYPE" = "i8" ] || [ "$DTYPE" = "i16" ]; then
+    : "${PVA_OPERATOR_INC:?set PVA_OPERATOR_INCLUDE to the installed PVA operator headers}"
+    : "${NVCV_INC:?set NVCV_INCLUDE to the installed NVCV headers}"
     aarch64-linux-gnu-gcc -O3 $ARCH_FLAGS \
-        -I$CUDA/include -I$PVASOL_INC -I$NVCV_INC -I$CUPVA_INC \
+        -I$CUDA/include -I$PVA_OPERATOR_INC -I$NVCV_INC -I$CUPVA_INC \
         -c $RT/polygeist_pva_rt.c -o $OUT/rt_pva.o
     PVA_OBJ="$OUT/rt_pva.o"
     # Explicit NvSciBuf/NvSciSync linkage: libcupva_host.so depends on
     # NvSciBuf*/NvSciSync* symbols, and the PVA backend's init constructors
     # (which run BEFORE main) call them — so deferring with
     # --allow-shlib-undefined results in a segfault during library init.
-    # The reference yolov5_pva_pbr binary has these as direct DT_NEEDEDs;
-    # we match that link contract.
     # --no-as-needed forces the linker to keep the NvSciBuf/NvSciSync libs
     # in DT_NEEDED even though main() doesn't reference them directly.
     # libcupva_host's init constructors call into them; they must be loaded

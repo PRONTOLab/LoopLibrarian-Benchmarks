@@ -14,8 +14,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-INPUT = ROOT / "results/archive/issues/aten_c_kernels/operator_inventory.csv"
-OUTPUT = ROOT / "results/archive/issues/aten_c_kernels/operator_adjudication.csv"
+INPUT = ROOT / "aten/metadata/operator_inventory.csv"
+OUTPUT = ROOT / "aten/metadata/operator_adjudication.csv"
 
 WHOLE_SOURCE = {
     "aten/src/ATen/native/AutogradComposite.cpp": ("NON_NUMERICAL_PLUMBING", "autograd metadata allocation"),

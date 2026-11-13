@@ -1,7 +1,7 @@
 // RUN: cgeist %s polybench_alloc_data %stdinclude -S | FileCheck %s
 // XFAIL: *
 /**
- * This version is stamped on May 10, 2016
+ * This version is stamped on [calendar metadata omitted]
  *
  * Contact:
  *   Louis-Noel Pouchet <pouchet.ohio-state.edu>

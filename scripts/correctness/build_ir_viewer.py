@@ -14,6 +14,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from ll_paths import COMPILER
 
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -28,7 +29,7 @@ def env_path(name: str, default: Path | str) -> Path:
 
 POLYBENCH_DIR = env_path("POLYGEIST_POLYBENCH_MLIR_DIR", "/tmp/polybench_new")
 OUTPUT_DIR = env_path("POLYGEIST_IR_VIEWER_OUT", "/tmp/ir_viewer")
-REWRITER = env_path("POLYGEIST_KERNEL_MATCH_REWRITER", SCRIPT_DIR / "kernel_match_rewrite.py")
+REWRITER = env_path("POLYGEIST_KERNEL_MATCH_REWRITER", COMPILER / "scripts/correctness/kernel_match_rewrite.py")
 PYTHON = os.environ.get("PYTHON", sys.executable)
 
 

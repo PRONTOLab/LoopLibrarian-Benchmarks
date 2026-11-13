@@ -30,21 +30,21 @@ for id in "${ids[@]}"; do
     failures=$((failures + 1))
     continue
   fi
-  printf 'START id=%s utc=%s\n' "$id" "$(date -u +%FT%TZ)" | \
+  printf 'START id=%s utc=%s\n' "$id" "omitted" | \
     tee -a "$campaign_root/run-progress$suffix.log"
-  if POLYGEIST_SILICON_PROFILE=configured-host \
+  if POLYGEIST_SILICON_PROFILE=manual \
       POLYGEIST_JETSON_RUNS=5 \
       POLYGEIST_LOG_DIR="$raw_dir" \
       POLYGEIST_JETSON_EXTRA_LIBS="$extra_libs" \
       "$repo_root/scripts/correctness/run_jetson.sh" \
       --exe "$bin_dir/$id" "mfem_derived${suffix}_$id" \
       > "$raw_dir/$id.deploy.log" 2>&1; then
-    printf 'PASS id=%s utc=%s\n' "$id" "$(date -u +%FT%TZ)" | \
+    printf 'PASS id=%s utc=%s\n' "$id" "omitted" | \
       tee -a "$campaign_root/run-progress$suffix.log"
   else
     failures=$((failures + 1))
     printf 'FAIL id=%s log=%s utc=%s\n' "$id" \
-      "$raw_dir/$id.deploy.log" "$(date -u +%FT%TZ)" | \
+      "$raw_dir/$id.deploy.log" "omitted" | \
       tee -a "$campaign_root/run-progress$suffix.log"
   fi
 done

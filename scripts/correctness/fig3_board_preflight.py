@@ -56,7 +56,7 @@ fixed = bool(clocks) and all(p["scaling_min_freq"] == p["scaling_max_freq"]
                              and p["scaling_min_freq"].isdigit() for p in clocks)
 hot = any(t["millicelsius"].isdigit() and int(t["millicelsius"]) >= 85000
           for t in temperatures)
-result = dict(timestamp=time.time(), load=os.getloadavg(), busy=busy,
+result = dict(load=os.getloadavg(), busy=busy,
               clocks=clocks, temperatures=temperatures, fan_settings=fans,
               power_mode=read(Path("/var/lib/nvpmodel/status")),
               software=read(Path("/etc/nv_tegra_release")),

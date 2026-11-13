@@ -5,15 +5,16 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUT_DIR="${1:?usage: build_pva_silicon_tests.sh OUT_DIR}"
-: "${PVASOL_ROOT:?set PVASOL_ROOT to the staged PVA Solutions source tree}"
+: "${PVA_OPERATOR_INCLUDE:?set PVA_OPERATOR_INCLUDE to the installed PVA operator headers}"
+: "${NVCV_INCLUDE:?set NVCV_INCLUDE to the installed NVCV headers}"
 : "${CUPVA_SDK_ROOT:?set CUPVA_SDK_ROOT to the build-time CUPVA headers}"
 : "${PVA_LIB_STAGE:?set PVA_LIB_STAGE to staged AArch64 PVA libraries}"
 CUDA_CROSS="${POLYGEIST_CUDA_CROSS_ROOT:-/usr/local/cuda-12.6/targets/sbsa-linux}"
 PVA_TARGET_RPATH="${POLYGEIST_PVA_TARGET_RPATH:-/usr/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/nvidia}"
 mkdir -p "$OUT_DIR"
 
-OPERATOR_INC="$PVASOL_ROOT/public/src/operator/include"
-NVCV_INC="$PVASOL_ROOT/public/3rdparty/cvcuda/src/nvcv/src/include"
+OPERATOR_INC="$PVA_OPERATOR_INCLUDE"
+NVCV_INC="$NVCV_INCLUDE"
 COMMON_INCLUDES=(-I"$POLYGEIST_ROOT/runtime" -I"$CUDA_CROSS/include"
                  -I"$CUPVA_SDK_ROOT/include" -I"$OPERATOR_INC" -I"$NVCV_INC")
 

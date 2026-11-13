@@ -7,11 +7,12 @@ import csv
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "results/archive/issues/aten_c_kernels"
+CORPUS = ROOT / "aten/inputs"
 
 
 def rows(name: str, delimiter: str = ",") -> list[dict[str, str]]:
-    with (CORPUS / name).open(newline="") as stream:
+    base = ROOT / ("results/archive/issues/aten_c_kernels" if name.startswith("results/") else "aten/metadata")
+    with (base / name).open(newline="") as stream:
         return list(csv.DictReader(stream, delimiter=delimiter))
 
 

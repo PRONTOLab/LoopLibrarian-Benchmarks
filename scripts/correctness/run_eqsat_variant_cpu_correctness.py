@@ -22,7 +22,7 @@ from generate_polybench_harness import generate_harness
 
 
 ROOT = Path(__file__).resolve().parents[2]
-MATCHER = ROOT / "scripts/correctness/kernel_match_rewrite.py"
+MATCHER = COMPILER / "scripts/correctness/kernel_match_rewrite.py"
 BUILDER = ROOT / "scripts/correctness/polygeist_build.sh"
 COMPARE = ROOT / "scripts/correctness/compare_polybench_dumps.py"
 UTILITIES = ROOT / "polybench/sources/utilities"

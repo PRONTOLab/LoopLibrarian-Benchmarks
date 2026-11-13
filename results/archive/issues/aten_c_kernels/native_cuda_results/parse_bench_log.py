@@ -22,7 +22,7 @@ def main() -> None:
                         help="merge new results into an existing parsed CSV")
     parser.add_argument("--hardware", required=True)
     parser.add_argument("--torch-version", default="2.6.0")
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--date", default="")
     args = parser.parse_args()
 
     by_kernel = {}

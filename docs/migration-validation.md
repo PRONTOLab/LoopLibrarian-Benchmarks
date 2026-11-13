@@ -1,12 +1,15 @@
 # Repository migration validation
 
-Validated on 2026-11-12. Compiler commit: `2ac275444fbdf2b60a39cfb133aba2514c33b920`.
+Compiler commit: `2ac275444fbdf2b60a39cfb133aba2514c33b920`.
 The scripts use the same raising, imported-specification matching, and ABI
 lowering as the compiler branch. No benchmark computation was changed.
 
-- Preserved 14,719 transferred paths; benchmark sources and archived
+- The initial migration preserved 14,719 transferred paths; benchmark sources and archived
   results compare byte-for-byte with Polygeist `f824f9b5`. The migration map
   and verification JSON identify intentionally ported drivers and manifests.
+  Subsequent publication cleanup removed calendar metadata and internal lab
+  records, and replaced dated archive paths with stable run identifiers. The
+  byte-for-byte comparison describes the initial migration, before that cleanup.
 - Re-imported all 260 specification entries. Every entry retained its prior
   validation status; this is not a claim that all 260 pass every semantic stage.
 - Verified 239 upstream source hash references.

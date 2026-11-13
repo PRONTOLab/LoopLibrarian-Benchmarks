@@ -550,7 +550,7 @@ def bench_native_fixture(k, op, dims, n, shape, scalar_args):
         x=torch.randint(0,2,(R,C),device=d,dtype=torch.int32)
         use_all = (k == "aten_and_reduce_cpu" or
                    int(scalar_arg(scalar_args,"all",1)) != 0)
-        fn=(lambda: torch.all(x != 0,dim=1).to(torch.int32)) if use_all else \
+        fn=(lambda: torch.all(x != 0,dim=1).to(torch.int32)) if use_all else\
            (lambda: torch.any(x != 0,dim=1).to(torch.int32))
         bench(k,fn,shape); return
     if k in {"aten_bf16_dot_cpu", "aten_fp16_dot_cpu",

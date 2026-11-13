@@ -4,8 +4,8 @@
 ## Made by Louis-Noel Pouchet
 ## Contact: <pouchet@cse.ohio-state.edu>
 ##
-## Started on  Sat Oct 29 00:03:48 2011 Louis-Noel Pouchet
-## Last update Fri Apr 22 15:39:13 2016 Louis-Noel Pouchet
+## Started on  [calendar metadata omitted] Louis-Noel Pouchet
+## Last update [calendar metadata omitted] Louis-Noel Pouchet
 ##
 
 ## Maximal variance accepted between the 3 median runs for performance results.

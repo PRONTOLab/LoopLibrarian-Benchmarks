@@ -8,8 +8,8 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CORPUS = ROOT / "issues" / "mfem_c_kernels"
-RESULTS = CORPUS / "results"
+CORPUS = ROOT / "mfem" / "inputs"
+RESULTS = ROOT / "results/archive/issues/mfem_c_kernels/results"
 CGEIST = COMPILER / "build" / "bin" / "cgeist"
 OPT = COMPILER / "build" / "bin" / "polygeist-opt"
 RESOURCE_DIR = COMPILER / "llvm-project" / "build" / "lib" / "clang" / "18"
@@ -58,7 +58,7 @@ def main():
         else:
             raise_log.write_text("not run: cgeist frontend failed\n")
         linalg = count(r"\blinalg\.", raised) if raise_rc == 0 else 0
-        loops = count(r"\b(?:affine|scf)\.(?:for|parallel|while)\b", raised) \
+        loops = count(r"\b(?:affine|scf)\.(?:for|parallel|while)\b", raised)\
             if raise_rc == 0 else 0
         result = dict(row)
         result.update(frontend_ok=str(front_rc == 0).lower(),
