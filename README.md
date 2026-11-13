@@ -4,7 +4,7 @@ This repository contains the artifact for the paper:
 > **"LoopLibrarian: Automatically Targeting Library Functions as a Compiler ISA"**  
 > *IEEE/ACM International Symposium on Code Generation and Optimization (CGO '27)*
 
-Artifact DOI: [![DOI](https://zenodo.org/badge/1455872115.svg)](https://zenodo.org/badge/latestdoi/1455872115)
+An updated archival release and DOI will be added after package validation.
 
 [![Artifact badge target: Reusable](https://img.shields.io/badge/Artifact_badge_target-Reusable-lightgrey)](docs/extending-experiments.md)
 
