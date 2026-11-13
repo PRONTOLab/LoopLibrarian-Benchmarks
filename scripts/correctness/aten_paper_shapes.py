@@ -47,6 +47,8 @@ def apply_shape(name, cfg, record):
     out = copy.deepcopy(cfg)
     out['dims'].update(record['dims'])
     out['dimension_scope'] = 'Pinned paper benchmark dimensions; separate C copy; original fixture unchanged'
+    if record.get('dimension_scope'):
+        out['dimension_scope'] = record['dimension_scope']
     if record.get('correction'):
         out['dimension_scope'] = 'Corrected invalid paper shape: '+record['correction']
     return out

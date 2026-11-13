@@ -15,6 +15,15 @@ static void *slot(int a,const float *p,size_t i) { return (unsigned char*)p+i*el
 static int equal_slot(int array,const void *a,const void *b) {
   return integer_arrays[array] ? memcmp(a,b,element_bytes[array])==0 : equal(*(const float*)a,*(const float*)b);
 }
+static int publication_equal_slot(int array,const void *a,const void *b,
+                                  double tolerance,int require_finite) {
+  if(integer_arrays[array]) return memcmp(a,b,element_bytes[array])==0;
+  float got=*(const float*)a,expected=*(const float*)b;
+  if(require_finite && (!isfinite(got)||!isfinite(expected))) return 0;
+  if(isnan(got)||isnan(expected)) return isnan(got)&&isnan(expected);
+  if(!isfinite(got)||!isfinite(expected)) return got==expected;
+  return fabs((double)got-expected)<=tolerance*(1.0+fabs((double)expected));
+}
 static void mismatch(const char *label,int array,size_t index,const void *got,const void *expected) {
   if(integer_arrays[array]) {
     int32_t a,b;
@@ -90,6 +99,7 @@ int main(int argc,char **argv) {
       invoke(resident?device:host); CU(cudaDeviceSynchronize());
       if(resident) for(int a=0;a<NA;a++) CU(cudaMemcpy(allocation(host[a]),allocation(device[a]),bytes(a),cudaMemcpyDeviceToHost));
       size_t count=0,bad=0,nativebad=0,nativerefbad=0,guardbad=0,inputbad=0; double maxabs=0;
+      size_t publication_bad=0,publication_nativebad=0,publication_nativerefbad=0;
       for(int a=0;a<NA;a++) {
         for(int j=0;j<GUARD_BYTES;j++) {
           unsigned char *h=allocation(host[a]),*n=allocation(native[a]);
@@ -104,10 +114,14 @@ int main(int argc,char **argv) {
             if(!equal_slot(a,h,r)) { if(bad<4)mismatch("MISMATCH",a,i,h,r);bad++; }
             if(!equal_slot(a,h,n)) { if(nativebad<4)mismatch("NATIVE_MISMATCH",a,i,h,n);nativebad++; }
             if(!equal_slot(a,n,r)) { if(nativerefbad<4)mismatch("NATIVE_REFERENCE_MISMATCH",a,i,n,r);nativerefbad++; }
+            publication_bad+=!publication_equal_slot(a,h,r,PUBLICATION_RAISED_TOL,0);
+            publication_nativerefbad+=!publication_equal_slot(a,n,r,PUBLICATION_NATIVE_TOL,1);
+            publication_nativebad+=!publication_equal_slot(a,h,n,fmax(PUBLICATION_RAISED_TOL,PUBLICATION_NATIVE_TOL),1);
           } else if(memcmp(h,slot(a,initial[a],i),element_bytes[a])||memcmp(n,slot(a,initial[a],i),element_bytes[a])) inputbad++;
         }
       }
       printf("CHECK kind=%d parameters=%d resident=%d count=%zu bad=%zu nativebad=%zu nativerefbad=%zu guardbad=%zu inputbad=%zu maxabs=%.9g\n",kind,parameter_case,resident,count,bad,nativebad,nativerefbad,guardbad,inputbad,maxabs);
+      printf("PUBLICATION_CHECK kind=%d parameters=%d resident=%d count=%zu bad=%zu nativebad=%zu nativerefbad=%zu raised_tol=%.17g native_tol=%.17g\n",kind,parameter_case,resident,count,publication_bad,publication_nativebad,publication_nativerefbad,(double)PUBLICATION_RAISED_TOL,(double)PUBLICATION_NATIVE_TOL);
       bad_total|=bad||nativebad||nativerefbad||guardbad||inputbad;
     }
   }

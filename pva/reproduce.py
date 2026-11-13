@@ -25,7 +25,10 @@ CASES += [dict(name='histogram_u8_'+dtype,dtype=dtype,ctype=ctype,
 CASES += [dict(name='gaussian_u8',dtype='u8',ctype='uint8_t',
                family='GaussianFilter',vendor='pvaGaussianFilterSubmit',
                function='fixture_gaussian_filter3x3',spec='opencv_gaussian3x3_u8',filter_kind=2)]
-PENDING=['BoxFilter','BilateralFilter','HistogramEqualization']
+CASES += [dict(name='box_u8',dtype='u8',ctype='uint8_t',family='BoxFilter',
+               vendor='pvaBoxFilterSubmit',function='fixture_box_filter3x3',
+               spec='opencv_box3x3_u8',filter_kind=1,error_budget=3)]
+PENDING=['BilateralFilter','HistogramEqualization']
 
 
 def build(case, output):
@@ -122,7 +125,9 @@ def build_fixed_filter(case,output):
         'void '+function+'(const '+case['ctype']+' input[192][256], '+case['ctype']+' output[192][256]) {\n'
         '  original_filter(192,256,&input[0][0],&output[0][0]);\n}\n')
     env=environment(POLYGEIST_ABI_BACKEND='pva',POLYGEIST_NUMERIC_MODEL='strict',
-                    POLYGEIST_CGEIST_FLAGS='--no-inline=false')
+                    POLYGEIST_CGEIST_FLAGS='--no-inline=false',
+                    POLYGEIST_BACKEND_ERROR_BUDGETS=json.dumps(
+                        {case['spec']:case['error_budget']} if case.get('error_budget') else {}))
     os.environ.update(env)
     stages=recipe.raise_c(recipe.PRODUCTION,str(source),function,str(dest/'source'),
                           ['--no-inline=false'],120)
@@ -140,28 +145,57 @@ def build_fixed_filter(case,output):
     env.update(POLYGEIST_MATCH_PROOF=str(dest/'proof.json'),POLYGEIST_BUILD_WORK_DIR=str(dest/'work'),
         POLYGEIST_HARNESS_CFLAGS=' '.join(['-DPVA_FILTER_CTYPE='+case['ctype'],
             '-DPVA_FILTER_FUNCTION='+function,'-DPVA_FILTER_DTYPE='+case['dtype'],
-            '-DPVA_FILTER_KIND='+str(case['filter_kind']),'-DPVA_FILTER_FIXED_SHAPE=1']))
+            '-DPVA_FILTER_KIND='+str(case['filter_kind']),'-DPVA_FILTER_FIXED_SHAPE=1',
+            '-DPVA_FILTER_TOLERANCE='+str(case.get('error_budget',0))]))
     command([COMPILER/'scripts/correctness/polygeist_build.sh','--target=jetson',
         '--function='+function,'--semantic-mlir='+str(dest/'matched.mlir'),
         '--harness='+str(harness),'-o',dest/'program',source],dest/'build.log',env)
     save(dest/'build.json',dict(case=case,source_sha256=sha(source),original_source_sha256=sha(original),
         harness_sha256=sha(harness),proof_sha256=sha(dest/'proof.json'),
         executable_sha256=sha(dest/'program'),emitted=proof['emitted'],
+        backend_contracts=proof.get('backend_contracts',{}),
         shape=dict(height=192,width=256),scope='Fixed benchmark-shape wrapper; original fixture body unchanged.'))
     print(case['name'],'built',flush=True)
+
+
+def check_output(case,pattern,rc,log):
+    vendor=case['vendor'] in log
+    match=re.search(r'max_error=(\d+)',log)
+    error=int(match[1]) if match else None
+    passed=rc==0 and vendor and error is not None and error<=case.get('error_budget',0)
+    if 'filter_kind' in case:
+        passed=passed and 'input_unchanged=1,border_unchanged=1,guards_ok=1' in log
+        passed=passed and re.search(r',input='+re.escape(pattern)+r'(?:\s|$)',log) is not None
+        passed=passed and ('EXACT_PASS' in log or 'WITHIN_TOLERANCE' in log)
+    else:
+        passed=passed and 'EXACT_PASS' in log and 'mismatches=0,max_error=0' in log
+    return dict(input=pattern,correctness=passed,returncode=rc,
+                max_abs_error=error,vendor_call_observed=vendor)
 
 
 def run(case,output):
     dest=output/case['name'];build=json.loads((dest/'build.json').read_text())
     if sha(dest/'program')!=build['executable_sha256']:raise RuntimeError('Executable changed')
+    if build['case']!=case:raise RuntimeError('Build configuration changed; rebuild the case')
     target='/tmp/looplibrarian-artifact-pva/'+case['name']
     if remote.upload(dest/'program',target):raise RuntimeError('Upload failed')
-    cmd='chmod +x '+shlex.quote(target)+'; '+remote.runtime_env()+' POLYGEIST_V2_TRACE=1 timeout 120 '+shlex.quote(target)
-    rc,log=remote.run(cmd,timeout=140);(dest/'run.log').write_text(log)
-    vendor=case['vendor'] in log
-    passed=rc==0 and 'EXACT_PASS' in log and 'mismatches=0,max_error=0' in log and vendor
-    result=dict(case=case['name'],correctness=passed,returncode=rc,
-                vendor_call_observed=vendor,executable_sha256=build['executable_sha256'])
+    checks=[]
+    patterns=['original','random','impulse','constant','quantization'] if 'filter_kind' in case else ['original']
+    for pattern in patterns:
+        cmd=('chmod +x '+shlex.quote(target)+'; '+remote.runtime_env()+
+             ' POLYGEIST_V2_TRACE=1 PVA_FILTER_INPUT_PATTERN='+pattern+
+             ' timeout 120 '+shlex.quote(target))
+        rc,log=remote.run(cmd,timeout=140);(dest/('run-'+pattern+'.log')).write_text(log)
+        if pattern=='original':(dest/'run.log').write_text(log)
+        checks.append(check_output(case,pattern,rc,log))
+    passed=all(c['correctness'] for c in checks)
+    result=dict(case=case['name'],correctness=passed,
+                returncode=next((c['returncode'] for c in checks if c['returncode']),0),
+                vendor_call_observed=all(c['vendor_call_observed'] for c in checks),
+                numerical_criterion='bounded-quantization' if case.get('error_budget') else 'exact',
+                error_budget=case.get('error_budget',0),checks=checks,
+                backend_contracts=build.get('backend_contracts',{}),
+                executable_sha256=build['executable_sha256'])
     save(dest/'result.json',result);print(case['name'],'PASS' if passed else 'FAIL',flush=True)
     return result
 

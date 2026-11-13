@@ -1,0 +1,2507 @@
+[
+  {
+    "kernel": "aten_abs",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c376eae04d6ec9ac5f98e47d5e8d382d617f43fb69c7cb6b39dd1f3809770e0d"
+    }
+  },
+  {
+    "kernel": "aten_acos",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c5e56154498fc87b6cc069d983a9b47681ed954e821b2fb9d6392eabbf227371"
+    }
+  },
+  {
+    "kernel": "aten_acosh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "7be9354934631cb637590cfbe49ac312c2709e741d604d26c228b4c4da67618d"
+    }
+  },
+  {
+    "kernel": "aten_add",
+    "dims": {
+      "B": 11,
+      "C": 46,
+      "H": 92,
+      "W": 92
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "bf650f6ccde4c9245886d6f0bbc9059eb1fb2e2a8909c394e284aa42b7479f00"
+    }
+  },
+  {
+    "kernel": "aten_add_clamp",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "alpha": "0.5",
+      "minval": "0.5",
+      "maxval": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b709d274b4f5138c219614b24f87cfb708daf5dfe89bcc1fed40680663fd81ce"
+    }
+  },
+  {
+    "kernel": "aten_addcdiv",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "value": "0.75"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c784e8e1f398610bc46eb6333e4c2f48ec8eb3ac68953976ee3d43173b225b07"
+    }
+  },
+  {
+    "kernel": "aten_addcmul",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "value": "0.75"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "f8e6155093a3370c204c056874a697700c3744fdc207680d9c8cc4ccfb5f47fb"
+    }
+  },
+  {
+    "kernel": "aten_addr_elementwise",
+    "dims": {
+      "N": 8388608
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "beta": "0.0",
+      "alpha": "0.75"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e14ba7cfd611ee24dbd9a518e5ff07097c8370f23fc967283a0b7bfc6909cef3"
+    }
+  },
+  {
+    "kernel": "aten_angle_complex_scalarized",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e390385b384d0af6b27ab26fcefc02a3d3570de6553b87107e03c1b07f218fd8"
+    }
+  },
+  {
+    "kernel": "aten_angle_real",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "308956b4ae57d72a8f2268c3db99dbd1860f7ddc961f9b9aa91c0466b4420e08"
+    }
+  },
+  {
+    "kernel": "aten_as_complex_cpu",
+    "dims": {
+      "N": 2097151
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "6e995c2fabe937cb30fadbb0f133c1aba7df7099fc2f8b7f99546099d1b42d96"
+    }
+  },
+  {
+    "kernel": "aten_asin",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "7a526649c948b6f18b307293f1f104b2d75f99e9c8dcbc1431d90d251298acb4"
+    }
+  },
+  {
+    "kernel": "aten_asinh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "cb2a44757b43984b5cc75ce9987fbd0c3a41e6d06c6983fa4b341dac6eaad3d9"
+    }
+  },
+  {
+    "kernel": "aten_atan",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "6979523eb3c64bbf8564b8109fc0d7cb27882768abccc2b1a7c89fbb16dc0545"
+    }
+  },
+  {
+    "kernel": "aten_atan2",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b20fc64dc5058c3edbfcb5d752402ec01d79329626153d846cac8e42804167d2"
+    }
+  },
+  {
+    "kernel": "aten_atanh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "df4bbcbf985884908e652892b01b2c82db81fbcb3cb8fa876af31d548a71c2db"
+    }
+  },
+  {
+    "kernel": "aten_batch_norm",
+    "dims": {
+      "B": 11,
+      "C": 46,
+      "H": 92,
+      "W": 92
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "4a4635083bb898cccaf8b8d55934d3277ab2e78c5a108fa426b6ea9d270a7b78"
+    }
+  },
+  {
+    "kernel": "aten_batch_norm_cpu_entry",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "scale": "1.25",
+      "bias": "-0.2"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a20b287bbfd44f07ca506fab7f3794fbeaada547be61073e90653978d6be917d"
+    }
+  },
+  {
+    "kernel": "aten_batch_norm_transform_cpu",
+    "dims": {
+      "N": 32,
+      "C": 64,
+      "H": 64,
+      "W": 64
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "22db928345966a7e48f3e03c99121154f8768dc2f9663c32c34baca36e4e00ed"
+    }
+  },
+  {
+    "kernel": "aten_blas_axpy_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "a": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "bcf5743041819db125e4d41ca9c8eac997fa67af9daa0b9c0749f97c9f1d4b76"
+    }
+  },
+  {
+    "kernel": "aten_blas_copy_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "cddafe4ebea12f2678161b82c4f2cd6d4578ad7ad6f15dbbf0379e7bade5b85a"
+    }
+  },
+  {
+    "kernel": "aten_blas_scale_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "a": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "212f07662cca5c305a236ad895ec663ffcca9ede0010eed3eef4b803af4056e1"
+    }
+  },
+  {
+    "kernel": "aten_block_diag_cpu",
+    "dims": {
+      "B": 23,
+      "N": 90
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "d6422cf609f4d978e28969de1211ea89dd6097775001c8a616a05a6382bb06cc"
+    }
+  },
+  {
+    "kernel": "aten_cartesian_prod_cpu",
+    "dims": {
+      "A": 1673,
+      "B": 1254
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "670681e4dc6a2be7c241563a5e83ba440546446b72acd9c8ab70b5d2e23eb376"
+    }
+  },
+  {
+    "kernel": "aten_cat_serial_cpu",
+    "dims": {
+      "K": 3096,
+      "M": 581,
+      "R": 774
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "731fdead9b1764a9343a35878655a96588ed650a4d81c1636b3a57039912b3a9"
+    }
+  },
+  {
+    "kernel": "aten_cat_sparse_cpu",
+    "dims": {
+      "B": 256,
+      "N": 16383
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b7ca6f65c2fd8a16298595f48380c673b3e5c6ad8ff2be6d0f97543d1ce7cb7f"
+    }
+  },
+  {
+    "kernel": "aten_cauchy_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "median": "0.5",
+      "sigma": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "41d9d32617605d6be332f5db15d99d6ad9f4ba51519c538701c502180a1d381f"
+    }
+  },
+  {
+    "kernel": "aten_ceil",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b428e401b581ccb9f8a9ba04bed517557f9df996009024e48e4459809ad0363f"
+    }
+  },
+  {
+    "kernel": "aten_channel_shuffle",
+    "dims": {
+      "B": 14,
+      "CPG": 28,
+      "G": 14,
+      "H": 28,
+      "W": 28
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "890ef064dd5bcce7a6fb919624e1839cc9f93f64c58d9441e8022c4f61aeb5bc"
+    }
+  },
+  {
+    "kernel": "aten_channel_shuffle_cpu",
+    "dims": {
+      "B": 17,
+      "CPG": 26,
+      "G": 34,
+      "S": 276
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "9a6da690e6f9b748aa92a8f0e5d90c0f4af1ed9b5e7093139d11e103d8360607"
+    }
+  },
+  {
+    "kernel": "aten_clamp",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "lo": "-0.5",
+      "hi": "0.75"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "30019cb20504fcf68dc19fb3dfa1ce924a0d6207b6309608bafa12617c8f398f"
+    }
+  },
+  {
+    "kernel": "aten_clamp_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "f80e4250995f3d1768355454f7a3ed9ee6a76244d0450a1a4b994b6be37cd4aa"
+    }
+  },
+  {
+    "kernel": "aten_clamp_max_scalar_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "maxval": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "25438467c8fc1225fd400033ed3b29bfdd9a11bf415a4a7b5cc580b7868be065"
+    }
+  },
+  {
+    "kernel": "aten_clamp_min_scalar_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "minval": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a4de79ab177db64db5e94cfbe1f664272151d36bf6d074e2bd210162142f5604"
+    }
+  },
+  {
+    "kernel": "aten_clamp_scalar_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "minval": "0.5",
+      "maxval": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "75321ac89a8d5e2f67a096b874d32c2184d59de43f64f0d4677d05541afabad0"
+    }
+  },
+  {
+    "kernel": "aten_complex_scalarized",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "bd85c7cb470dadd56561b47e05b1a8af59c8599232d07919c6f175bea803497c"
+    }
+  },
+  {
+    "kernel": "aten_conj_complex_scalarized",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e0cf1cbd3fc67cab8681163ac33eb872c9febfa1e732cc981377c2dcbd9aa17f"
+    }
+  },
+  {
+    "kernel": "aten_conv2d_columns_cpu",
+    "dims": {
+      "C": 11,
+      "H": 59,
+      "K": 11,
+      "W": 59
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "30e86762f7b5d07af82cc854d10a90995b8bef6db1d7de4ad4a53a83ee239e75"
+    }
+  },
+  {
+    "kernel": "aten_copy_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "bd19898c28c97834a723c46a485b2622b896a4a8b251e1c3f2380801792fc682"
+    }
+  },
+  {
+    "kernel": "aten_copy_tensor_array_cpu",
+    "dims": {
+      "B": 512,
+      "N": 8192
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ef0841f689c67ebb5f0c221d4e8f71dd35808f6918f1857cf420e379d991d6dd"
+    }
+  },
+  {
+    "kernel": "aten_cos",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "bd0cab955af194fe17c9ccaff62166cef71d5a4b04157830326aeeb10419b498"
+    }
+  },
+  {
+    "kernel": "aten_cosh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "26478625b2b95751aa50d71b2a254c1b6926df640a1194e53f250ecaab44b598"
+    }
+  },
+  {
+    "kernel": "aten_cross",
+    "dims": {
+      "N": 1398101
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b339d3e963be3a830b61888991cf2a1b65821b6866a6c2661856d3d9ee3e05b6"
+    }
+  },
+  {
+    "kernel": "aten_cross_cpu_backend",
+    "dims": {
+      "V": 1398101
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "cdfb94f8e6605097dff298c36aab6e040314748050088c0393b6c981bf346db9"
+    }
+  },
+  {
+    "kernel": "aten_diff_cpu",
+    "dims": {
+      "N": 16777216
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ae10c0fc6ceceb1475bcf90359e8315f0d3a96d0927a18054643f9f2a1e58ed2"
+    }
+  },
+  {
+    "kernel": "aten_dirichlet_grad_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "aa38f1cdb9c51e21328dbe356083caa3875efe2c6fdef173a2121639ceae158f"
+    }
+  },
+  {
+    "kernel": "aten_div",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "03ef493d706cfa12462ee591a033107fff20edb2dbde18054c0b0a7d142b2871"
+    }
+  },
+  {
+    "kernel": "aten_div_floor",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a77e1ee9d971572b8341e87649cc130c48b2e84521cd433f420f7f41b0947985"
+    }
+  },
+  {
+    "kernel": "aten_div_trunc",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "6e5279db71d36be0707a86c9f106a53db0d641b6d978fefb241f87e9d7ab79b7"
+    }
+  },
+  {
+    "kernel": "aten_dropout_feature_noise_cpu",
+    "dims": {
+      "B": 32,
+      "C": 64,
+      "H": 64,
+      "W": 64
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "scale": "1.25"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a58413fa7c7cc9eb3eb2aea77de227ee0faa9f28343e36b19b6e5a61c69c1e4c"
+    }
+  },
+  {
+    "kernel": "aten_elu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "alpha": "1.25",
+      "scale": "0.75"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "4f1534adecdcef0f25c4b4c941cc86f206adaafc9cff7479e1fd88104399a5c4"
+    }
+  },
+  {
+    "kernel": "aten_elu_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "alpha": "1.25",
+      "scale": "0.75"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "be979a566c090af4eac8e1141b3722f0a5d36ce1b11bf35ddad80fee1479607e"
+    }
+  },
+  {
+    "kernel": "aten_erf",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "7c8aef79db183c621877d42b6d621693c5596c404f97912a3ad19b53414691b7"
+    }
+  },
+  {
+    "kernel": "aten_erfc",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e15cacf6503f2b8c0c599563191319bcad603bb6638fb9c9ce7f01b0f0cae22f"
+    }
+  },
+  {
+    "kernel": "aten_exp",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "d11d2a78a8d6506fb7beff562e744295808c6ff5f8bb3ce9964e890ca1621ed7"
+    }
+  },
+  {
+    "kernel": "aten_exp2",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "392676326ae640f40075e2b96d2e12db271b9134365e0ee2444390b16198bab4"
+    }
+  },
+  {
+    "kernel": "aten_expm1",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "1b167f6cb950fb4bf9f03519ed2f154eabece422a812c6f30a7518e7f97384bb"
+    }
+  },
+  {
+    "kernel": "aten_exponential_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "lambda": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "685cfdf14e012a4938766411d54a8967185238679b32b346a3ca8cc848d6c501"
+    }
+  },
+  {
+    "kernel": "aten_fast_cat_dim0_cpu",
+    "dims": {
+      "B": 256,
+      "N": 16383
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "76325150fc916d837ea55e1af86b78535f2da3bc3bbb263a04d310a8e9985b37"
+    }
+  },
+  {
+    "kernel": "aten_flip_tensor_transform_cpu",
+    "dims": {
+      "C": 2897,
+      "R": 1448
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "8b6aa9e8c41f47c73c2fa69075cdaa751845e9766115445e5361ce605024f982"
+    }
+  },
+  {
+    "kernel": "aten_floor",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "9a6098e2517da21b710c91252b677c8b383350733d3e1883ab7c75aae2723ceb"
+    }
+  },
+  {
+    "kernel": "aten_fmax",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e32c6b06f725c775d8fe634ed3ceb120a8eaa8e5b2af07ee914914fa69632aa0"
+    }
+  },
+  {
+    "kernel": "aten_fmin",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "923f79f69886f49ca9c306d8bca38382eb8fb513bffcadebc8ef288a0150845a"
+    }
+  },
+  {
+    "kernel": "aten_fmod",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "281aebec75d5e5ec42f9ae47617f36ad5f1b56e050efb81ea248b7e3eb5f2824"
+    }
+  },
+  {
+    "kernel": "aten_frac",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "1ada09e74f1a019311fe6832023c2a154d4cc67dae60dbd836f85b51b7b738a7"
+    }
+  },
+  {
+    "kernel": "aten_gamma_transform_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "857246e42af4659a730c0ebf580c344cc697526eb550994d287257309fb55778"
+    }
+  },
+  {
+    "kernel": "aten_gelu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "9088bb2a35ce9f8bc27946d7436d98e545326fab9b225e3e9b13436e50bc452e"
+    }
+  },
+  {
+    "kernel": "aten_gelu_backward_cpu_exact",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "7f92992add3d973a3ac027e6c03f46f22d0a468474cb866f5282f3a33dcd1759"
+    }
+  },
+  {
+    "kernel": "aten_gelu_backward_cpu_tanh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b77e2376b795f766f25e1ed8e8aa107cf2f7fc6877484995045190790178a342"
+    }
+  },
+  {
+    "kernel": "aten_gelu_cpu_exact",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "60d8e43293069886be147805c84f8423e0110e24d1471f8bb411515d165ed2c8"
+    }
+  },
+  {
+    "kernel": "aten_gelu_cpu_tanh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b052c0e4c44b0e93ed2123c74f2ed18bbbcd87ab76ab8fc0291a27034a7b6aac"
+    }
+  },
+  {
+    "kernel": "aten_geometric_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "probability": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "329b56a00b4a90f526c5dc42164879f1d7f59eadc2dd85890b8cb7c4dc790576"
+    }
+  },
+  {
+    "kernel": "aten_glu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "12a35c78e44d78031af922da96099e6c0e21c15a026d6cfa813d937f9289b79d"
+    }
+  },
+  {
+    "kernel": "aten_glu_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "3945674a4c0848c418d6ec9c87d2b578f06b4f3b62af13607cfc6cb406d38552"
+    }
+  },
+  {
+    "kernel": "aten_glu_jvp",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b64d3ffae1597107c585fdb67aa657904a1e1f01aa7f5edad907421b31dc1b00"
+    }
+  },
+  {
+    "kernel": "aten_hardshrink",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "lambd": "0.35"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c980653bf5d4da86680f54a6f452cf7436dec679003a6d5350e8abe3a56e1432"
+    }
+  },
+  {
+    "kernel": "aten_hardsigmoid",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "5d2873f7c96be89752f2494435e8da25ff468aade25a73e0312a66cf133eae61"
+    }
+  },
+  {
+    "kernel": "aten_hardsigmoid_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e1ccad40b6c9b7bc59746b47ec4c33c26cdef19e19a50e71d9e0573dff8e295d"
+    }
+  },
+  {
+    "kernel": "aten_hardswish",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "f6cca96b0766a419eee4e7ff3857f8636d21a15d67257b7991c5b4f47718ff0c"
+    }
+  },
+  {
+    "kernel": "aten_hardswish_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c2f5c9caeea131e115b39b8f0eb92d80071116cc82395d8ba17f1125e4029ab9"
+    }
+  },
+  {
+    "kernel": "aten_hardtanh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "lo": "0.5",
+      "hi": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "563bda1ede4e7b0f89a0cad13528e567791ce9a04547b73e6d7ca584aec70b56"
+    }
+  },
+  {
+    "kernel": "aten_hardtanh_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "minval": "-0.7",
+      "maxval": "0.8"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "50674e17e4813d09c450628ab6c9ca1f36ab8f59d1b202504b7fecbd0a175991"
+    }
+  },
+  {
+    "kernel": "aten_huber_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "norm": "0.75",
+      "delta": "0.6"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "2e7aab39db3a21f682954af5ca8a3256af3c0f6ad8f0009b28e8454a32a5ca67"
+    }
+  },
+  {
+    "kernel": "aten_huber_elementwise",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "delta": "0.6"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "fc237af9410a92aefc04e53fd8527e23e2278e1020695b938f24f57e90025150"
+    }
+  },
+  {
+    "kernel": "aten_hypot",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "d95b2a807492717f3686eb6d022c3c6dd4ef84a071e95ef2d154dd90cfd60e18"
+    }
+  },
+  {
+    "kernel": "aten_im2col",
+    "dims": {
+      "B": 4,
+      "C": 8,
+      "H": 128,
+      "W": 128,
+      "KH": 3,
+      "KW": 3
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "80a6ddd5ddcbdb8abea2bfac312fbb48bb6fda05aed5a2183b510e00d588a3d9"
+    }
+  },
+  {
+    "kernel": "aten_kron_impl_cpu",
+    "dims": {
+      "A": 256,
+      "B": 128,
+      "C": 32,
+      "D": 32
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "8498c8666a6c40795cb645d05e86c60736a021e3e17e4f8286fb68a6857f34b5"
+    }
+  },
+  {
+    "kernel": "aten_kron_out_cpu",
+    "dims": {
+      "A": 256,
+      "B": 128,
+      "C": 32,
+      "D": 32
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "4180c6582b487ca0305d84b5ccab1006388c37ec616b40abc88e72bb49626253"
+    }
+  },
+  {
+    "kernel": "aten_leaky_relu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "slope": "0.1"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c2e8147ecc7e73a669e58fd21e05d56376c455658365714d8b3aa98bb8031ba4"
+    }
+  },
+  {
+    "kernel": "aten_lerp",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "dbe3d188438ef9643e2b9d64aa4637a07e5d6271ff05d16cb91c9bb4a5adc6d1"
+    }
+  },
+  {
+    "kernel": "aten_lerp_scalar",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "weight": "0.3"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "f237a5148ca59e8741efd429a85440ce071cfaf2800e9ef7679886c87b61d5fc"
+    }
+  },
+  {
+    "kernel": "aten_lerp_scalar_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "weight": "0.3"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "5a7599f9af86a0c300b21dc332746ca13d328922583d23baf3dc0757ba893853"
+    }
+  },
+  {
+    "kernel": "aten_lerp_tensor_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "4e36c378b701ed2abf8be0ed1fd3941821fb1c3896795f10d7c9ddbdcd8ee5ff"
+    }
+  },
+  {
+    "kernel": "aten_log",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "9c54543e9231c4a0cedb8f142b8b58827a1db768404b73a37f1df96ab7bc6398"
+    }
+  },
+  {
+    "kernel": "aten_log10",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ac0636e963ddd17674c8d618d02884c92c78e989d91eb6296fa88d209acf9ee0"
+    }
+  },
+  {
+    "kernel": "aten_log1p",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ba4aa2b8c62716e16318d4291be555d82e05047beb57921488854fdc2365cd53"
+    }
+  },
+  {
+    "kernel": "aten_log2",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ee9cd11114833340861e11c30efc757740a33985fbe1902a12555779cd111b23"
+    }
+  },
+  {
+    "kernel": "aten_log_normal_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "mean": "0.1",
+      "std": "0.25"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "3228bd5d128d5e87b50275469639e030e5a4cd3bf220ac89fb7d5e8f8e95288e"
+    }
+  },
+  {
+    "kernel": "aten_log_sigmoid_backward_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "bbbdeb54643214165017bf78f2be9446dc774303a8a55b5ef11fdccf711d85ea"
+    }
+  },
+  {
+    "kernel": "aten_log_sigmoid_cpu",
+    "dims": {
+      "N": 8388608
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "03cf66524b03612b01bf45c4c6be45acd931091385260a576728a1947fbfef2a"
+    }
+  },
+  {
+    "kernel": "aten_logaddexp",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "5e4c9549e496ad60a41825fbd230b8648328fc49c0b7a5500fc9d3e4f0f79cfa"
+    }
+  },
+  {
+    "kernel": "aten_logaddexp2",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "802367984d2ba2d097b2ba4096ac4c12f0c70948218f209ac910bb534e143dd4"
+    }
+  },
+  {
+    "kernel": "aten_logit",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "eps": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "44c183e450aa9f6f2c6c291cb871da8fb68f0cf71d134f21e5ef859300caf91d"
+    }
+  },
+  {
+    "kernel": "aten_logit_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "eps": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "1acbd43cf3ad0219fae361550a670a9257302149ba8caf6da31021b8239a8db5"
+    }
+  },
+  {
+    "kernel": "aten_masked_scale",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "inv_scale": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a76bf4baf6b599031b187f268ff840ffb68f1d5cc274a859cbd571419f283d33"
+    }
+  },
+  {
+    "kernel": "aten_maximum",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "bf432c9bc987b25345e60be7f45e4fede255a2d67fb6deb42945f7112bc1a33f"
+    }
+  },
+  {
+    "kernel": "aten_minimum",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c4e1fd03f5bae0c023ef17c59a0ea367c44aff3c015014386549edc3e23cb71b"
+    }
+  },
+  {
+    "kernel": "aten_mish",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "2ac2b3d9cda11987242cf655de8a7a51fa2ef7b0342bc824f8c7079d5f4b6f8e"
+    }
+  },
+  {
+    "kernel": "aten_mish_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "5a2b484fc4b3704bbc49cc5e0080858cc8f3b50fa9734e12747dbb3cbb793ef9"
+    }
+  },
+  {
+    "kernel": "aten_mse_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "value": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "3b8766b97ccc8a888819117f3fa39508b13fb34f693cd805da8072925773d5e1"
+    }
+  },
+  {
+    "kernel": "aten_mse_elementwise",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "fc8de200e2e67df9a15ef39eea49ee7e0029b16edeffe8699657a56280d8c520"
+    }
+  },
+  {
+    "kernel": "aten_mul",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "5ba3d39efbc6e52fc160e8fb08f5061993bfeb9fa9d433b4acb2c5088ce803ad"
+    }
+  },
+  {
+    "kernel": "aten_narrow_copy_dense_cpu",
+    "dims": {
+      "C": 2897,
+      "L": 724,
+      "R": 1448
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "920ac45cf951fdf2e49b2fbd745ba51cf26bf57240e14b7985764a9e80b11554"
+    }
+  },
+  {
+    "kernel": "aten_neg",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "8dc6aa183a65abd2ed99864b8404eb6b7f390e161a7db2f5b8f0a825556f747e"
+    }
+  },
+  {
+    "kernel": "aten_nested_clone_cpu",
+    "dims": {
+      "B": 724,
+      "N": 5793
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "6efd855924bd5e4100063cfb7c83eb435f5035e7128c3bbb3fb131e57f10e5bd"
+    }
+  },
+  {
+    "kernel": "aten_nested_squeeze_cpu",
+    "dims": {
+      "B": 724,
+      "N": 5793
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "d9c078c2a4021bf938eb9a0640b47fc388055e18dfb78ed23effcb66531001ca"
+    }
+  },
+  {
+    "kernel": "aten_nested_sum_backward_cpu",
+    "dims": {
+      "B": 724,
+      "N": 5793
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b8e8c2a9e03cd9111e6bcfda266de952c849188bac1a30649005a00ac629d8d3"
+    }
+  },
+  {
+    "kernel": "aten_normal_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "mean": "0.1",
+      "std": "0.75"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e949888b2e2c03e086b9d70f3fed51d82f74f49e88f52a38abd5ee16efaa5f4c"
+    }
+  },
+  {
+    "kernel": "aten_outer",
+    "dims": {
+      "M": 2048,
+      "N": 2048
+    },
+    "dtype": "f64",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a9381fb81effd746d1bdb89a658b2345feff1bfc1abad03ef3a8dc11deea23f3"
+    }
+  },
+  {
+    "kernel": "aten_pixel_shuffle",
+    "dims": {
+      "B": 9,
+      "C": 14,
+      "H": 19,
+      "R": 9,
+      "W": 19
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "0bbc3f997f6046427e69b7d83add4b09807f18e54b0f01db82edc72c4ca1d82e"
+    }
+  },
+  {
+    "kernel": "aten_pixel_shuffle_cpu_backend",
+    "dims": {
+      "B": 4,
+      "C": 13,
+      "H": 34,
+      "RATIO": 9,
+      "W": 34
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b82615f73bf273d567e492813e7087607bc95d211f9c88d48a735a7d55ca3679"
+    }
+  },
+  {
+    "kernel": "aten_pixel_unshuffle_cpu_backend",
+    "dims": {
+      "B": 4,
+      "C": 13,
+      "H": 34,
+      "RATIO": 9,
+      "W": 34
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "307bfd08baace0d6e2390480a83b1871f49f4448b7edf00031c27e8dee5f9c2c"
+    }
+  },
+  {
+    "kernel": "aten_polar_scalarized",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "032d7876fafe0a578cb4323091e567b268f981f810bd51f4db924bb55d71a465"
+    }
+  },
+  {
+    "kernel": "aten_pow",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "6e785a1fa0f40f9f9d586ffc3baf77c54acd69a7459f6bc00e06e93a67528980"
+    }
+  },
+  {
+    "kernel": "aten_pow_tensor_scalar",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "exponent": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c12d753b6f11f5b1faa365a03d4292b54a169467d57998bc2e812f5c4a6d701f"
+    }
+  },
+  {
+    "kernel": "aten_reciprocal",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "2df6e3768ea01a4e7a5a49e4ad4d7ecd3ee97b979677460745ac8606b822cac3"
+    }
+  },
+  {
+    "kernel": "aten_relu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "31702a6021dad8f5f05bcd46990184e6a6142f8f9738c0c60339cb4300f09e9f"
+    }
+  },
+  {
+    "kernel": "aten_renorm_scale_factor",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "maxnorm": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "920729ee3e6c9fa84563280e1cb26b7f6d2adbf38a9c8e259620a3c2982f1e74"
+    }
+  },
+  {
+    "kernel": "aten_repeat_compute_cpu",
+    "dims": {
+      "N": 8192,
+      "R": 512
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "9ea3447a9a6802656dec4588b63cdf505a02f3c2077b047b48dd29a79ef148b3"
+    }
+  },
+  {
+    "kernel": "aten_repeat_tensor_shape_cpu",
+    "dims": {
+      "N": 8192,
+      "R": 512
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "074d4528caa923c6981e0ab35ea7dc7c521d9806553e22a8dd4b8162e0e5f654"
+    }
+  },
+  {
+    "kernel": "aten_round",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b903cecb9139b3172e79533a4527f139470109b284bb56578fa8b4337c657bf5"
+    }
+  },
+  {
+    "kernel": "aten_round_decimals",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "scale": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "20d130ca83cab9500c6ffa4cab8daa363899a527aae05c306614b7c57e5254c9"
+    }
+  },
+  {
+    "kernel": "aten_rsqrt",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ef52dd95f9e2b59007cbda27593edc89116007866d6a883d2a1890573c0d7290"
+    }
+  },
+  {
+    "kernel": "aten_shrink_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "lambd": "0.35"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "473b8b6457dce70ad2b9e5b887b332ef602557584964077d5b303cebb54665d6"
+    }
+  },
+  {
+    "kernel": "aten_sigmoid",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "00a5a1b0368dc6a8af5334e4b1b784e81b959503b06d90b6a2c9a1a6172d67ce"
+    }
+  },
+  {
+    "kernel": "aten_sigmoid_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "af425c9695dbac3810936e46930fddaa4602365e88ae921c80b300bc05b5095e"
+    }
+  },
+  {
+    "kernel": "aten_silu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "e4d42466c91c2365eaf32b5f046285133d17e04852f4595b4ba52cb8092b5a7e"
+    }
+  },
+  {
+    "kernel": "aten_silu_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "fc66a4d419288a505750a1b8c6d7ef6e9ce8a3e29d767503d9ee6a7b1182f653"
+    }
+  },
+  {
+    "kernel": "aten_silu_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "51ad9e710a4b3cb5acec01eff2d53b52ac4f642bb7118bac886e5050992258d1"
+    }
+  },
+  {
+    "kernel": "aten_sin",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "69392edf6fdc5ff89a3a141df44efb6c5abda0e531a3cbb1e68d880cacd2ef7f"
+    }
+  },
+  {
+    "kernel": "aten_sinh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "1ad681e8772eb9a83a94fd1255bae49f79f66e7ccc02d3b3aaab7e29167026b0"
+    }
+  },
+  {
+    "kernel": "aten_smooth_l1_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "norm": "0.75",
+      "beta": "0.6"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "5c2645044c54cdf92ad7957cf570f222730552619a5ba3c2bf07aee09408e79c"
+    }
+  },
+  {
+    "kernel": "aten_smooth_l1_elementwise",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "beta": "0.6"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a838c833d7bc9ad7cd223fd431d00196e401ced5850d69b4b4a2126c96fa82c7"
+    }
+  },
+  {
+    "kernel": "aten_softplus",
+    "dims": {
+      "N": 8388608
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "beta": "1.25",
+      "threshold": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ee09bfffedd49df2490790872b404d5e60e1b0db7ca0505e9195e665ded03f7a"
+    }
+  },
+  {
+    "kernel": "aten_softplus_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "beta": "1.1",
+      "threshold": "0.7"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "ddda373b4c0a01d1588403dc8b54c6ab9b2439fe90c3c0ac8c18c9ffe955073c"
+    }
+  },
+  {
+    "kernel": "aten_softshrink",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "lambd": "0.35"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "51bc746eb6b06594952987271650f2eb132f34f54bbf4bbc748e8d1b23cefec8"
+    }
+  },
+  {
+    "kernel": "aten_sparse_add_values_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "alpha": "0.5"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "94579f3a5e043a4f9826e610abe6d2c93d38770295df1602fac9f29f4f427307"
+    }
+  },
+  {
+    "kernel": "aten_sparse_intersection_apply_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "04531853d9e8cdfd269be601a51e5af0158e79bf0d551a219f4c592f0bf177ea"
+    }
+  },
+  {
+    "kernel": "aten_sparse_intersection_launch_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "4c637a05b0f85cd9a22c90e9c4b6acb56aa5ebeecf1a4a6541c58fdcb8b2533b"
+    }
+  },
+  {
+    "kernel": "aten_sparse_mul_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "98c93548940f61bc5af07523d105c7a870a0b14807b1a4507decdad93f520bc3"
+    }
+  },
+  {
+    "kernel": "aten_split_copy_cpu",
+    "dims": {
+      "N": 4194304,
+      "S": 4
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "160639309b93a5063d645f4e8659a97e497ed5b89effe1769e318e38f4bbe427"
+    }
+  },
+  {
+    "kernel": "aten_sqrt",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "73d4a5418cde9f70104ef660c4ed041e9809da9480297dab2e9f01fdbd9de441"
+    }
+  },
+  {
+    "kernel": "aten_square",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "564f519bfe1c82d6e654a32ef0098c494d3d20c662dc09e1bba834363391f92f"
+    }
+  },
+  {
+    "kernel": "aten_stack_serial_cpu",
+    "dims": {
+      "K": 405,
+      "R": 203,
+      "T": 51
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b321fad82962254ee36b9d8cd78c5803259002bb737a3884ba74926100e6916f"
+    }
+  },
+  {
+    "kernel": "aten_standard_gamma_grad_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "27ed2681e9325c00c34829610418afa9225ddf807fff6514c25b70b768e52e43"
+    }
+  },
+  {
+    "kernel": "aten_tan",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "a3c5a49534a70a0e02d116754375dbb1c10ff2ddb46d60e866be903151a12f2b"
+    }
+  },
+  {
+    "kernel": "aten_tanh",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "c99a8d02d644ef5876b7d3f0986d946dd4f5e85018258f32d0b80bea247bd9e6"
+    }
+  },
+  {
+    "kernel": "aten_tanh_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "374b4cfa387a6d9ea200cf5b360bd6e9b25e6b5a8ef07c2f7e418ab00bced9e5"
+    }
+  },
+  {
+    "kernel": "aten_threshold_backward",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "threshold": "0.35"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "1afdd4e4e03a04ea2a234ae138a95c5ebc0d7a1ca00290671a771aa34cc9bdf3"
+    }
+  },
+  {
+    "kernel": "aten_transform_bias_rescale_qkv_cpu",
+    "dims": {
+      "B": 8,
+      "S": 512,
+      "H": 16,
+      "D": 64
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "scale": "0.125"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "88a16df98c8f10b6ac3578d81a7135f027010e82a381c3ea003c3775f5e024ec"
+    }
+  },
+  {
+    "kernel": "aten_transpose_copy",
+    "dims": {
+      "M": 2365,
+      "N": 1774
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "f8f1ca9a36b092bf23f5ee9d8b8942d20071ed86d03df2604b851a2a2939e98c"
+    }
+  },
+  {
+    "kernel": "aten_trunc",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b20b1e53f57a21d35966f7c127208adc8edc382224e28f1c1bda4aed938b647e"
+    }
+  },
+  {
+    "kernel": "aten_unbind_copy_cpu",
+    "dims": {
+      "B": 512,
+      "N": 8192
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "3fcbdfec7aa1fc3ba805a0e62e9b74d5865c3f6e3ccbd72f65415fa4b95edacf"
+    }
+  },
+  {
+    "kernel": "aten_unfolded2d_copy_cpu",
+    "dims": {
+      "C": 11,
+      "H": 46,
+      "KH": 17,
+      "KW": 17,
+      "OH": 34,
+      "OW": 34,
+      "W": 46
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "b21617e47d081389313fea33f9bca889a220e1a8525192db042933533f1d3c15"
+    }
+  },
+  {
+    "kernel": "aten_uniform_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {
+      "from": "-2.0",
+      "to": "3.0"
+    },
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "dfcb557bbd109d17a0da4059168ec95bae12ebf0b2fea07151416898d3ac6577"
+    }
+  },
+  {
+    "kernel": "aten_zeros_cpu",
+    "dims": {
+      "N": 4194304
+    },
+    "dtype": "f32",
+    "scalar_args": {},
+    "dimension_scope": "Archived resident benchmark dimensions; separate C copy; not a Figure 5 cohort claim",
+    "provenance": {
+      "source": "resident_shape_specs.json",
+      "source_sha256": "cd8db20a4c38de4db98126a429525204a221be66e2fdcb94ee191a685a62d91e",
+      "record_sha256": "cc7244b896f998f47484a852d85d51dfd2cb287af8317ec13d2f33522ee723e0"
+    }
+  }
+]

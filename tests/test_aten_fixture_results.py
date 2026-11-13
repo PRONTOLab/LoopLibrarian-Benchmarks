@@ -37,4 +37,27 @@ class FixtureResults(unittest.TestCase):
         r=correctness_summary(3,self.log(native_reference=1),16,2)
         self.assertFalse(r['passed']);self.assertTrue(r['raised_matches_native'])
 
+    def publication_log(self):
+        return '\n'.join(
+            f'PUBLICATION_CHECK kind=1 parameters=0 resident={resident} count=16 '
+            'bad=0 nativebad=0 nativerefbad=0 raised_tol=0.002 native_tol=0.002'
+            for resident in range(2))
+
+    def test_publication_pass_keeps_strict_failure(self):
+        result=correctness_summary(3,self.log(bad=1)+'\n'+self.publication_log(),16,2)
+        self.assertFalse(result['passed'])
+        self.assertFalse(result['raised_passed'])
+        self.assertTrue(result['publication_passed'])
+
+    def test_publication_check_cannot_hide_guard_or_process_failure(self):
+        for rc,log in [(3,self.log(guard=1)),(2,self.log()),(0,self.log(complete=False))]:
+            result=correctness_summary(rc,log+'\n'+self.publication_log(),16,2)
+            self.assertFalse(result['publication_passed'])
+
+    def test_missing_or_wrong_publication_coverage_fails(self):
+        for publication in ['',self.publication_log().splitlines()[0],
+                            self.publication_log().replace('count=16','count=15')]:
+            result=correctness_summary(3,self.log(bad=1)+'\n'+publication,16,2)
+            self.assertFalse(result['publication_passed'])
+
 if __name__=='__main__':unittest.main()

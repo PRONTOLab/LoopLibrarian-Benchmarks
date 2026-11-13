@@ -16,13 +16,14 @@ def main():
     p.add_argument('--cases',nargs='+',help='Explicit subset; omit for all 115 paper cases')
     p.add_argument('--output',type=Path,default=OUT)
     p.add_argument('--jobs',type=int,default=3)
+    p.add_argument('--timing-correctness',choices=['strict','publication'],default='strict')
     args=p.parse_args();out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
     campaign=out/'matching';gpu=out/'gpu'
     selection=['--cases',*args.cases] if args.cases else []
     runtime=[PYTHON,ROOT/'scripts/correctness/aten_paper_runtime.py',
              '--campaign',campaign,'--output',gpu,*selection,
              '--cudnn-plan-cache','--gpu-workspace-cache','--persistent-workspace',
-             '--native-paper-inputs']
+             '--native-paper-inputs','--timing-correctness',args.timing_correctness]
     if args.stage in ('build','all'):
         command([PYTHON,ROOT/'scripts/correctness/aten_paper115_campaign.py',
             '--output',campaign,*selection,'--include-validated',

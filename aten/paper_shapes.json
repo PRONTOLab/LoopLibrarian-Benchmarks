@@ -2023,7 +2023,19 @@
     "dimension_aliases": {
       "N": "NNZ"
     },
-    "dimension_alias_note": "The historical harness names CSR capacity N; the C fixture names the same capacity NNZ. Both recorded sizes are retained without changing the computation."
+    "dimension_alias_note": "The historical harness names CSR capacity N; the C fixture names the same capacity NNZ. Both recorded sizes are retained without changing the computation.",
+    "native_input_recipe": {
+      "source": "aten/harnesses/native_exact_region_bench.cpp: whole_sampled_addmm_sparse_csr; column_host[p] = p % columns",
+      "initializers": {
+        "crow": "(int)(i*(size_t)N/R)",
+        "col": "(int)(i%C)",
+        "self": "((float)(i%101)-50.0f)/37.0f",
+        "a": "((float)(i%101)-50.0f)/37.0f",
+        "b": "((float)(i%101)-50.0f)/37.0f",
+        "out": "((float)(i%101)-50.0f)/37.0f"
+      },
+      "note": "The historical raised harness uses a different sparse-index recipe. Retain both correctness checks; label timings by the selected recipe."
+    }
   },
   {
     "kernel": "aten_slow_conv3d_backward_input_cpu",

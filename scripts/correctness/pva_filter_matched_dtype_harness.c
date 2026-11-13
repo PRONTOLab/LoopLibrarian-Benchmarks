@@ -42,12 +42,34 @@ static uint64_t checksum(const pixel_t *data) {
 }
 
 int main(void) {
-  pixel_t *input = malloc(sizeof(pixel_t) * PIXELS);
-  pixel_t *output = malloc(sizeof(pixel_t) * PIXELS);
+  enum { GUARD_BYTES = 64 };
+  size_t bytes = sizeof(pixel_t) * PIXELS;
+  unsigned char *input_storage = malloc(bytes + 2 * GUARD_BYTES);
+  unsigned char *output_storage = malloc(bytes + 2 * GUARD_BYTES);
+  pixel_t *saved_input = malloc(bytes);
   pixel_t *reference = malloc(sizeof(pixel_t) * PIXELS);
-  if (!input || !output || !reference) return 2;
-  for (size_t i = 0; i < PIXELS; ++i)
-    input[i] = (pixel_t)(i * 40503u + i / 17u + 0x9e37u);
+  if (!input_storage || !output_storage || !saved_input || !reference) return 2;
+  memset(input_storage, 0xA5, bytes + 2 * GUARD_BYTES);
+  memset(output_storage, 0xA5, bytes + 2 * GUARD_BYTES);
+  pixel_t *input = (pixel_t *)(input_storage + GUARD_BYTES);
+  pixel_t *output = (pixel_t *)(output_storage + GUARD_BYTES);
+  const char *pattern = getenv("PVA_FILTER_INPUT_PATTERN");
+  if (!pattern) pattern = "original";
+  if (strcmp(pattern, "original") && strcmp(pattern, "random") &&
+      strcmp(pattern, "impulse") && strcmp(pattern, "constant") &&
+      strcmp(pattern, "quantization")) return 2;
+  uint32_t state = 12345;
+  for (size_t i = 0; i < PIXELS; ++i) {
+    state = state * 1664525u + 1013904223u;
+    if (!strcmp(pattern, "random")) input[i] = (pixel_t)(state >> 24);
+    else if (!strcmp(pattern, "constant")) input[i] = 73;
+    else if (!strcmp(pattern, "impulse")) input[i] = i == (H/2)*W+W/2 ? 255 : 0;
+    else if (!strcmp(pattern, "quantization")) {
+      size_t tap = ((i/W)%3)*3 + (i%W)%3;
+      input[i] = tap == 0 || tap == 2 || tap == 4 || tap == 6 ? 255 : 0;
+    } else input[i] = (pixel_t)(i * 40503u + i / 17u + 0x9e37u);
+  }
+  memcpy(saved_input, input, bytes);
   memcpy(output, input, sizeof(pixel_t) * PIXELS);
   memcpy(reference, input, sizeof(pixel_t) * PIXELS);
   for (int y = 1; y < H - 1; ++y)
@@ -78,19 +100,29 @@ int main(void) {
 #endif
   size_t mismatches = 0;
   unsigned long long max_error = 0;
+  int border_unchanged = 1, guards_ok = 1;
   for (size_t i = 0; i < PIXELS; ++i) {
     long long difference = (long long)output[i] - (long long)reference[i];
     unsigned long long error =
         (unsigned long long)(difference < 0 ? -difference : difference);
     mismatches += error != 0;
     if (error > max_error) max_error = error;
+    if ((i/W == 0 || i/W == H-1 || i%W == 0 || i%W == W-1) && error)
+      border_unchanged = 0;
   }
+  int input_unchanged = memcmp(input, saved_input, bytes) == 0;
+  for (size_t i = 0; i < GUARD_BYTES; ++i)
+    if (input_storage[i] != 0xA5 || output_storage[i] != 0xA5 ||
+        input_storage[GUARD_BYTES+bytes+i] != 0xA5 ||
+        output_storage[GUARD_BYTES+bytes+i] != 0xA5) guards_ok = 0;
   const char *status = max_error == 0 ? "EXACT_PASS" :
       max_error <= PVA_FILTER_TOLERANCE ? "WITHIN_TOLERANCE" : "FAIL";
-  printf("FILTER_RAISED,%s,%s,%s,mismatches=%zu,max_error=%llu,tolerance=%d,checksum=%llu\n",
+  printf("FILTER_RAISED,%s,%s,%s,mismatches=%zu,max_error=%llu,tolerance=%d,checksum=%llu,"
+         "input_unchanged=%d,border_unchanged=%d,guards_ok=%d,input=%s\n",
          PVA_FILTER_KIND == 1 ? "box" : "gaussian",
          STRINGIFY(PVA_FILTER_DTYPE), status, mismatches, max_error,
-         PVA_FILTER_TOLERANCE, (unsigned long long)checksum(output));
-  free(input); free(output); free(reference);
-  return max_error <= PVA_FILTER_TOLERANCE ? 0 : 1;
+         PVA_FILTER_TOLERANCE, (unsigned long long)checksum(output),
+         input_unchanged, border_unchanged, guards_ok, pattern);
+  free(input_storage); free(output_storage); free(reference); free(saved_input);
+  return max_error <= PVA_FILTER_TOLERANCE && input_unchanged && border_unchanged && guards_ok ? 0 : 1;
 }

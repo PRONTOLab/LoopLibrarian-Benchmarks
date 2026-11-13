@@ -16,6 +16,19 @@ def band_counts(points):
                 more_than_2x_slower=sum(r > 2 for r in ratios))
 
 
+def timing_group(runtime):
+    timing = runtime['timing']
+    recipe = timing['input_kind']
+    policy = timing.get('correctness_policy', 'strict')
+    assert policy in ('strict', 'publication'), 'Unknown correctness policy'
+    check = runtime['correctness'][recipe]
+    assert check.get('publication_passed' if policy == 'publication' else 'passed'), 'Failed timing criterion'
+    if recipe == 'native-paper':
+        return 'alternative'
+    assert recipe == 'paper', 'Unclassified timing-input exception'
+    return 'paper' if check.get('passed') else 'publication'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--report', type=Path, required=True, help='gpu/report.json')
@@ -27,7 +40,7 @@ def main():
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
     data = json.loads(report.read_text())
-    groups = {'paper': [], 'alternative': []}
+    groups = {'paper': [], 'publication': [], 'alternative': []}
     rows = []
     for case in data['cases']:
         runtime = case.get('runtime', {})
@@ -38,6 +51,8 @@ def main():
                    original_raised_passed=original.get('raised_passed'),
                    original_native_passed=original.get('native_passed'),
                    original_raised_native_agreement=original.get('raised_matches_native'),
+                   publication_criterion_passed=original.get('publication_passed'),
+                   timing_correctness_policy='',
                    paper_native_us=case['published']['native_us'],
                    paper_raised_us=case['published']['raised_us'],
                    paper_timing_protocol=case['published']['timing_protocol'])
@@ -47,7 +62,7 @@ def main():
         if timing.get('passed'):
             recipe = timing['input_kind']
             assert case['complete_match'] and case['build']['rc'] == 0, case['kernel']
-            assert runtime['correctness'][recipe]['passed'], case['kernel']
+            group = timing_group(runtime)
             assert case['build']['binary_sha256'] == runtime['binary_sha256'], case['kernel']
             minimum = timing['minimum_ms']
             for path in ('raised', 'native_aten_cuda'):
@@ -56,15 +71,15 @@ def main():
                 assert all(math.isfinite(s['ms']) and s['ms'] > 0 for s in samples)
                 assert math.isclose(min(s['ms'] for s in samples), minimum[path], rel_tol=1e-10)
             native, raised = minimum['native_aten_cuda'] * 1000, minimum['raised'] * 1000
-            group = 'paper' if recipe == 'paper' and runtime['fully_validated'] else 'alternative'
-            if group == 'alternative':
-                assert recipe == 'native-paper', 'Unclassified timing-input exception'
             groups[group].append((native, raised))
-            row.update(status='validated_original_inputs' if group == 'paper' else 'validated_alternative_inputs',
+            row.update(status={'paper':'validated_original_inputs_strict',
+                               'publication':'validated_original_inputs_publication',
+                               'alternative':'validated_alternative_inputs'}[group],
+                       timing_correctness_policy=timing.get('correctness_policy','strict'),
                        input_kind=recipe, native_us=native, raised_us=raised,
                        raised_over_native=raised / native)
         rows.append(row)
-    points = groups['paper'] + groups['alternative']
+    points = [point for group in groups.values() for point in group]
     if not points:
         raise SystemExit('No validated timing pairs to plot')
     assert len(points) == data['summary']['timing_pairs_validated']
@@ -82,8 +97,9 @@ def main():
     high = max(xhigh, yhigh)
     scatter = []
     for group, label, color, mark in [
-            ('paper', 'Original-input checks passed', 'raisedgreen', '*'),
-            ('alternative', 'Finite-input checks passed', 'alternateorange', 'diamond')]:
+            ('paper', 'Original inputs: strict', 'raisedgreen', '*'),
+            ('publication', 'Original inputs: paper criterion', 'publicationblue', 'triangle'),
+            ('alternative', 'Alternative inputs', 'alternateorange', 'diamond')]:
         if not groups[group]:
             continue
         coords = ' '.join(f'({x:.9g},{y:.9g})' for x, y in groups[group])
@@ -99,6 +115,7 @@ def main():
 \definecolor{{raisedgreen}}{{HTML}}{{1A7F37}}
 \definecolor{{boundred}}{{HTML}}{{BD3438}}
 \definecolor{{alternateorange}}{{HTML}}{{B35C00}}
+\definecolor{{publicationblue}}{{HTML}}{{2266AA}}
 \begin{{document}}
 \begin{{tikzpicture}}
 \begin{{loglogaxis}}[
@@ -139,7 +156,9 @@ def main():
                        stdout=log, stderr=subprocess.STDOUT, check=True)
     summary = dict(source_report=str(report), source_sha256=hashlib.sha256(report.read_bytes()).hexdigest(),
                    generator_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                   cohort=len(rows), original_inputs=len(groups['paper']),
+                   cohort=len(rows), original_inputs=len(groups['paper'])+len(groups['publication']),
+                   strict_original_inputs=len(groups['paper']),
+                   publication_only_original_inputs=len(groups['publication']),
                    alternative_inputs=len(groups['alternative']), **band_counts(points),
                    unplotted=[dict(kernel=r['kernel'], status=r['status']) for r in rows
                               if not r['status'].startswith('validated_')],
@@ -189,7 +208,8 @@ def main():
             published_same_timed_cases=band_counts(shared_paper), current=band_counts(points),
             limitation='Original figure axes are preserved: 50-us lower limits versus 10 us currently. '
                        'The paper mixes timing protocols; current uses five pairs. '
-                       'Two current points use alternative finite inputs; seven cases lack validated timings.')
+                       f'{len(groups["alternative"])} current points use separately recorded alternative inputs; '
+                       f'{len(rows)-len(points)} cases lack validated timings.')
         (out / 'comparison-summary.json').write_text(json.dumps(comparison_summary, indent=2) + '\n')
     (out / 'README.md').write_text(
         '# ATen current results\n\n'
@@ -197,9 +217,10 @@ def main():
         'LoopLibrarian resident GPU time on the vertical axis, in microseconds. '
         'The black line is parity; red dotted lines delimit a factor of two.\n\n'
         f"There are {len(points)} timed cases from the {len(rows)}-case paper cohort. "
-        f"Green circles show {len(groups['paper'])} cases passing the original comparisons. "
-        'Hollow orange diamonds show the separately recorded finite-input argmax/min '
-        'measurements; their original NaN-input disagreements remain unresolved. '
+        f"Green circles show {len(groups['paper'])} cases passing strict checks on original inputs. "
+        f"Blue triangles show {len(groups['publication'])} cases passing the historical criterion; "
+        'their strict diagnostic failures are retained. Hollow orange diamonds show '
+        'separately recorded alternative input recipes; consult the CSV for each case. '
         'Missing and failed cases have no fabricated coordinates and remain in '
         '`aten-current-data.csv` and `plot-summary.json`.\n\n'
         'All new points use five timing pairs. The original paper used mixed timing '

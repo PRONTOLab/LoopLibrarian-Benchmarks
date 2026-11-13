@@ -23,6 +23,20 @@ def complete_variants(result):
             v.get('counts', {}).get('loops') == 0]
 
 
+def reusable_runtime(saved, built, args, alternative):
+    if saved.get('binary_sha256') != built.get('binary_sha256'):
+        return False
+    if built.get('rc'):
+        return True
+    policy = saved.get('timing_correctness',
+                       saved.get('timing', {}).get('correctness_policy', 'strict'))
+    return (policy == args.timing_correctness and
+            saved.get('cudnn_plan_cache') == args.cudnn_plan_cache and
+            saved.get('gpu_workspace_cache') == args.gpu_workspace_cache and
+            set(saved.get('correctness', {})) ==
+            ({'paper', 'native-paper'} if alternative else {'paper'}))
+
+
 def inventory(campaign, followups=(), names=None):
     rows = list(csv.DictReader((ROOT/'aten/paper_cases.csv').open()))
     if names is not None:
@@ -102,7 +116,9 @@ def report(args, cases):
                 speedup_over_paper=(measured['native_aten_cuda']/measured['raised']) /
                     (float(historical['native_us'])/float(historical['raised_us'])),
                 same_statistic=historical['timing_protocol']=='minimum of 5 after 5 warmups',
+                same_raised_input_recipe=timing['input_kind']=='paper',
                 input_kind=timing['input_kind'],
+                correctness_policy=timing.get('correctness_policy','strict'),
                 baseline=runtime.get('scope'),
                 note='Compare input recipes and native API scope before interpreting speedup differences.')
         rows.append(row)
@@ -113,18 +129,28 @@ def report(args, cases):
                    original_paper_raised_passed=sum(r.get('runtime',{}).get('correctness',{}).get('paper',{}).get('raised_passed',False) for r in rows),
                    original_paper_native_passed=sum(r.get('runtime',{}).get('correctness',{}).get('paper',{}).get('native_passed') is True for r in rows),
                    original_paper_raised_native_agreement=sum(r.get('runtime',{}).get('correctness',{}).get('paper',{}).get('raised_matches_native') is True for r in rows),
-                   original_paper_comparisons_passed=sum(r.get('runtime',{}).get('correctness',{}).get('paper',{}).get('passed',False) for r in rows))
+                   original_paper_comparisons_passed=sum(r.get('runtime',{}).get('correctness',{}).get('paper',{}).get('passed',False) for r in rows),
+                   publication_criterion_passed=sum(r.get('runtime',{}).get('correctness',{}).get('paper',{}).get('publication_passed',False) for r in rows),
+                   timings_using_publication_criterion=sum(r.get('runtime',{}).get('timing',{}).get('passed',False) and r.get('runtime',{}).get('timing',{}).get('correctness_policy')=='publication' for r in rows))
     timed=[r['comparison'] for r in rows if 'comparison' in r]
     summary['raised_runtime_within_5pct_or_faster']=sum(c['raised_time_over_paper']<=1.05 for c in timed)
     summary['native_relative_speedup_within_5pct_or_better']=sum(c['speedup_over_paper']>=0.95 for c in timed)
     summary['timed_cases_with_same_publication_statistic']=sum(c['same_statistic'] for c in timed)
+    summary['strict_original_inputs_passed']=summary['original_paper_comparisons_passed']
+    summary['timings_using_strict_criterion']=sum(c['correctness_policy']=='strict' for c in timed)
+    aligned=[c for c in timed if c['same_statistic'] and c['same_raised_input_recipe']]
+    summary['timed_cases_with_same_statistic_and_raised_inputs']=len(aligned)
+    summary['same_statistic_and_raised_inputs_speedup_within_5pct_or_better']=sum(
+        c['speedup_over_paper']>=0.95 for c in aligned)
     F.save(args.output/'report.json', dict(summary=summary, cases=rows))
     columns=['kernel','complete_match','build_returncode','paper_raised_passed',
              'paper_native_passed','paper_raised_native_agreement','all_comparisons_passed',
              'timing_validated','timing_pairs','timing_input','timing_statistic',
              'raised_us','native_us','native_over_raised','paper_raised_us','paper_native_us',
              'raised_time_over_paper','speedup_over_paper','same_publication_statistic',
-             'specifications','vendor_calls','evidence_directory']
+             'specifications','vendor_calls','evidence_directory',
+             'publication_criterion_passed','timing_correctness_policy',
+             'same_raised_input_recipe']
     with (args.output/'report.csv').open('w',newline='') as stream:
         writer=csv.DictWriter(stream,fieldnames=columns);writer.writeheader()
         for row in rows:
@@ -140,6 +166,8 @@ def report(args, cases):
                 paper_native_passed=correctness.get('native_passed'),
                 paper_raised_native_agreement=correctness.get('raised_matches_native'),
                 all_comparisons_passed=runtime.get('fully_validated'),
+                publication_criterion_passed=correctness.get('publication_passed'),
+                timing_correctness_policy=timing.get('correctness_policy','strict') if timing else None,
                 timing_validated=timing.get('passed'),timing_pairs=len(pairs) if samples else None,
                 timing_input=timing.get('input_kind'),timing_statistic=timing.get('statistic'),
                 raised_us=comparison.get('raised_us'),native_us=comparison.get('native_us'),
@@ -149,6 +177,7 @@ def report(args, cases):
                 raised_time_over_paper=comparison.get('raised_time_over_paper'),
                 speedup_over_paper=comparison.get('speedup_over_paper'),
                 same_publication_statistic=comparison.get('same_statistic'),
+                same_raised_input_recipe=comparison.get('same_raised_input_recipe'),
                 specifications=';'.join(row.get('emitted_specifications',[])),
                 vendor_calls=';'.join(str(call.get('gpu_entry') or call.get('call'))
                                       for call in row.get('lowered_calls',[])),
@@ -174,6 +203,8 @@ def main():
     parser.add_argument('--cutensor-root', type=Path)
     parser.add_argument('--native-paper-inputs', action='store_true',
                         help='Where separately recorded, also test and time native-harness inputs; keep original raised-input failures')
+    parser.add_argument('--timing-correctness', choices=['strict','publication'],default='strict',
+                        help='Retain strict diagnostics; optionally gate timings on the archived publication criterion')
     parser.add_argument('--cudnn-plan-cache', action='store_true')
     parser.add_argument('--gpu-workspace-cache', action='store_true')
     parser.add_argument('--persistent-workspace', action='store_true')
@@ -209,11 +240,7 @@ def main():
             previous=args.output/case['kernel']/'gpu-result.json'
             if args.resume and previous.is_file():
                 saved=json.loads(previous.read_text())
-                if saved.get('binary_sha256')==built.get('binary_sha256') and (
-                        built.get('rc') or
-                        (saved.get('cudnn_plan_cache')==args.cudnn_plan_cache and
-                         saved.get('gpu_workspace_cache')==args.gpu_workspace_cache and
-                         set(saved.get('correctness',{}))==({'paper','native-paper'} if alternative else {'paper'}))):
+                if reusable_runtime(saved, built, args, alternative):
                     continue
                 raise ValueError('Existing runtime evidence differs; use a fresh output: '+case['kernel'])
             groups['native-paper' if alternative else 'paper'].append(case['kernel'])

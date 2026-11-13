@@ -213,6 +213,7 @@ exclude the preparation above. Use the suite name with `python3 reproduce.py`.
 | `mfem` | 18 supported fixtures and integrated PCG updates | 15–45 minutes |
 | `eqsat` | 30 inputs with/without EqSat, plus SpEQ comparisons | 30 minutes–2 hours |
 | `graph_sizes` | Paired GEMM graphs for LoopLibrarian and SpEQ | 2–10 minutes |
+| Additional [ATen pointwise experiments](aten/POINTWISE.md) | Candidate matching; original fixture dimensions, separate from Figure 5 | 20–60 minutes for the matching inventory; 2–10 minutes for one selected complete case |
 | `ginsbach` | 30-input detection sweep and correctness of detected replacements | 10–30 minutes |
 | `kernelfarer` | GEMM, SYR2K, 2mm, and 3mm; three implementations | 30–90 minutes |
 | `library_inventory` | Audit the existing specification catalog | Less than 2 minutes; import is separate |
@@ -236,7 +237,7 @@ build/validation runs took minutes. The full-suite ranges above remain planning
 estimates until a complete run of each packaged driver records its duration.
 Timeout settings are failure limits, not expected run times.
 
-The 200-pointwise-case ATen target and the three remaining PVA operator families
+The 200-pointwise-case ATen target and the two remaining PVA operator families
 are outside these estimates. The ATen estimate does not promise that all 115
 cases pass or include time to implement missing compiler support. The
 compilation-cost estimate is for collecting the new table; it does not establish

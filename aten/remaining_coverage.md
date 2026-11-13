@@ -21,13 +21,51 @@ establishing it would not resolve this proof gap.
 A scratch import of the public
 [`convert_indices_from_coo_to_csr_cpu<int32_t,int32_t>` implementation](https://github.com/pytorch/pytorch/blob/d7af122d81a49b1fa7a31ba52bd57c026f092646/aten/src/ATen/native/TensorConversions.cpp)
 passes the C/affine, Linalg, and debufferized execution comparisons. Its
-symbolic interpretation stops when a loop-carried value is needed as an array
-index; the application stops at a non-index `while` loop argument. This
-isolates the remaining gap to symbolic loop reasoning, rather than the C
+symbolic interpretation now succeeds for both its affine and debufferized IR.
+The generic interpreter resolves a previous-iteration input load when the
+initial value agrees and the source array remains read-only. It handles both
+SSA loop arguments and their scalar-memory representation. The application
+still stops at a non-index `while` loop argument. This isolates the remaining
+gap to symbolic loop reasoning, rather than the C
 frontend or execution of the raised reference. The unproved reference is not
 enabled in the production catalog.
 
-## Original numerical comparisons
+The sorted-row condition is necessary, not just a proof optimization. A
+two-element diagnostic with two rows gives fixture output `[0,0,2]` and
+imported-reference output `[0,2,2]` for unsorted input `[1,0]`. All three sorted
+two-element inputs agree. This small check is a counterexample to unconditional
+equivalence, not a general proof on sorted inputs. Accepting the intended
+sorted-input domain still requires explicit contract handling and the general
+cursor-loop proof.
+
+## Numerical criteria
+
+The retained historical raised harness, `aten_pointwise_graph_silicon.py`, uses
+`rtol * (1 + abs(reference))`, with `rtol = 0.002` for these FP32 cases.
+This is also present at compiler commit `c58b6f11`. The retained native harness
+`aten/harnesses/native_exact_region_bench.cpp` uses the same FP32 threshold;
+its FP64 threshold is `1e-10 * (1 + abs(reference))`. Native checks reject
+non-finite values; raised checks allow matching NaNs/infinities. Signed zeros
+compare equal in those historical checks.
+
+The newer strict diagnostic uses `1e-5 + 1e-4 * abs(reference)` and distinguishes
+signed zeros. Its failures below are failures under that stricter diagnostic,
+not evidence that the historical numerical criterion fails. Both criteria are
+now computed on the same full output. `--timing-correctness publication`
+explicitly selects the historical criterion for timing admission; strict
+results, guards, input-corruption checks, and process status remain visible.
+The older report keys named `original_paper_*` describe strict diagnostics on
+the original input recipe; they do not name the historical tolerance.
+
+All five previously untimed matched cases pass the historical criterion.
+Five paired samples per case give these minimum times in microseconds
+(LoopLibrarian / native CUDA): sparse norm 292.964 / 208.931, outer product
+1038.159 / 373.349, transposed 3-D convolution weight gradient
+3035.276 / 2748.200, ordinary 3-D convolution weight gradient
+7535.982 / 7120.552, and BSR sparse addmv 666.217 / 4518.466.
+These complete timing evidence for 113 matched cases, not 115 matches.
+
+### Strict diagnostic results
 
 The existing checks retain these distinctions:
 
@@ -46,8 +84,8 @@ The existing checks retain these distinctions:
   and is labeled explicitly when it supplies timings. The original failure
   remains visible.
 
-The report does not widen tolerances or remove exceptional inputs to increase
-the pass count.
+The strict failures remain recorded. The historical criterion has a separate
+pass count; alternative input recipes never replace the original checks.
 
 ## Performance
 
@@ -58,26 +96,31 @@ experiment. The following differences are confirmed by the historical native
 harness, the current generated harness, and the recorded timing samples:
 
 - `aten_unbind_copy_cpu`: the historical native harness calls
-  `at::unbind_copy_out` with preallocated output row views. The current native
-  adapter calls `copy_` on a whole tensor. Native time changes from 3.982368 to
+  `at::unbind_copy_out` with preallocated output row views. An earlier native
+  adapter called `copy_` on a whole tensor. Native time changed from 3.982368 to
   0.267204 ms while raised time changes from 0.217664 to 0.237860 ms. Most of
   the apparent speedup change, 18.30 to 1.12, therefore comes from changing
-  the baseline operation.
+  the baseline operation. The adapter now calls the historical API again:
+  LoopLibrarian 236.357 us, native 4891.543 us, ratio 20.696.
 - `aten_renorm_scale_factor`: the historical native path runs `add_out`,
-  `reciprocal_out`, `mul_out`, `gt_out`, and `where_out`; the current path uses
-  `renorm_scale_factor_stub`. Native time changes from 1.381760 to 0.251012 ms;
-  raised time also regresses from 0.633024 to 1.149012 ms.
+  `reciprocal_out`, `mul_out`, `gt_out`, and `where_out`; an earlier adapter used
+  `renorm_scale_factor_stub`. That changed native time from 1.381760 to
+  0.251012 ms. The historical five-call path is restored: LoopLibrarian
+  1152.532 us, native 1429.274 us. The raised runtime still regresses from
+  the paper's 633.024 us.
 - `aten_sampled_addmm_sparse_csr_cpu`: dimensions and the native API agree,
   but historical column indices use `p % columns`, whereas the current
   recipe uses `((i*17)+(i/(N/R))*13)%C`. Native time changes from 1.803584 to
-  8.187084 ms; raised time remains close, 8.205024 versus 8.140748 ms. A
-  controlled rerun is required to isolate the effect of the index pattern.
+  8.187084 ms; raised time remained close, 8.205024 versus 8.140748 ms.
+  A fresh pair using the native column recipe for both implementations gives
+  1824.928 / 1886.017 us. This changes the raised input pattern; it is not
+  evidence of a 4.5-fold compiler improvement. Both recipes are retained and
+  the selected timing recipe is labeled `native-paper`.
 
 The historical calls are in `aten/harnesses/native_exact_region_bench.cpp`;
 the current adapters are in `scripts/correctness/aten_fixture_batch.py` and
-the generated per-case harnesses. Restore the historical API scope and input
-recipes for the reproduction comparison, retaining changed-baseline
-measurements separately. Existing speedup aggregates are descriptive counts,
+the generated per-case harnesses. Earlier measurements remain in their original
+run directories. Existing speedup aggregates are descriptive counts,
 not evidence that all included comparisons reproduce the paper.
 
 ### Generated-code performance
@@ -105,3 +148,9 @@ needs a public reference and graph adapter that retain its multiple outputs.
 The existing tensor-pointwise adapter accepts a single overwritten output.
 Five timing pairs and the original historical statistic are recorded
 separately; results with different statistics are not silently equated.
+
+Sparse norm currently emits cuDNN multiplication followed by CUB reduction
+and a scalar square root. The historical path used one `cublasSnrm2` call.
+The new 292.964 us versus historical 108.960 us is therefore a change in the
+generated library sequence, not just a correctness-tolerance issue. A whole
+FP32 norm reference and equivalence proof are needed to recover that call.

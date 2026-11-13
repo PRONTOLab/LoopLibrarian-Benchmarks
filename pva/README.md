@@ -10,7 +10,8 @@ python3 reproduce.py pva --output results/runs/pva
 
 The driver currently covers dilation for four integer pixel types, the
 8-bit-input histogram with 32-bit signed/unsigned output arrays, and 8-bit
-3-by-3 Gaussian filtering. Histogram and Gaussian use wrappers fixing the
+3-by-3 Gaussian filtering, and U8 box filtering with an explicit quantization
+contract. Histogram and image filters use wrappers fixing the
 benchmark dimensions to 192 by 256; their original C
 bodies are unchanged. This is fixed-shape coverage, not a claim to support every
 dynamic image size. The signless MLIR counter type permits either validated
@@ -21,14 +22,35 @@ Each case retains raised IR, an imported-specification proof, the linked
 executable hash, complete correctness output, and the observed vendor call.
 The histogram harness checks every bin. Image filters check the complete output,
 including preservation of the untouched border. A summary lists the operator
-families that the fresh flow does not yet reproduce: BoxFilter,
-BilateralFilter, and HistogramEqualization. The other Gaussian pixel types
+families that the fresh flow does not yet reproduce: BilateralFilter and
+HistogramEqualization. The other Gaussian pixel types
 and 16-bit-input histogram routes also remain outside this driver.
 
 Gaussian imports OpenCV's public fixed-point implementation. Generic integer
 range checks preserve casts, shifts, overflow behavior, and rounding while
-proving its equivalence to the unchanged C stencil. The vendor adapter uses
-the fixed 3-by-3 binomial configuration (sigma 0.8493218 on both axes).
+proving its equivalence to the unchanged C stencil. The shared ABI configuration
+evaluator derives sigma from the imported reference's coefficient shifts,
+rounds the API parameters to FP32, and checks the resulting quantized weights.
+The generated call passes sigma 0.8493217825889587 on both axes. The runtime
+wrapper does not contain a fixed sigma. This supports imported compile-time
+specializations; arbitrary application coefficient arrays are not yet searched.
+
+BoxFilter also requires an exact source-to-reference match. Its separate PVA
+backend contract bounds quantization error by 3 over U8 pixels, conditional on
+the documented coefficients and rounding model. The driver explicitly enables
+that specification's budget; normal compiler matching keeps approximate
+backends disabled. The bound comes from rational interval arithmetic, rather
+than from the observed test errors. Proof receipts retain the configuration,
+model assumptions, calculated bound and accepted budget. Changing those inputs
+invalidates stored match evidence.
+
+Gaussian and BoxFilter execute five input patterns: original initialization,
+random, impulse, constant and a quantization counterexample. The harness checks
+all pixels, untouched input, exact border preservation and buffer guards. On
+the documented target, Gaussian is exact for all five; BoxFilter's observed
+maximum errors are respectively 1, 2, 1, 0 and 3. These observations validate
+these inputs on this backend and do not prove the closed implementation follows
+the model for every input. Results distinguish `exact` from `bounded-quantization`.
 
 Install the external PVA SDK and operator binaries separately. Configure
 `PVA_OPERATOR_INCLUDE`, `NVCV_INCLUDE`, `CUPVA_SDK_ROOT`, and `PVA_LIB_STAGE` in
@@ -37,12 +59,12 @@ headers/libraries; the repository does not redistribute SDK source or
 headers. Set the SSH transport and `remote_library_path` in `config.json` as
 described in the top-level README.
 
-Allow approximately 5–10 minutes to build these seven cases on the documented
+Allow approximately 5–10 minutes to build these eight cases on the documented
 host, plus 1–3 minutes for deployment and correctness checks. SDK/toolchain
 installation is separate. To resume a completed build, use `--stage run` with
 the same output directory; use `--cases morphology_u8` for a small smoke test.
 
-The remaining three operator families are not exact substitutions for the
+BoxFilter and the remaining two operator families are not exact substitutions for the
 unchanged C fixtures. A separate diagnostic calls their real PVA APIs and
 compares full outputs directly with those fixtures:
 
@@ -78,8 +100,7 @@ Observed differences on the documented target are:
   normalization. See the
   [public algorithm description](https://docs.nvidia.com/pva/solutions/0.3.0/impl/operator/histogramequalization.html).
 
-The OpenCV box-filter reference was raised and proved against the fixture, but
-its PVA execution failed exact comparison. That candidate is excluded from
-the production catalog. Completing these families requires compatible vendor
-semantics or an explicitly justified approximate-equivalence method; changing
-the comparison tolerance alone cannot authorize a library replacement.
+The OpenCV box reference now uses the explicit contract described above.
+Bilateral's neighborhood difference and histogram equalization's constant-image
+behavior remain outside that contract. They are still excluded from production
+matching; changing a comparison tolerance alone cannot authorize a replacement.

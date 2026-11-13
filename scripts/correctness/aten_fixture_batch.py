@@ -22,6 +22,8 @@ import time
 import uuid
 
 import aten_pointwise_graph_silicon as BENCH
+from aten_pointwise_native import NATIVE as POINTWISE_NATIVE
+from aten_pointwise_native import NATIVE_RUNTIME_LIBRARIES
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
@@ -204,13 +206,30 @@ NATIVE = {
         false,{0},1,{true,false,false});
       t[2].view({T+K-1,B,I}).copy_(std::get<0>(grads).permute({2,0,1}));''',
     'count_nonzero_impl_cpu': 'static auto counts=at::empty({R},t[0].options().dtype(at::kLong)); at::count_nonzero_out(counts,t[0].view({R,C}),std::optional<int64_t>{1}); t[1].copy_(counts);',
-    'renorm_scale_factor': 'auto iter=at::TensorIteratorConfig().add_output(t[1]).add_input(t[0]).build(); at::native::renorm_scale_factor_stub(at::kCUDA,iter,(double)s[0]);',
+    # Preserve the native API scope of the historical renorm_scale_factor
+    # harness. Scratch initialization happens during warmup, outside timing.
+    'renorm_scale_factor': '''static auto denominator=at::empty_like(t[0]);
+      static auto quotient=at::empty_like(t[0]);
+      static auto ones=at::ones_like(t[0]);
+      static auto mask=at::empty(t[0].sizes(),t[0].options().dtype(at::kBool));
+      at::add_out(denominator,t[0],1.0e-7);
+      at::reciprocal_out(quotient,denominator);
+      at::mul_out(quotient,quotient,s[0]);
+      at::gt_out(mask,t[0],s[0]);
+      at::where_out(t[1],mask,quotient,ones);''',
     'blas_copy_cpu': 't[1].copy_(t[0]);',
     'copy_cpu': 't[1].copy_(t[0]);',
     'copy_tensor_array_cpu': 't[1].copy_(t[0]);',
     'nested_squeeze_cpu': 't[1].copy_(t[0]);',
     'nested_clone_cpu': 't[1].copy_(t[0]);',
-    'unbind_copy_cpu': 't[1].copy_(t[0]);',
+    # Historical unbind_copy measures the public multi-output operation,
+    # with output row views prepared before the measured invocations.
+    'unbind_copy_cpu': '''static auto input=t[0].view({B,N});
+      static auto output=t[1].view({B,N});
+      static std::vector<at::Tensor> rows;
+      if(rows.empty()){rows.reserve(B);for(int64_t row=0;row<B;++row)
+        rows.push_back(output.select(0,row));}
+      at::unbind_copy_out(rows,input,0);''',
     'as_complex_cpu': 't[1].copy_(t[0].slice(0,0,t[0].numel(),2)); t[2].copy_(t[0].slice(0,1,t[0].numel(),2));',
     'complex_scalarized': 't[2].copy_(t[0]); t[3].copy_(t[1]);',
     'conj_complex_scalarized': 't[2].copy_(t[0]); at::neg_out(t[3],t[1]);',
@@ -274,6 +293,10 @@ NATIVE = {
     'dropout_feature_noise_cpu': 'auto out=t[2].view({B,C,H,W}); at::mul_out(out,t[0].view({B,C,H,W}),t[1].view({B,C,1,1})); out.mul_(s[0]);',
     'transform_bias_rescale_qkv_cpu': 'auto input=t[0].view({B,S,3,H,D}); auto bias=t[1].view({3,H,D}); for(int i=0;i<3;i++){auto out=t[i+2].view({B,H,S,D}); at::add_out(out,input.select(2,i).permute({0,2,1,3}),bias.select(0,i).view({1,H,1,D})); if(i==0)out.mul_(s[0]);}',
 }
+for _name, _baseline in POINTWISE_NATIVE.items():
+    if _name in NATIVE:
+        raise ValueError('Duplicate native ATen baseline: ' + _name)
+    NATIVE[_name] = _baseline
 
 
 def save(path, value):
@@ -347,6 +370,12 @@ def harness(name, cfg):
 #include <cuda_runtime_api.h>
 '''
     prefix += f'#define NA {len(sizes)}\n#define NS {ns}\n#define ABS_TOL 1e-5\n#define REL_TOL 1e-4\n'
+    # Independently report the archived publication criteria. The strict
+    # diagnostics above remain unchanged, including their process exit code.
+    raised_tolerance = cfg.get('rtol', 2e-3)
+    native_tolerance = 1e-10 if cfg.get('dtype') == 'double' else 2e-3
+    prefix += f'#define PUBLICATION_RAISED_TOL {raised_tolerance:.17g}\n'
+    prefix += f'#define PUBLICATION_NATIVE_TOL {native_tolerance:.17g}\n'
     samples = cfg.get('timing_samples', 5)
     if type(samples) is not int or samples < 5:
         raise ValueError('timing_samples must be an integer of at least five')
@@ -554,6 +583,8 @@ def build(name, args):
                  ('FP64 atol=1e-12 rtol=1e-10' if cfg.get('dtype')=='double' else 'FP32 atol=1e-5 rtol=1e-4')))
     if name == 'aten_xor_sum_cpu':
         row['baseline']='ATen CUDA bitwise_xor tree with preallocated intermediates; installed libtorch lacks hash_tensor; not the newer xor_sum kernel'
+    if name == 'aten_mse_backward':
+        row['baseline']='ATen CUDA sub_out and in-place mul composition for arbitrary normalization; both calls timed; not a single MSE backward API'
     if name == 'aten_quant_col_offsets_cpu':
         row['baseline']='ATen CUDA sum and subtract composition; preallocated outputs'
     if name in ('aten_argmax_cpu', 'aten_argmin_cpu'):
@@ -594,9 +625,24 @@ def correctness_summary(rc, log, expected, modes):
     # Numerical tolerance is not transitive, so never infer the third comparison.
     native=(complete and all(all(c[k]==0 for k in ('nativerefbad','guardbad','inputbad')) for c in checks)
             if all('nativerefbad' in c for c in checks) else None)
+    publication = [{k:float(v) for k,v in re.findall(r'(\w+)=([+\-\d.eE]+)',line)}
+                   for line in log.splitlines() if line.startswith('PUBLICATION_CHECK ')]
+    publication_complete = (complete and len(publication)==modes and
+        all(p.get('count')==expected and p.get('resident')==c.get('resident') and
+            all(k in p for k in ('bad','nativebad','nativerefbad','raised_tol','native_tol'))
+            for p,c in zip(publication, checks)))
+    safe = complete and all(c['guardbad']==0 and c['inputbad']==0 for c in checks)
+    publication_raised = publication_complete and safe and all(p['bad']==0 for p in publication)
+    publication_native = publication_complete and safe and all(p['nativerefbad']==0 for p in publication)
+    publication_agreement = publication_complete and safe and all(p['nativebad']==0 for p in publication)
     return dict(rc=rc,passed=raised and agreement and native is not False,
                 raised_passed=raised,native_passed=native,
-                raised_matches_native=agreement,checks=checks,vendor_calls=vendor_calls)
+                raised_matches_native=agreement,checks=checks,vendor_calls=vendor_calls,
+                publication_passed=publication_raised and publication_native and publication_agreement,
+                publication_raised_passed=publication_raised,
+                publication_native_passed=publication_native,
+                publication_raised_matches_native=publication_agreement,
+                publication_checks=publication)
 
 
 def run_gpu(names, args):
@@ -610,6 +656,16 @@ def run_gpu(names, args):
         environment += 'POLYGEIST_CUDNN_PLAN_CACHE=1 '
     if getattr(args,'gpu_workspace_cache',False):
         environment += 'POLYGEIST_GPU_WORKSPACE_CACHE=1 '
+    required_libraries = sorted({library for name in names
+        for library in NATIVE_RUNTIME_LIBRARIES.get(name.removeprefix('aten_'), [])})
+    if required_libraries:
+        probe = ('import ctypes; ' + '; '.join('ctypes.CDLL('+repr(lib)+')'
+                 for lib in required_libraries) + '; print("Native CUDA dependencies available")')
+        rc, log = board.run(environment+'python3 -c '+shlex.quote(probe),timeout=30)
+        (args.output/'native-dependencies.log').write_text(log)
+        if rc:
+            raise RuntimeError('Native ATen runtime dependency unavailable: '+
+                ', '.join(required_libraries)+'; see native-dependencies.log')
     run_id=uuid.uuid4().hex[:12]
     prior=args.output/'gpu-results.json'
     results=[r for r in json.loads(prior.read_text()) if r['kernel'] not in names] if prior.exists() else []
@@ -635,6 +691,7 @@ def run_gpu(names, args):
         (dest/'remote-hash.log').write_text(log)
         if rc or built['binary_sha256'] not in log:raise RuntimeError('Remote hash check failed')
         row=dict(kernel=name,run_id=run_id,binary_sha256=built['binary_sha256'],
+                 timing_correctness=getattr(args,'timing_correctness','strict'),
                  scope=built['baseline'],dimension_scope=built['configuration']['dimension_scope'],
                  cudnn_plan_cache=args.cudnn_plan_cache,
                  gpu_workspace_cache=getattr(args,'gpu_workspace_cache',False),correctness={})
@@ -657,6 +714,8 @@ def run_gpu(names, args):
             print(name,kind,row['correctness'][kind]['passed'],flush=True);save(args.output/'gpu-results.json',results)
         row['fully_validated']=all(v['passed'] for v in row['correctness'].values())
         row['raised_validated']=all(v['raised_passed'] for v in row['correctness'].values())
+        row['publication_validated']=all(v['publication_passed'] for v in row['correctness'].values())
+        row['publication_raised_validated']=all(v['publication_raised_passed'] for v in row['correctness'].values())
         row['raised_matches_native']=all(v['raised_matches_native'] for v in row['correctness'].values())
         row['native_matches_reference']=(all(v['native_passed'] for v in row['correctness'].values())
             if all(v['native_passed'] is not None for v in row['correctness'].values()) else None)
@@ -666,14 +725,20 @@ def run_gpu(names, args):
         timing_input=getattr(args,'timing_input','auto')
         if timing_input=='auto':
             timing_input='paper' if 'paper_initializers' in cfg else 'normal'
-        if (not args.skip_timing and (row['raised_validated'] or args.time_validated_normal_inputs)
-                and row['correctness'].get(timing_input,{}).get('passed')):
+        policy=getattr(args,'timing_correctness','strict')
+        all_raised_ok=row['publication_raised_validated'] if policy=='publication' else row['raised_validated']
+        timing_check='publication_passed' if policy=='publication' else 'passed'
+        if (not args.skip_timing
+                and (not getattr(args,'require_full_correctness',False) or row['fully_validated'])
+                and (all_raised_ok or args.time_validated_normal_inputs)
+                and row['correctness'].get(timing_input,{}).get(timing_check)):
             rc,log=board.run(environment+'timeout '+str(run_timeout)+' '+shlex.quote(remote)+' timing '+shlex.quote(timing_input),timeout=run_timeout+5)
             (dest/'timing-gpu.log').write_text(log)
             samples=[dict(path=a,sample=int(b),ms=float(c)) for a,b,c in re.findall(r'SAMPLE path=(\w+) sample=(\d+) ms=([\deE.+-]+)',log)]
             count=cfg.get('timing_samples',5)
             passed=rc==0 and 'PASS timing' in log and len(samples)==2*count and all(sorted(s['sample'] for s in samples if s['path']==p)==list(range(count)) for p in ('raised','native_aten_cuda'))
             row['timing']=dict(passed=passed,samples=samples,input_kind=timing_input,
+                correctness_policy=policy,
                 all_raised_input_modes_passed=row['raised_validated'],
                 normal_input_only_override=args.time_validated_normal_inputs,
                 native_edge_disagreement=(not row['native_matches_reference']
@@ -711,12 +776,16 @@ def main():
     p.add_argument('--rank',type=int,default=0)
     p.add_argument('--shape-specs',type=Path,help='Pinned benchmark dimensions; separate source copies preserve the original fixtures')
     p.add_argument('--timing-samples',type=int,default=5)
+    p.add_argument('--timing-correctness',choices=['strict','publication'],default='strict',
+                   help='Timing gate; publication retains separate strict diagnostics and uses archived tolerances')
     p.add_argument('--run-timeout',type=int,default=60)
     p.add_argument('--correctness-kinds', nargs='+', choices=['normal','edge','zeros','paper','native-paper'],
                    help='Selected input recipes, explicitly recorded in the results')
     p.add_argument('--timing-input', choices=['auto','normal','paper','native-paper'], default='auto',
                    help='Time this validated input recipe; auto retains the raised publication recipe')
     p.add_argument('--skip-timing', action='store_true')
+    p.add_argument('--require-full-correctness', action='store_true',
+                   help='Require every original-C/native/raised comparison before timing')
     p.add_argument('--cases',nargs='+',required=True)
     p.add_argument('--jobs',type=int,default=2)
     p.add_argument('--persistent-workspace',action='store_true',

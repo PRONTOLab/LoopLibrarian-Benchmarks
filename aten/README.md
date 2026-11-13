@@ -7,8 +7,11 @@ matching configuration, and original timing records are in `paper_cases.csv`,
 Extraction provenance is in `aten/metadata/`. Fresh reproduction does not
 require the evidence archive.
 
+The separate [pointwise experiment](POINTWISE.md) inventories and tests additional
+scalar-operation candidates without changing the 115-case paper cohort.
+
 ```
-python3 reproduce.py aten --output results/runs/aten-paper
+python3 reproduce.py aten --timing-correctness publication --output results/runs/aten-paper
 ```
 
 This command materializes separate paper-shape copies, raises them, proves
@@ -43,6 +46,8 @@ combined `report.json`. The summary keeps these separate:
 - successful executable builds;
 - raised-versus-original-C correctness;
 - native-versus-original-C correctness and raised/native agreement;
+- the separately reported historical numerical criterion and the criterion
+  used to admit each timing run;
 - validated timing pairs and both latency and native-relative speedup comparisons.
 
 `gpu/report.csv` provides one row per selected paper case, including unmatched
@@ -58,8 +63,9 @@ python3 aten/plot_results.py --report results/runs/aten-paper/gpu/report.json --
 
 This requires `pdflatex` with PGFPlots and the `standalone` class, plus
 `pdftoppm`. It writes a PDF, PNG, plot provenance, and a CSV retaining every
-cohort case. Original-input passes and the separately validated finite-input
-argmax/min timings use different markers. Failed or unmatched cases remain in
+cohort case. Strict original-input passes, historical-criterion passes, and
+separately validated alternative input recipes use different markers.
+Failed or unmatched cases remain in
 the CSV without invented timing coordinates. Rendering uses the saved samples
 and takes a few seconds.
 
@@ -75,12 +81,23 @@ was reproduced. Timing comparisons explicitly flag a different historical
 statistic. Argmax/min retain the original NaN-containing recipe and its native
 CUDA disagreement; their separately recorded finite native-harness recipe is
 also checked and is identified whenever it supplies a timing measurement.
-No tolerance is changed to hide a failed comparison.
+The default strict diagnostic uses `1e-5 + 1e-4 * abs(reference)` and
+distinguishes signed zeros. The historical FP32 harnesses instead used
+`0.002 * (1 + abs(reference))` without distinguishing signed zeros. The command
+above explicitly selects the historical criterion for timing admission while
+retaining every strict diagnostic result. Omit `--timing-correctness publication`
+to require the strict checks before timing. Neither policy waives buffer guards,
+input corruption, incomplete output checks, or execution failures. See
+[numerical criteria and source evidence](remaining_coverage.md#numerical-criteria).
 
 Strict comparability with the paper is not established for every timing pair.
-The current native harness uses different API scopes for `unbind_copy` and
-`renorm_scale_factor`, and sampled sparse addmm uses a different column-index
-recipe. Passing output comparisons does not resolve these timing differences.
+The native API scopes for `unbind_copy` and `renorm_scale_factor` have been
+restored to the retained historical harness. Sampled sparse addmm preserves
+two column-index recipes because its historical raised and native runs used
+different inputs. Its new timing pair uses the native recipe for both paths;
+the resulting ratio must not be described as a compiler improvement over the
+historical raised runtime. Passing output comparisons does not resolve all
+timing differences.
 See [the comparison audit and remaining work](remaining_coverage.md) before
 interpreting the scatter or speedup counts as a reproduction of the paper.
 
@@ -115,4 +132,5 @@ are more subtle: both GPU paths agree, but 17/3456 outputs in transposed
 convolution and 92/3456 outputs in ordinary convolution still exceed the
 existing per-element tolerance against FP64. Their original C references also
 fail for 94/3456 and 85/3456 outputs respectively. These results establish
-native-GPU agreement, not a clean pass of the original numerical criterion.
+native-GPU agreement, not a clean pass of the stricter diagnostic criterion.
+The separately recorded historical-criterion checks pass these three cases.

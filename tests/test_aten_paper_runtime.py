@@ -14,6 +14,22 @@ import aten_paper_runtime as R
 
 
 class RuntimeSelection(unittest.TestCase):
+    def test_resume_preserves_correctness_policy_and_input_scope(self):
+        saved = dict(binary_sha256='same', cudnn_plan_cache=True,
+                     gpu_workspace_cache=True, correctness={'paper': {}},
+                     timing={'correctness_policy': 'publication'})
+        built = dict(binary_sha256='same', rc=0)
+        args = SimpleNamespace(timing_correctness='publication',
+                               cudnn_plan_cache=True, gpu_workspace_cache=True)
+        self.assertTrue(R.reusable_runtime(saved, built, args, False))
+        self.assertFalse(R.reusable_runtime(saved, built, args, True))
+        args.timing_correctness = 'strict'
+        self.assertFalse(R.reusable_runtime(saved, built, args, False))
+        saved['timing'] = {}
+        self.assertTrue(R.reusable_runtime(saved, built, args, False))
+        saved['timing_correctness'] = 'publication'
+        self.assertFalse(R.reusable_runtime(saved, built, args, False))
+
     def test_csv_preserves_unmatched_and_failed_comparisons_without_timings(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);(root/'aten').mkdir()

@@ -31,7 +31,8 @@ Additional drivers cover [ATen](../aten/README.md), [PVA](../pva/README.md),
 [specification inventory](../library_inventory/README.md). Their commands and
 remaining limitations are documented separately. Availability of a driver does
 not establish completion: ATen retains proof and numerical comparison gaps,
-and PVA retains three operator families with different vendor semantics.
+and PVA retains two operator families with different vendor semantics. The PVA
+driver reports BoxFilter separately under an explicit quantization contract.
 
 ## Machines and dependencies
 
