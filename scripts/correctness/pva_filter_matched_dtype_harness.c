@@ -25,7 +25,11 @@ enum { H = 192, W = 256, PIXELS = H * W };
 #define STRINGIFY_INNER(value) #value
 #define STRINGIFY(value) STRINGIFY_INNER(value)
 
+#ifdef PVA_FILTER_FIXED_SHAPE
+void PVA_FILTER_FUNCTION(const pixel_t [H][W], pixel_t [H][W]);
+#else
 void PVA_FILTER_FUNCTION(int, int, const pixel_t *, pixel_t *);
+#endif
 
 static uint64_t checksum(const pixel_t *data) {
   const uint8_t *bytes = (const uint8_t *)data;
@@ -67,7 +71,11 @@ int main(void) {
       reference[y * W + x] = (pixel_t)((sum + 8) >> 4);
 #endif
     }
+#ifdef PVA_FILTER_FIXED_SHAPE
+  PVA_FILTER_FUNCTION((const pixel_t (*)[W])input, (pixel_t (*)[W])output);
+#else
   PVA_FILTER_FUNCTION(H, W, input, output);
+#endif
   size_t mismatches = 0;
   unsigned long long max_error = 0;
   for (size_t i = 0; i < PIXELS; ++i) {

@@ -1,0 +1,1524 @@
+[
+  {
+    "kernel": "aten_avg_pool2d",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        2
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_avg_pool3d",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        2
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_adaptive_avg_pool3d",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        2
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_conv_transpose3d_backward_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_avg_pool2d_backward_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ],
+      "specifications": [
+        "aten_avg_pool2d_backward_k2_f32"
+      ]
+    },
+    "option_source": "Validated whole-reference match from public PyTorch average-pool backward; odd-tail output behavior preserved."
+  },
+  {
+    "kernel": "aten_narrow_copy_dense_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_norm_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_int_mm_out_cpu",
+    "match_options": {
+      "region": true,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_avg_pool3d_backward_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": false,
+      "region_budget": 30,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "matching_stage": "debuf"
+    },
+    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+  },
+  {
+    "kernel": "aten_zeros_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_or_reduce_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_dilated_convolution_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_blas_copy_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_copy_tensor_array_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_copy_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_clamp_min_scalar_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_nested_squeeze_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_nested_clone_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_clamp_max_scalar_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_im2col",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_cat_serial_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_conv2d_columns_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_conv_transpose2d",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-next/aten_conv_transpose2d/request.json"
+  },
+  {
+    "kernel": "aten_stack_serial_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_compressed_block_convert_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        2
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_batch_norm",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_outer",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 25,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/filter-flatfill-paper/aten_outer/request.json"
+  },
+  {
+    "kernel": "aten_angle_complex_scalarized",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_blas_axpy_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_mul_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_intersection_apply_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_intersection_launch_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_add_values_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_cross_cpu_backend",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_cross",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_cumprod_cpu",
+    "match_options": {
+      "ranks": [
+        1
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_repeat_compute_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_as_complex_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_repeat_tensor_shape_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_coo_to_csr_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "numeric_model": "strict",
+      "region": true
+    },
+    "option_source": "Default generic raising and region matching."
+  },
+  {
+    "kernel": "aten_convert_coo_to_csr_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "numeric_model": "strict",
+      "region": true
+    },
+    "option_source": "Default generic raising and region matching."
+  },
+  {
+    "kernel": "aten_conv2d",
+    "match_options": {
+      "region": false,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_max_pool2d",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 30,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "matching_stage": "debuf"
+    },
+    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+  },
+  {
+    "kernel": "aten_sparse_addmv_csr_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-arithmetic/aten_sparse_addmv_csr_cpu/request.json"
+  },
+  {
+    "kernel": "aten_nested_sum_backward_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_complex_scalarized",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_nested_all_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "numeric_model": "strict",
+      "region": true
+    },
+    "option_source": "Default generic raising and region matching."
+  },
+  {
+    "kernel": "aten_adaptive_avg_pool2d",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        2
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_conj_complex_scalarized",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_normal_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_uniform_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_blas_scale_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_nansum_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_pixel_shuffle",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_channel_shuffle_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_channel_shuffle",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_batch_norm_transform_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_nested_sum_dim_cpu",
+    "match_options": {
+      "region": true,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_and_reduce_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_pixel_unshuffle_cpu_backend",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_pixel_shuffle_cpu_backend",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_log_normal_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_matmul_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-arithmetic/aten_sparse_matmul_cpu/request.json"
+  },
+  {
+    "kernel": "aten_transpose_copy",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_nested_matmul_broadcast_cpu",
+    "match_options": {
+      "ranks": [
+        2
+      ],
+      "region": true,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_flatten_nd_linear_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sum",
+    "match_options": {
+      "ranks": [
+        1
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_diff_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_exponential_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_argmax_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 30,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "matching_stage": "debuf"
+    },
+    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+  },
+  {
+    "kernel": "aten_argmin_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 30,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "matching_stage": "debuf"
+    },
+    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+  },
+  {
+    "kernel": "aten_bmm",
+    "match_options": {
+      "ranks": [
+        2
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_allany_dims_cpu",
+    "match_options": {
+      "region": true,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_dropout_feature_noise_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_nested_bmm_cpu",
+    "match_options": {
+      "ranks": [
+        2
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_sumproduct_pair_cpu",
+    "match_options": {
+      "ranks": [
+        2
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_geometric_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_bmm_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_matmul_csr_to_coo_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-expand-last/aten_sparse_matmul_csr_to_coo_cpu/request.json"
+  },
+  {
+    "kernel": "aten_convert_csr_to_coo_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-expand-last/aten_convert_csr_to_coo_cpu/request.json"
+  },
+  {
+    "kernel": "aten_polar_scalarized",
+    "match_options": {
+      "region": true,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_cauchy_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_cpu_blas_gemm_strided_batched_cpu",
+    "match_options": {
+      "ranks": [
+        2
+      ],
+      "region": true,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_cpu_blas_gemm_batched_cpu",
+    "match_options": {
+      "ranks": [
+        2
+      ],
+      "region": true,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_conv_tbc_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_kron_impl_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_kron_out_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_upsample_bilinear2d",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 30,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "matching_stage": "debuf"
+    },
+    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+  },
+  {
+    "kernel": "aten_dirichlet_grad_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_count_nonzero_impl_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_transform_bias_rescale_qkv_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_addmm_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-arithmetic/aten_sparse_addmm_cpu/request.json"
+  },
+  {
+    "kernel": "aten_depthwise_conv3x3_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "numeric_model": "relaxed",
+      "region": true,
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "Fresh complete proof in paper115-relaxed-followup; same relaxed arithmetic as archived full-catalog request"
+  },
+  {
+    "kernel": "aten_gamma_transform_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_hspmm_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-arithmetic/aten_hspmm_cpu/request.json"
+  },
+  {
+    "kernel": "aten_renorm_scale_factor",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_standard_gamma_grad_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        1
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_conv_tbc_backward_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-next/aten_conv_tbc_backward_cpu/request.json"
+  },
+  {
+    "kernel": "aten_slow_conv3d_backward_input_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-direct/aten_slow_conv3d_backward_input_cpu/request.json"
+  },
+  {
+    "kernel": "aten_conv_transpose3d_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-direct/aten_conv_transpose3d_cpu/request.json"
+  },
+  {
+    "kernel": "aten_sampled_addmm_sparse_csr_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "numeric_model": "relaxed",
+      "region": true,
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "Fresh complete proof in paper115-relaxed-followup; same relaxed arithmetic as archived full-catalog request"
+  },
+  {
+    "kernel": "aten_joint_scaling_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": false,
+      "region_budget": 30,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "matching_stage": "debuf"
+    },
+    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+  },
+  {
+    "kernel": "aten_sspaddmm_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-arithmetic/aten_sspaddmm_cpu/request.json"
+  },
+  {
+    "kernel": "aten_xor_sum_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": true,
+      "split_pointwise_inputs": true,
+      "ranks": [
+        2
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_conv_transpose3d_grad_weight_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 25,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/filter-flatfill-paper/aten_conv_transpose3d_grad_weight_cpu/request.json"
+  },
+  {
+    "kernel": "aten_slow_conv3d_backward_weight_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 25,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/filter-flatfill-paper/aten_slow_conv3d_backward_weight_cpu/request.json"
+  },
+  {
+    "kernel": "aten_cpu_blas_gemm_cpu",
+    "match_options": {
+      "ranks": [
+        2
+      ],
+      "region": true,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_embedding_bag_counts_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/histogram/aten_embedding_bag_counts_cpu/request.json"
+  },
+  {
+    "kernel": "aten_mm",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+  },
+  {
+    "kernel": "aten_unbind_copy_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "strict",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_addmm",
+    "match_options": {
+      "region": true,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  },
+  {
+    "kernel": "aten_sparse_addmv_bsr_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 120,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "matching_stage": "linalg"
+    },
+    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+  },
+  {
+    "kernel": "aten_conv1d",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "numeric_model": "relaxed",
+      "region": true,
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "Fresh complete proof in paper115-relaxed-followup; same relaxed arithmetic as archived full-catalog request"
+  },
+  {
+    "kernel": "aten_sparse_csr_addmm_cpu",
+    "match_options": {
+      "ranks": [
+        0
+      ],
+      "region": true,
+      "region_budget": 45,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false
+    },
+    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-arithmetic/aten_sparse_csr_addmm_cpu/request.json"
+  },
+  {
+    "kernel": "aten_quant_col_offsets_cpu",
+    "match_options": {
+      "region": false,
+      "numeric_model": "relaxed",
+      "split_reduction_inputs": false,
+      "split_pointwise_inputs": false,
+      "ranks": [
+        0
+      ]
+    },
+    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+  }
+]

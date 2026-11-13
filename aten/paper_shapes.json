@@ -1666,7 +1666,14 @@
     "shape_selection_note": "full row-wise first-index argmax through CUB segmented reduction",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
     "recipe_version": "run-pickficjkj-v3",
-    "recipe_fingerprint": "8b87dc0870be83c0"
+    "recipe_fingerprint": "8b87dc0870be83c0",
+    "native_input_recipe": {
+      "source": "aten/harnesses/native_exact_region_bench.cpp: whole_integer_reduction calls raised_fixture_values (finite values); the original raised argreduce NaN recipe remains separate.",
+      "initializers": {
+        "x": "((float)(i%101)-50.0f)/37.0f",
+        "out": "0"
+      }
+    }
   },
   {
     "kernel": "aten_argmin_cpu",
@@ -1684,7 +1691,14 @@
     "shape_selection_note": "full row-wise first-index argmin through CUB segmented reduction",
     "comparison_scope": "WHOLE_OR_EXPLICITLY_ADJUDICATED",
     "recipe_version": "run-pickficjkj-v3",
-    "recipe_fingerprint": "927e47c252552e8f"
+    "recipe_fingerprint": "927e47c252552e8f",
+    "native_input_recipe": {
+      "source": "aten/harnesses/native_exact_region_bench.cpp: whole_integer_reduction calls raised_fixture_values (finite values); the original raised argreduce NaN recipe remains separate.",
+      "initializers": {
+        "x": "((float)(i%101)-50.0f)/37.0f",
+        "out": "0"
+      }
+    }
   },
   {
     "kernel": "aten_avg_pool3d_backward_cpu",

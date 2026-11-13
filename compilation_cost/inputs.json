@@ -1,0 +1,3070 @@
+{
+  "schema": 1,
+  "origin": "Distinct source/function inputs in the retained complete-build campaigns; includes failed inputs, not only successful rows.",
+  "cases": [
+    {
+      "suite": "aten",
+      "kernel": "aten_adaptive_avg_pool2d",
+      "function": "aten_adaptive_avg_pool2d",
+      "source": "aten/inputs/aten_adaptive_avg_pool2d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          2
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_adaptive_avg_pool3d",
+      "function": "aten_adaptive_avg_pool3d",
+      "source": "aten/inputs/aten_adaptive_avg_pool3d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          2
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_addmm",
+      "function": "aten_addmm",
+      "source": "aten/inputs/aten_addmm.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": true,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_allany_dims_cpu",
+      "function": "aten_allany_dims_cpu",
+      "source": "aten/inputs/aten_allany_dims_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": true,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_and_reduce_cpu",
+      "function": "aten_and_reduce_cpu",
+      "source": "aten/inputs/aten_and_reduce_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_angle_complex_scalarized",
+      "function": "aten_angle_complex_scalarized",
+      "source": "aten/inputs/aten_angle_complex_scalarized.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_argmax_cpu",
+      "function": "aten_argmax_cpu",
+      "source": "aten/inputs/aten_argmax_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 30,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "matching_stage": "debuf"
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_argmin_cpu",
+      "function": "aten_argmin_cpu",
+      "source": "aten/inputs/aten_argmin_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 30,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "matching_stage": "debuf"
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_as_complex_cpu",
+      "function": "aten_as_complex_cpu",
+      "source": "aten/inputs/aten_as_complex_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_avg_pool2d",
+      "function": "aten_avg_pool2d",
+      "source": "aten/inputs/aten_avg_pool2d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          2
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_avg_pool2d_backward_cpu",
+      "function": "aten_avg_pool2d_backward_cpu",
+      "source": "aten/inputs/aten_avg_pool2d_backward_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ],
+        "specifications": [
+          "aten_avg_pool2d_backward_k2_f32"
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_avg_pool3d",
+      "function": "aten_avg_pool3d",
+      "source": "aten/inputs/aten_avg_pool3d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          2
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_avg_pool3d_backward_cpu",
+      "function": "aten_avg_pool3d_backward_cpu",
+      "source": "aten/inputs/aten_avg_pool3d_backward_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": false,
+        "region_budget": 30,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "matching_stage": "debuf"
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_batch_norm",
+      "function": "aten_batch_norm",
+      "source": "aten/inputs/aten_batch_norm.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_batch_norm_transform_cpu",
+      "function": "aten_batch_norm_transform_cpu",
+      "source": "aten/inputs/aten_batch_norm_transform_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_blas_axpy_cpu",
+      "function": "aten_blas_axpy_cpu",
+      "source": "aten/inputs/aten_blas_axpy_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_blas_copy_cpu",
+      "function": "aten_blas_copy_cpu",
+      "source": "aten/inputs/aten_blas_copy_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_blas_scale_cpu",
+      "function": "aten_blas_scale_cpu",
+      "source": "aten/inputs/aten_blas_scale_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_bmm",
+      "function": "aten_bmm",
+      "source": "aten/inputs/aten_bmm.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          2
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cat_serial_cpu",
+      "function": "aten_cat_serial_cpu",
+      "source": "aten/inputs/aten_cat_serial_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cauchy_cpu",
+      "function": "aten_cauchy_cpu",
+      "source": "aten/inputs/aten_cauchy_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_channel_shuffle",
+      "function": "aten_channel_shuffle",
+      "source": "aten/inputs/aten_channel_shuffle.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_channel_shuffle_cpu",
+      "function": "aten_channel_shuffle_cpu",
+      "source": "aten/inputs/aten_channel_shuffle_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_clamp_max_scalar_cpu",
+      "function": "aten_clamp_max_scalar_cpu",
+      "source": "aten/inputs/aten_clamp_max_scalar_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_clamp_min_scalar_cpu",
+      "function": "aten_clamp_min_scalar_cpu",
+      "source": "aten/inputs/aten_clamp_min_scalar_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_complex_scalarized",
+      "function": "aten_complex_scalarized",
+      "source": "aten/inputs/aten_complex_scalarized.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_compressed_block_convert_cpu",
+      "function": "aten_compressed_block_convert_cpu",
+      "source": "aten/inputs/aten_compressed_block_convert_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          2
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conj_complex_scalarized",
+      "function": "aten_conj_complex_scalarized",
+      "source": "aten/inputs/aten_conj_complex_scalarized.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv1d",
+      "function": "aten_conv1d",
+      "source": "aten/inputs/aten_conv1d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "numeric_model": "relaxed",
+        "region": true,
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv2d",
+      "function": "aten_conv2d",
+      "source": "aten/inputs/aten_conv2d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv2d_columns_cpu",
+      "function": "aten_conv2d_columns_cpu",
+      "source": "aten/inputs/aten_conv2d_columns_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv_tbc_backward_cpu",
+      "function": "aten_conv_tbc_backward_cpu",
+      "source": "aten/inputs/aten_conv_tbc_backward_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv_tbc_cpu",
+      "function": "aten_conv_tbc_cpu",
+      "source": "aten/inputs/aten_conv_tbc_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv_transpose2d",
+      "function": "aten_conv_transpose2d",
+      "source": "aten/inputs/aten_conv_transpose2d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv_transpose3d_backward_cpu",
+      "function": "aten_conv_transpose3d_backward_cpu",
+      "source": "aten/inputs/aten_conv_transpose3d_backward_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv_transpose3d_cpu",
+      "function": "aten_conv_transpose3d_cpu",
+      "source": "aten/inputs/aten_conv_transpose3d_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_conv_transpose3d_grad_weight_cpu",
+      "function": "aten_conv_transpose3d_grad_weight_cpu",
+      "source": "aten/inputs/aten_conv_transpose3d_grad_weight_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 25,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_convert_coo_to_csr_cpu",
+      "function": "aten_convert_coo_to_csr_cpu",
+      "source": "aten/inputs/aten_convert_coo_to_csr_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "numeric_model": "strict",
+        "region": true
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_convert_csr_to_coo_cpu",
+      "function": "aten_convert_csr_to_coo_cpu",
+      "source": "aten/inputs/aten_convert_csr_to_coo_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_copy_cpu",
+      "function": "aten_copy_cpu",
+      "source": "aten/inputs/aten_copy_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_copy_tensor_array_cpu",
+      "function": "aten_copy_tensor_array_cpu",
+      "source": "aten/inputs/aten_copy_tensor_array_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_count_nonzero_impl_cpu",
+      "function": "aten_count_nonzero_impl_cpu",
+      "source": "aten/inputs/aten_count_nonzero_impl_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cpu_blas_gemm_batched_cpu",
+      "function": "aten_cpu_blas_gemm_batched_cpu",
+      "source": "aten/inputs/aten_cpu_blas_gemm_batched_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          2
+        ],
+        "region": true,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cpu_blas_gemm_cpu",
+      "function": "aten_cpu_blas_gemm_cpu",
+      "source": "aten/inputs/aten_cpu_blas_gemm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          2
+        ],
+        "region": true,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cpu_blas_gemm_strided_batched_cpu",
+      "function": "aten_cpu_blas_gemm_strided_batched_cpu",
+      "source": "aten/inputs/aten_cpu_blas_gemm_strided_batched_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          2
+        ],
+        "region": true,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cross",
+      "function": "aten_cross",
+      "source": "aten/inputs/aten_cross.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cross_cpu_backend",
+      "function": "aten_cross_cpu_backend",
+      "source": "aten/inputs/aten_cross_cpu_backend.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_cumprod_cpu",
+      "function": "aten_cumprod_cpu",
+      "source": "aten/inputs/aten_cumprod_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          1
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_depthwise_conv3x3_cpu",
+      "function": "aten_depthwise_conv3x3_cpu",
+      "source": "aten/inputs/aten_depthwise_conv3x3_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "numeric_model": "relaxed",
+        "region": true,
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_diff_cpu",
+      "function": "aten_diff_cpu",
+      "source": "aten/inputs/aten_diff_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_dilated_convolution_cpu",
+      "function": "aten_dilated_convolution_cpu",
+      "source": "aten/inputs/aten_dilated_convolution_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_dirichlet_grad_cpu",
+      "function": "aten_dirichlet_grad_cpu",
+      "source": "aten/inputs/aten_dirichlet_grad_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_dropout_feature_noise_cpu",
+      "function": "aten_dropout_feature_noise_cpu",
+      "source": "aten/inputs/aten_dropout_feature_noise_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_embedding_bag_counts_cpu",
+      "function": "aten_embedding_bag_counts_cpu",
+      "source": "aten/inputs/aten_embedding_bag_counts_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_exponential_cpu",
+      "function": "aten_exponential_cpu",
+      "source": "aten/inputs/aten_exponential_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_flatten_nd_linear_cpu",
+      "function": "aten_flatten_nd_linear_cpu",
+      "source": "aten/inputs/aten_flatten_nd_linear_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_gamma_transform_cpu",
+      "function": "aten_gamma_transform_cpu",
+      "source": "aten/inputs/aten_gamma_transform_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_geometric_cpu",
+      "function": "aten_geometric_cpu",
+      "source": "aten/inputs/aten_geometric_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_hspmm_cpu",
+      "function": "aten_hspmm_cpu",
+      "source": "aten/inputs/aten_hspmm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_im2col",
+      "function": "aten_im2col",
+      "source": "aten/inputs/aten_im2col.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_int_mm_out_cpu",
+      "function": "aten_int_mm_out_cpu",
+      "source": "aten/inputs/aten_int_mm_out_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": true,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_joint_scaling_cpu",
+      "function": "aten_joint_scaling_cpu",
+      "source": "aten/inputs/aten_joint_scaling_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": false,
+        "region_budget": 30,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "matching_stage": "debuf"
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_kron_impl_cpu",
+      "function": "aten_kron_impl_cpu",
+      "source": "aten/inputs/aten_kron_impl_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_kron_out_cpu",
+      "function": "aten_kron_out_cpu",
+      "source": "aten/inputs/aten_kron_out_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_log_normal_cpu",
+      "function": "aten_log_normal_cpu",
+      "source": "aten/inputs/aten_log_normal_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_max_pool2d",
+      "function": "aten_max_pool2d",
+      "source": "aten/inputs/aten_max_pool2d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 30,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "matching_stage": "debuf"
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_mm",
+      "function": "aten_mm",
+      "source": "aten/inputs/aten_mm.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nansum_cpu",
+      "function": "aten_nansum_cpu",
+      "source": "aten/inputs/aten_nansum_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_narrow_copy_dense_cpu",
+      "function": "aten_narrow_copy_dense_cpu",
+      "source": "aten/inputs/aten_narrow_copy_dense_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nested_all_cpu",
+      "function": "aten_nested_all_cpu",
+      "source": "aten/inputs/aten_nested_all_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "numeric_model": "strict",
+        "region": true
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nested_bmm_cpu",
+      "function": "aten_nested_bmm_cpu",
+      "source": "aten/inputs/aten_nested_bmm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          2
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nested_clone_cpu",
+      "function": "aten_nested_clone_cpu",
+      "source": "aten/inputs/aten_nested_clone_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nested_matmul_broadcast_cpu",
+      "function": "aten_nested_matmul_broadcast_cpu",
+      "source": "aten/inputs/aten_nested_matmul_broadcast_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          2
+        ],
+        "region": true,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nested_squeeze_cpu",
+      "function": "aten_nested_squeeze_cpu",
+      "source": "aten/inputs/aten_nested_squeeze_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nested_sum_backward_cpu",
+      "function": "aten_nested_sum_backward_cpu",
+      "source": "aten/inputs/aten_nested_sum_backward_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_nested_sum_dim_cpu",
+      "function": "aten_nested_sum_dim_cpu",
+      "source": "aten/inputs/aten_nested_sum_dim_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": true,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_normal_cpu",
+      "function": "aten_normal_cpu",
+      "source": "aten/inputs/aten_normal_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_or_reduce_cpu",
+      "function": "aten_or_reduce_cpu",
+      "source": "aten/inputs/aten_or_reduce_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_outer",
+      "function": "aten_outer",
+      "source": "aten/inputs/aten_outer.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 25,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_pixel_shuffle",
+      "function": "aten_pixel_shuffle",
+      "source": "aten/inputs/aten_pixel_shuffle.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_pixel_shuffle_cpu_backend",
+      "function": "aten_pixel_shuffle_cpu_backend",
+      "source": "aten/inputs/aten_pixel_shuffle_cpu_backend.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_pixel_unshuffle_cpu_backend",
+      "function": "aten_pixel_unshuffle_cpu_backend",
+      "source": "aten/inputs/aten_pixel_unshuffle_cpu_backend.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_polar_scalarized",
+      "function": "aten_polar_scalarized",
+      "source": "aten/inputs/aten_polar_scalarized.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": true,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_quant_col_offsets_cpu",
+      "function": "aten_quant_col_offsets_cpu",
+      "source": "aten/inputs/aten_quant_col_offsets_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_renorm_scale_factor",
+      "function": "aten_renorm_scale_factor",
+      "source": "aten/inputs/aten_renorm_scale_factor.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_repeat_compute_cpu",
+      "function": "aten_repeat_compute_cpu",
+      "source": "aten/inputs/aten_repeat_compute_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_repeat_tensor_shape_cpu",
+      "function": "aten_repeat_tensor_shape_cpu",
+      "source": "aten/inputs/aten_repeat_tensor_shape_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sampled_addmm_sparse_csr_cpu",
+      "function": "aten_sampled_addmm_sparse_csr_cpu",
+      "source": "aten/inputs/aten_sampled_addmm_sparse_csr_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "numeric_model": "relaxed",
+        "region": true,
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_slow_conv3d_backward_input_cpu",
+      "function": "aten_slow_conv3d_backward_input_cpu",
+      "source": "aten/inputs/aten_slow_conv3d_backward_input_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_slow_conv3d_backward_weight_cpu",
+      "function": "aten_slow_conv3d_backward_weight_cpu",
+      "source": "aten/inputs/aten_slow_conv3d_backward_weight_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 25,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_add_values_cpu",
+      "function": "aten_sparse_add_values_cpu",
+      "source": "aten/inputs/aten_sparse_add_values_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_addmm_cpu",
+      "function": "aten_sparse_addmm_cpu",
+      "source": "aten/inputs/aten_sparse_addmm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_addmv_bsr_cpu",
+      "function": "aten_sparse_addmv_bsr_cpu",
+      "source": "aten/inputs/aten_sparse_addmv_bsr_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 120,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "matching_stage": "linalg"
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_addmv_csr_cpu",
+      "function": "aten_sparse_addmv_csr_cpu",
+      "source": "aten/inputs/aten_sparse_addmv_csr_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_bmm_cpu",
+      "function": "aten_sparse_bmm_cpu",
+      "source": "aten/inputs/aten_sparse_bmm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_coo_to_csr_cpu",
+      "function": "aten_sparse_coo_to_csr_cpu",
+      "source": "aten/inputs/aten_sparse_coo_to_csr_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "numeric_model": "strict",
+        "region": true
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_csr_addmm_cpu",
+      "function": "aten_sparse_csr_addmm_cpu",
+      "source": "aten/inputs/aten_sparse_csr_addmm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_intersection_apply_cpu",
+      "function": "aten_sparse_intersection_apply_cpu",
+      "source": "aten/inputs/aten_sparse_intersection_apply_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_intersection_launch_cpu",
+      "function": "aten_sparse_intersection_launch_cpu",
+      "source": "aten/inputs/aten_sparse_intersection_launch_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_matmul_cpu",
+      "function": "aten_sparse_matmul_cpu",
+      "source": "aten/inputs/aten_sparse_matmul_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_matmul_csr_to_coo_cpu",
+      "function": "aten_sparse_matmul_csr_to_coo_cpu",
+      "source": "aten/inputs/aten_sparse_matmul_csr_to_coo_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_mul_cpu",
+      "function": "aten_sparse_mul_cpu",
+      "source": "aten/inputs/aten_sparse_mul_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sparse_norm_cpu",
+      "function": "aten_sparse_norm_cpu",
+      "source": "aten/inputs/aten_sparse_norm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sspaddmm_cpu",
+      "function": "aten_sspaddmm_cpu",
+      "source": "aten/inputs/aten_sspaddmm_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 45,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_stack_serial_cpu",
+      "function": "aten_stack_serial_cpu",
+      "source": "aten/inputs/aten_stack_serial_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_standard_gamma_grad_cpu",
+      "function": "aten_standard_gamma_grad_cpu",
+      "source": "aten/inputs/aten_standard_gamma_grad_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sum",
+      "function": "aten_sum",
+      "source": "aten/inputs/aten_sum.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          1
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_sumproduct_pair_cpu",
+      "function": "aten_sumproduct_pair_cpu",
+      "source": "aten/inputs/aten_sumproduct_pair_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          2
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_transform_bias_rescale_qkv_cpu",
+      "function": "aten_transform_bias_rescale_qkv_cpu",
+      "source": "aten/inputs/aten_transform_bias_rescale_qkv_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_transpose_copy",
+      "function": "aten_transpose_copy",
+      "source": "aten/inputs/aten_transpose_copy.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_unbind_copy_cpu",
+      "function": "aten_unbind_copy_cpu",
+      "source": "aten/inputs/aten_unbind_copy_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "ranks": [
+          0
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_uniform_cpu",
+      "function": "aten_uniform_cpu",
+      "source": "aten/inputs/aten_uniform_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_upsample_bilinear2d",
+      "function": "aten_upsample_bilinear2d",
+      "source": "aten/inputs/aten_upsample_bilinear2d.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "ranks": [
+          0
+        ],
+        "region": true,
+        "region_budget": 30,
+        "numeric_model": "relaxed",
+        "split_reduction_inputs": false,
+        "split_pointwise_inputs": false,
+        "matching_stage": "debuf"
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_xor_sum_cpu",
+      "function": "aten_xor_sum_cpu",
+      "source": "aten/inputs/aten_xor_sum_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          2
+        ]
+      }
+    },
+    {
+      "suite": "aten",
+      "kernel": "aten_zeros_cpu",
+      "function": "aten_zeros_cpu",
+      "source": "aten/inputs/aten_zeros_cpu.c",
+      "cflags": [
+        "-O3"
+      ],
+      "match_options": {
+        "region": false,
+        "numeric_model": "strict",
+        "split_reduction_inputs": true,
+        "split_pointwise_inputs": true,
+        "ranks": [
+          1
+        ]
+      }
+    },
+    {
+      "suite": "llama",
+      "kernel": "token_embedding",
+      "function": "kernel_llama_token_embedding",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "attention_rmsnorm",
+      "function": "kernel_llama_attention_rmsnorm",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "qkv_projection",
+      "function": "kernel_llama_qkv_projection",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "rope_interleaved",
+      "function": "kernel_llama_rope",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "rope_split",
+      "function": "kernel_llama_rope_split",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "kv_cache_rw",
+      "function": "kernel_llama_kv_cache_rw",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "attention_scores",
+      "function": "kernel_llama_attention_scores",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "attention_mask_if",
+      "function": "kernel_llama_attention_mask",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "attention_mask_select",
+      "function": "kernel_llama_attention_mask_select",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "attention_softmax",
+      "function": "kernel_llama_attention_softmax",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "attention_output",
+      "function": "kernel_llama_attention_output",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "output_projection",
+      "function": "kernel_llama_output_projection",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "residual_add",
+      "function": "kernel_llama_residual_add",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "ffn_rmsnorm",
+      "function": "kernel_llama_ffn_rmsnorm",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "gate_up_projection",
+      "function": "kernel_llama_gate_up_projection",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "swiglu",
+      "function": "kernel_llama_swiglu",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "down_projection",
+      "function": "kernel_llama_down_projection",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "final_rmsnorm",
+      "function": "kernel_llama_final_rmsnorm",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "lm_head_projection",
+      "function": "kernel_llama_lm_head_projection",
+      "source": "llama/inputs/llama_forward_ops.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "extended_forward",
+      "function": "kernel_llama2_extended_forward",
+      "source": "llama/inputs/llama2_extended_forward_bench.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "llama2c_matmul",
+      "function": "matmul",
+      "source": "third_party/llama2.c/run.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "llama2c_rmsnorm",
+      "function": "rmsnorm",
+      "source": "third_party/llama2.c/run.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "llama",
+      "kernel": "llama2c_softmax",
+      "function": "softmax",
+      "source": "third_party/llama2.c/run.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "interp_value_2d_scratch_sliced",
+      "function": "mfem_interp_value_2d_scratch_sliced",
+      "source": "mfem/inputs/normalized/value_scratch_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "interp_value_3d_scratch_sliced",
+      "function": "mfem_interp_value_3d_scratch_sliced",
+      "source": "mfem/inputs/normalized/value_scratch_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "integrate_value_2d_scratch_sliced",
+      "function": "mfem_integrate_value_2d_scratch_sliced",
+      "source": "mfem/inputs/normalized/value_scratch_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "integrate_value_3d_scratch_sliced",
+      "function": "mfem_integrate_value_3d_scratch_sliced",
+      "source": "mfem/inputs/normalized/value_scratch_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mass_apply_2d_stage_sliced",
+      "function": "mfem_pa_mass_apply_2d_stage_sliced",
+      "source": "mfem/inputs/normalized/mass_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mass_apply_3d_stage_sliced",
+      "function": "mfem_pa_mass_apply_3d_stage_sliced",
+      "source": "mfem/inputs/normalized/mass_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "interp_grad_2d_stage_sliced",
+      "function": "mfem_interp_grad_2d_stage_sliced",
+      "source": "mfem/inputs/normalized/gradient_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "interp_grad_3d_stage_sliced",
+      "function": "mfem_interp_grad_3d_stage_sliced",
+      "source": "mfem/inputs/normalized/gradient_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "integrate_grad_2d_stage_sliced",
+      "function": "mfem_integrate_grad_2d_stage_sliced",
+      "source": "mfem/inputs/normalized/gradient_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "integrate_grad_3d_stage_sliced",
+      "function": "mfem_integrate_grad_3d_stage_sliced",
+      "source": "mfem/inputs/normalized/gradient_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "diffusion_apply_2d_stage_sliced",
+      "function": "mfem_pa_diffusion_apply_2d_stage_sliced",
+      "source": "mfem/inputs/normalized/diffusion_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "diffusion_apply_3d_stage_sliced",
+      "function": "mfem_pa_diffusion_apply_3d_stage_sliced",
+      "source": "mfem/inputs/normalized/diffusion_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "convection_apply_2d_stage_sliced",
+      "function": "mfem_pa_convection_apply_2d_stage_sliced",
+      "source": "mfem/inputs/normalized/convection_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "convection_apply_3d_stage_sliced",
+      "function": "mfem_pa_convection_apply_3d_stage_sliced",
+      "source": "mfem/inputs/normalized/convection_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "elasticity_qpoint_2d_scalarized",
+      "function": "mfem_elasticity_qpoint_2d_scalarized",
+      "source": "mfem/inputs/normalized/elasticity_scalarized.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "elasticity_qpoint_3d_scalarized",
+      "function": "mfem_elasticity_qpoint_3d_scalarized",
+      "source": "mfem/inputs/normalized/elasticity_scalarized.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "curlcurl_apply_2d_stage_sliced",
+      "function": "mfem_pa_curlcurl_apply_2d_stage_sliced",
+      "source": "mfem/inputs/normalized/de_rham2_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "divdiv_apply_2d_stage_sliced",
+      "function": "mfem_pa_divdiv_apply_2d_stage_sliced",
+      "source": "mfem/inputs/normalized/de_rham2_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "divdiv_apply_3d_stage_sliced",
+      "function": "mfem_pa_divdiv_apply_3d_stage_sliced",
+      "source": "mfem/inputs/normalized/divdiv3_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "curlcurl_apply_3d_stage_sliced",
+      "function": "mfem_pa_curlcurl_apply_3d_stage_sliced",
+      "source": "mfem/inputs/normalized/curlcurl3_stage_sliced.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_mtop_iso_elasticity_dfem_2d",
+      "function": "mfem_app_mtop_iso_elasticity_dfem_2d",
+      "source": "mfem/inputs/application_extractions/mtop_iso_elasticity_dfem_2d.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_dfem_minimal_surface_2d",
+      "function": "mfem_app_dfem_minimal_surface_2d",
+      "source": "mfem/inputs/application_extractions/dfem_minimal_surface_2d.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_ex35p_h1_3d",
+      "function": "mfem_app_ex35p_h1_3d",
+      "source": "mfem/inputs/application_extractions/ex35p_pa_operators.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_ex35p_hcurl_3d",
+      "function": "mfem_app_ex35p_hcurl_3d",
+      "source": "mfem/inputs/application_extractions/ex35p_pa_operators.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_ex35p_hdiv_3d",
+      "function": "mfem_app_ex35p_hdiv_3d",
+      "source": "mfem/inputs/application_extractions/ex35p_pa_operators.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_ex9p_mass_convection_2d",
+      "function": "mfem_app_ex9p_mass_convection_2d",
+      "source": "mfem/inputs/application_extractions/ex9p_mass_convection_2d.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_grad_div_3d",
+      "function": "mfem_app_grad_div_3d",
+      "source": "mfem/inputs/application_extractions/grad_div_3d.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_abs_l1_mass_3d",
+      "function": "mfem_app_abs_l1_mass_3d",
+      "source": "mfem/inputs/application_extractions/abs_l1_jacobi_operators.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_abs_l1_diffusion_3d",
+      "function": "mfem_app_abs_l1_diffusion_3d",
+      "source": "mfem/inputs/application_extractions/abs_l1_jacobi_operators.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_abs_l1_curlcurl_3d",
+      "function": "mfem_app_abs_l1_curlcurl_3d",
+      "source": "mfem/inputs/application_extractions/abs_l1_jacobi_operators.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "mfem",
+      "kernel": "mfem_app_navier_tgv_pa_operators_3d",
+      "function": "mfem_app_navier_tgv_pa_operators_3d",
+      "source": "mfem/inputs/application_extractions/navier_tgv_pressure_diffusion_3d.c",
+      "cflags": [
+        "-O3"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "2mm",
+      "function": "kernel_2mm",
+      "source": "polybench/sources/linear-algebra/kernels/2mm/2mm.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/kernels/2mm",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "3mm",
+      "function": "kernel_3mm",
+      "source": "polybench/sources/linear-algebra/kernels/3mm/3mm.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/kernels/3mm",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "adi",
+      "function": "kernel_adi",
+      "source": "polybench/sources/stencils/adi/adi.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/stencils/adi",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "atax",
+      "function": "kernel_atax",
+      "source": "polybench/sources/linear-algebra/kernels/atax/atax.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/kernels/atax",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "bicg",
+      "function": "kernel_bicg",
+      "source": "polybench/sources/linear-algebra/kernels/bicg/bicg.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/kernels/bicg",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "cholesky",
+      "function": "kernel_cholesky",
+      "source": "polybench/sources/linear-algebra/solvers/cholesky/cholesky.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/solvers/cholesky",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "correlation",
+      "function": "kernel_correlation",
+      "source": "polybench/sources/datamining/correlation/correlation.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/datamining/correlation",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "covariance",
+      "function": "kernel_covariance",
+      "source": "polybench/sources/datamining/covariance/covariance.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/datamining/covariance",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "deriche",
+      "function": "kernel_deriche",
+      "source": "polybench/sources/medley/deriche/deriche.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/medley/deriche",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "doitgen",
+      "function": "kernel_doitgen",
+      "source": "polybench/sources/linear-algebra/kernels/doitgen/doitgen.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/kernels/doitgen",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "durbin",
+      "function": "kernel_durbin",
+      "source": "polybench/sources/linear-algebra/solvers/durbin/durbin.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/solvers/durbin",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "fdtd-2d",
+      "function": "kernel_fdtd_2d",
+      "source": "polybench/sources/stencils/fdtd-2d/fdtd-2d.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/stencils/fdtd-2d",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "floyd-warshall",
+      "function": "kernel_floyd_warshall",
+      "source": "polybench/sources/medley/floyd-warshall/floyd-warshall.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/medley/floyd-warshall",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "gemm",
+      "function": "kernel_gemm",
+      "source": "polybench/sources/linear-algebra/blas/gemm/gemm.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/blas/gemm",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "gemver",
+      "function": "kernel_gemver",
+      "source": "polybench/sources/linear-algebra/blas/gemver/gemver.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/blas/gemver",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "gesummv",
+      "function": "kernel_gesummv",
+      "source": "polybench/sources/linear-algebra/blas/gesummv/gesummv.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/blas/gesummv",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "gramschmidt",
+      "function": "kernel_gramschmidt",
+      "source": "polybench/sources/linear-algebra/solvers/gramschmidt/gramschmidt.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/solvers/gramschmidt",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "heat-3d",
+      "function": "kernel_heat_3d",
+      "source": "polybench/sources/stencils/heat-3d/heat-3d.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/stencils/heat-3d",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "jacobi-1d",
+      "function": "kernel_jacobi_1d",
+      "source": "polybench/sources/stencils/jacobi-1d/jacobi-1d.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/stencils/jacobi-1d",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "jacobi-2d",
+      "function": "kernel_jacobi_2d",
+      "source": "polybench/sources/stencils/jacobi-2d/jacobi-2d.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/stencils/jacobi-2d",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "lu",
+      "function": "kernel_lu",
+      "source": "polybench/sources/linear-algebra/solvers/lu/lu.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/solvers/lu",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "ludcmp",
+      "function": "kernel_ludcmp",
+      "source": "polybench/sources/linear-algebra/solvers/ludcmp/ludcmp.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/solvers/ludcmp",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "mvt",
+      "function": "kernel_mvt",
+      "source": "polybench/sources/linear-algebra/kernels/mvt/mvt.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/kernels/mvt",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "nussinov",
+      "function": "kernel_nussinov",
+      "source": "polybench/sources/medley/nussinov/nussinov.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/medley/nussinov",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "seidel-2d",
+      "function": "kernel_seidel_2d",
+      "source": "polybench/sources/stencils/seidel-2d/seidel-2d.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/stencils/seidel-2d",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "symm",
+      "function": "kernel_symm",
+      "source": "polybench/sources/linear-algebra/blas/symm/symm.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/blas/symm",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "syr2k",
+      "function": "kernel_syr2k",
+      "source": "polybench/sources/linear-algebra/blas/syr2k/syr2k.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/blas/syr2k",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "syrk",
+      "function": "kernel_syrk",
+      "source": "polybench/sources/linear-algebra/blas/syrk/syrk.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/blas/syrk",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "trisolv",
+      "function": "kernel_trisolv",
+      "source": "polybench/sources/linear-algebra/solvers/trisolv/trisolv.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/solvers/trisolv",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    },
+    {
+      "suite": "polybench",
+      "kernel": "trmm",
+      "function": "kernel_trmm",
+      "source": "polybench/sources/linear-algebra/blas/trmm/trmm.c",
+      "cflags": [
+        "-O3",
+        "-I{root}/polybench/sources/utilities",
+        "-I{root}/polybench/sources/linear-algebra/blas/trmm",
+        "-Dstatic=__attribute__((noipa))",
+        "-DLARGE_DATASET",
+        "-DDATA_TYPE_IS_DOUBLE",
+        "-DPOLYBENCH_USE_C99_PROTO",
+        "-DPOLYBENCH_DUMP_ARRAYS"
+      ]
+    }
+  ],
+  "aten_configuration": "Pinned paper shapes and matching_options.json; the same configuration in both EqSat arms."
+}

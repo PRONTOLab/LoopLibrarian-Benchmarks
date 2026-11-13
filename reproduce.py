@@ -13,7 +13,7 @@ import sys
 from common import ARTIFACT, ROOT, environment, provenance, save, setting
 
 SUITES = ['polybench_cpu', 'polybench_gpu', 'llama', 'mfem', 'eqsat',
-          'graph_sizes', 'ginsbach', 'kernelfarer', 'aten', 'library_inventory']
+          'graph_sizes', 'ginsbach', 'kernelfarer', 'aten', 'library_inventory', 'pva', 'compilation_cost']
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
@@ -27,6 +27,7 @@ def main():
     stamp = uuid.uuid4().hex[:12]
     out = (a.output or ROOT/'results/runs'/f'{a.suite}-{stamp}').resolve()
     directories = {'polybench_cpu': 'polybench/cpu', 'polybench_gpu': 'polybench/gpu', 'llama': 'llama', 'mfem': 'mfem', 'eqsat': 'eqsat', 'graph_sizes': 'graph_sizes', 'ginsbach': 'ginsbach', 'kernelfarer': 'kernelfarer', 'aten': 'aten', 'library_inventory': 'library_inventory'}
+    directories.update(pva='pva',compilation_cost='compilation_cost')
     script = ROOT/directories[a.suite]/'reproduce.py'
     stage = 'all' if a.stage == 'plan' else a.stage
     cmd = [sys.executable, str(script), '--stage', stage]

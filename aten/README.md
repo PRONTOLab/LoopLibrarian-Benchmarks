@@ -1,86 +1,118 @@
-# ATen checkpoint — run-maplolfahi
+# ATen paper-cohort reproduction
 
-The paper cohort contains 115 non-pointwise cases. This checkpoint has 106
-complete library matches and 102 strict GPU correctness passes. Nine cases
-still lack a complete match; four matched cases retain failed comparisons.
-Matching coverage, correctness, and performance are tracked separately.
+The timing cohort contains 115 cases. The 598 extracted/transliterated source
+fixtures are ordinary files in `aten/inputs/`; the cohort, paper dimensions,
+matching configuration, and original timing records are in `paper_cases.csv`,
+`paper_shapes.json`, `matching_options.json`, and `paper_timings.csv`.
+Extraction provenance is in `aten/metadata/`. Fresh reproduction does not
+require the evidence archive.
 
-## Evidence
+```
+python3 reproduce.py aten --output results/runs/aten-paper
+```
 
-- [Current status](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/runtime-validation-status.json)
-- [Per-case results and timing samples](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/runtime-validation-ledger.json)
-- [Failure diagnoses](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/runtime-failure-diagnoses.json)
-- [Historical paper data](../results/archive/issues/aten_c_kernels/paper_analysis/aten_gpu_nonpointwise_115.csv)
-- [Pinned dimensions](../results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/shapes.json)
-- [COO baseline attribution](../results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-native-attribution/paper-comparisons.json)
-- [Latest reference imports and runtime improvements](../results/archive/issues/aten_paper13_followup_run-nhcdgielcn/runtime-report.md)
+This command materializes separate paper-shape copies, raises them, proves
+matches against imported `lib_v3` references, builds complete matches, checks
+full outputs against the original C and real ATen CUDA, and runs five warmups
+and five alternating synchronized timing pairs. The original fixture bodies
+remain unchanged. Per-case configuration chooses generic raising and matching
+options; it does not authorize a replacement without a specification proof.
 
-The retained records include correctness output, timing samples, build metadata,
-proof receipts, and machine snapshots. Absolute paths record the original run
-location; resolve the portion after `Polygeist/` against this checkout. Local
-compiler workspaces, binaries, and intermediate object files are not included.
-These records are evidence, not inputs substituting for a fresh build.
+Imported tensor references can retain broadcast dimensions instead of expanding
+every input to the output size. For example, the public PyTorch saved-statistics
+normalization reference supplies the arithmetic and broadcast maps for a cuDNN
+graph; the ABI adapter only creates descriptors and marshals buffers. The
+Kronecker-product reference exposes PyTorch's broadcast views and output reshape
+and binds to cuTENSOR. Neither path recognizes application function names.
 
-## Scope and remaining work
+For a short test, add `--cases aten_pixel_shuffle`. Build and run can be
+separated with `--stage build` and `--stage run`, using the same output directory.
+Configure the target's SSH transport and library paths in `config.json`.
+`ATEN_NATIVE_TORCH_ROOT` points to the target-compatible libtorch headers and
+libraries on the build host; `ATEN_NATIVE_CUDA_ROOT` points to the AArch64 CUDA
+installation. `POLYGEIST_CUTENSOR_ROOT` is also required by cases that prove a
+cuTENSOR replacement. This setting is used for both runtime compilation and
+linking the final ATen comparison executable. SDK setup is separate from the
+experiment.
 
-There are 101 validated timings at the recorded paper dimensions: 46 are within
-5% of the reported raised runtime or faster, 16 are 5–20% slower, and 39 are
-more than 20% slower. Only 90 also use the same recorded statistic. These are
-runtime comparisons, not a claim that every native-baseline speedup reproduces.
-The ledger retains baseline-scope and input-distribution caveats. The separate
-COO follow-up isolates the historical native API/preparation scope.
+The output contains `matching/` with per-case IR, proofs and ABI checks, and
+`gpu/` with executable hashes, correctness logs, every timing sample and a
+combined `report.json`. The summary keeps these separate:
 
-The four failed comparisons are sparse norm, outer product, transposed 3D
-convolution weight gradient, and slow 3D convolution weight gradient. The first,
-third, and fourth agree with native CUDA but differ from the C reference under
-the strict rounding gate. Outer product agrees with C but differs from native
-CUDA in signed zero. They remain failed in the strict pass count.
+- complete imported-specification matches;
+- successful executable builds;
+- raised-versus-original-C correctness;
+- native-versus-original-C correctness and raised/native agreement;
+- validated timing pairs and both latency and native-relative speedup comparisons.
 
-New timing runs use five warmups and five alternating synchronized pairs.
-Historical twenty-pair records remain labeled with their original protocol.
+`gpu/report.csv` provides one row per selected paper case, including unmatched
+cases. It records the emitted specifications and vendor calls, each correctness
+criterion, timing input/statistic, and current versus published runtimes. Blank
+cells mean unavailable evidence, rather than a successful check or zero time.
 
-The latest generic descriptor-copy implementation passes byte-exact GPU checks
-over 722,206,720 bytes. Current raised runtimes are 1.088 ms for adaptive average
-pooling, 1.581 ms for pixel shuffle, and 2.924 ms for batch normalization. All
-three pass strict paper-size correctness but remain slower than the paper.
-BSR matrix-vector and average-pool backward proof/import work is retained as
-pending work and does not increase the completed GPU counts above.
+Regenerate the Figure 5-style scatter from a recorded report:
 
-## Reproduction drivers
+```
+python3 aten/plot_results.py --report results/runs/aten-paper/gpu/report.json --output results/runs/aten-paper/plots
+```
 
-The 598 source fixtures are ordinary files in `aten/inputs/`. The paper cohort
-is `aten/paper_cases.csv`, its dimensions are `aten/paper_shapes.json`, and
-extraction provenance is retained in `aten/metadata/`. These inputs do not
-require `results/archive/`. The drivers
-materialize separate copies with the recorded paper dimensions, raise both
-application and library references through the established pipeline, prove
-matches against `lib_v3`, and emit the corresponding library calls.
+This requires `pdflatex` with PGFPlots and the `standalone` class, plus
+`pdftoppm`. It writes a PDF, PNG, plot provenance, and a CSV retaining every
+cohort case. Original-input passes and the separately validated finite-input
+argmax/min timings use different markers. Failed or unmatched cases remain in
+the CSV without invented timing coordinates. Rendering uses the saved samples
+and takes a few seconds.
 
-- `scripts/correctness/aten_paper115_campaign.py`: fresh raising, matching,
-  proof verification, and ABI emission; accepts `--shape-specs` and
-  `--case-options` for the saved dimension and option records.
-- `scripts/correctness/aten_fixture_batch.py`: fresh build and strict C/native
-  CUDA comparisons; use `--correctness-kinds paper --timing-samples 5` with
-  the same shape specification and a successful matching campaign.
-- `scripts/correctness/aten_fixture_host_sanitize.py`: host memory checks.
-- `scripts/correctness/aten_frozen_runtime_campaign.py`: separate timing
-  experiments on saved build inputs; not the fresh-source reproduction driver.
-- `scripts/correctness/aten_coo_native_attribution.py`: isolated follow-up on
-  the COO native baseline preparation and materialization scope.
+Add `--paper-figure PATH_TO_ARCHIVED_FIGURE.pdf` to produce an additional
+side-by-side PDF/PNG with the original paper figure embedded unchanged. Its
+summary compares both the full historical cohort and the cases with current
+validated timings, and records the original figure hash. The original figure's
+axis limits are retained, so consult the numeric comparison as well as the image.
 
-The shared environment and target-library requirements are documented in the
-[artifact README](../README.md). Consult each driver's `--help` for build/run
-stages and transport configuration. Authentication belongs in local transport
-configuration, not in the repository.
+Unmatched cases and failed comparisons remain in the denominator. A successful
+driver exit means the experiment completed, not that every published result
+was reproduced. Timing comparisons explicitly flag a different historical
+statistic. Argmax/min retain the original NaN-containing recipe and its native
+CUDA disagreement; their separately recorded finite native-harness recipe is
+also checked and is identified whenever it supplies a timing measurement.
+No tolerance is changed to hide a failed comparison.
 
-## Checkpoint validation
+Strict comparability with the paper is not established for every timing pair.
+The current native harness uses different API scopes for `unbind_copy` and
+`renorm_scale_factor`, and sampled sparse addmm uses a different column-index
+recipe. Passing output comparisons does not resolve these timing differences.
+See [the comparison audit and remaining work](remaining_coverage.md) before
+interpreting the scatter or speedup counts as a reproduction of the paper.
 
-All 339 Python correctness tests passed after refreshing all 260 reference
-imports. The new static flat-fill compiler regression passed its RUN command
-and FileCheck assertions. Average-pool backward now validates exactly through
-the affine, memref-Linalg, and tensor-definition routes. BSR's tensor-definition
-route remains excluded because it fails numerical validation; its affine and
-memref-Linalg routes validate exactly. The GPU pass count above comes from the
-recorded campaigns, not this host test suite.
+Allow roughly 1–3 hours for the full fresh match/build/check/timing campaign on
+the documented machines, depending on runtime-object cache state and host
+load. A single case normally takes a few minutes. These are wall-time estimates,
+not kernel runtimes. Compilation-cost experiments disable application compiler
+caches and are measured separately.
 
-For a fresh selected-case run: `python3 reproduce.py aten --cases aten_mm --output results/runs/aten-mm`. Use `aten/paper_shapes.json`; the merged manifest contains all 115 cases.
+Historical checkpoints, including their older counts, statistics and failure
+diagnoses, remain under `results/archive/issues/`. Runtime-only relink probes
+are diagnostics; a fresh source-to-executable run is needed before treating an
+optimization as artifact evidence.
+
+For reduction-order diagnostics, compare a recorded executable's computation
+with the same paper-shape C body evaluated in FP64:
+
+```
+python3 aten/numerical_diagnostics.py --gpu-results results/runs/aten-paper/gpu --output results/runs/aten-numerics
+```
+
+This runs sparse norm and the two 3-D convolution weight-gradient cases. It
+widens the initialized FP32 values exactly, evaluates the unchanged arithmetic
+body in FP64, and reports the existing absolute/relative tolerance against
+that reference. It retains the base-build and object hashes. Allow 1–3 minutes.
+This is a diagnostic relink, with no timing measurements; it never overwrites
+the original paper comparisons or counts as a new compiler reproduction.
+
+The recorded diagnostic found that sparse norm's serial FP32 accumulation
+fails the FP64 comparison while both GPU paths pass. The convolution cases
+are more subtle: both GPU paths agree, but 17/3456 outputs in transposed
+convolution and 92/3456 outputs in ordinary convolution still exceed the
+existing per-element tolerance against FP64. Their original C references also
+fail for 94/3456 and 85/3456 outputs respectively. These results establish
+native-GPU agreement, not a clean pass of the original numerical criterion.

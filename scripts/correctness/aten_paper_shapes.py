@@ -92,4 +92,15 @@ def input_recipe(name, cfg, record, benchmark):
         expressions[arg] = match[1]
     cfg['paper_initializers'] = expressions
     cfg['paper_parameters'] = scalars
+    # Some archived native timings used a different input distribution from
+    # the raised-side correctness harness. Preserve both named recipes.
+    native = record.get('native_input_recipe')
+    if native is not None:
+        if (not isinstance(native, dict) or not native.get('source') or
+                set(native.get('initializers', {})) != set(expressions) or
+                any(not isinstance(v, str) or not v.strip()
+                    for v in native['initializers'].values())):
+            raise ValueError('Invalid native publication input recipe: '+name)
+        cfg['native_paper_initializers'] = copy.deepcopy(native['initializers'])
+        cfg['native_paper_input_source'] = native['source']
     return cfg

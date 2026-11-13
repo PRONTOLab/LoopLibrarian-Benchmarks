@@ -13,6 +13,17 @@ import aten_paper_shapes as S
 
 
 class PaperShapes(unittest.TestCase):
+    def test_native_recipe_preserves_original_nan_recipe(self):
+        row = S.load_shapes(ROOT/'aten/paper_shapes.json')['aten_argmax_cpu']
+        cfg = B.configuration(row['kernel'], row)
+        self.assertIn('NAN', cfg['paper_initializers']['x'])
+        self.assertNotIn('NAN', cfg['native_paper_initializers']['x'])
+        self.assertIn('whole_integer_reduction', cfg['native_paper_input_source'])
+        self.assertIn('#define NATIVE_PAPER_RECIPE 1', B.harness(row['kernel'], cfg))
+        invalid = dict(row, native_input_recipe=dict(source='test', initializers={'x':'0'}))
+        with self.assertRaises(ValueError):
+            B.configuration(row['kernel'], invalid)
+
     def test_explicit_harness_dimension_alias(self):
         source = ROOT/'aten/inputs/aten_sampled_addmm_sparse_csr_cpu.c'
         original = source.read_bytes()

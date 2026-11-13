@@ -135,9 +135,9 @@ results/archive/       retained evidence and original extraction fixtures
 docs/                  methodology, system metadata, migration record
 ```
 
-The eight established suites, ATen, and the library inventory have reproduction
-entry points. PVA and compilation-cost documentation identifies the remaining
-setup and validation work.
+The eight established suites, ATen, PVA, compilation cost, and the library
+inventory have reproduction entry points. Each suite documents its setup,
+supported cases, and remaining validation work.
 The root launcher provides a common interface; pending evaluations are labeled
 as pending rather than presented as completed reproduction results.
 
@@ -217,7 +217,9 @@ exclude the preparation above. Use the suite name with `python3 reproduce.py`.
 | `kernelfarer` | GEMM, SYR2K, 2mm, and 3mm; three implementations | 30–90 minutes |
 | `library_inventory` | Audit the existing specification catalog | Less than 2 minutes; import is separate |
 | `aten`, selected case | Paper shape, correctness, and five timing pairs | 2–10 minutes; large convolution cases can take longer |
-| `aten`, full 115-case attempt | Matching, builds, correctness, and timings for passing cases | 2–8 hours; provisional estimate, cohort still incomplete |
+| `aten`, full 115-case attempt | Matching, builds, correctness, and timings for passing cases | 1–3 hours; cohort still incomplete |
+| `pva` | Seven supported datatype cases; fresh compilation and hardware correctness | 6–13 minutes; excludes SDK setup |
+| `compilation_cost` | 199 inputs, two EqSat arms, five repetitions: 1,990 sequential fresh builds | 30–60 hours; provisional, based on 50–170-second probes |
 
 For repeat runs using valid existing executables, budget approximately
 30–90 minutes for PolyBench CPU, 10–20 minutes for PolyBench GPU, and
@@ -234,10 +236,11 @@ build/validation runs took minutes. The full-suite ranges above remain planning
 estimates until a complete run of each packaged driver records its duration.
 Timeout settings are failure limits, not expected run times.
 
-The 200-pointwise-case ATen target, PVA's fresh compilation flow, and the repeated
-compilation-cost table are still under development. Their complete reproduction
-times are not yet established; the ATen estimate above does not promise that all
-115 cases pass or include time to implement missing compiler support.
+The 200-pointwise-case ATen target and the three remaining PVA operator families
+are outside these estimates. The ATen estimate does not promise that all 115
+cases pass or include time to implement missing compiler support. The
+compilation-cost estimate is for collecting the new table; it does not establish
+agreement with the published values.
 
 Record actual elapsed time when running an experiment, for example:
 

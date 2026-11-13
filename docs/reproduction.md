@@ -26,10 +26,12 @@ timings are not inputs to these drivers.
 - `kernelfarer`: Table 9, fresh native, real KernelFaRer, and whole-program
   LoopLibrarian builds for GEMM, SYR2K, 2mm, and 3mm.
 
-ATen, PVA, compilation-cost measurements, and the 257-specification inventory
-are outside this package's eight evaluation commands. The ongoing ATen campaign
-has a separate [checkpoint and evidence index](../aten/README.md); it is not
-yet a completed 115-case reproduction.
+Additional drivers cover [ATen](../aten/README.md), [PVA](../pva/README.md),
+[compilation cost](../compilation_cost/README.md), and the
+[specification inventory](../library_inventory/README.md). Their commands and
+remaining limitations are documented separately. Availability of a driver does
+not establish completion: ATen retains proof and numerical comparison gaps,
+and PVA retains three operator families with different vendor semantics.
 
 ## Machines and dependencies
 

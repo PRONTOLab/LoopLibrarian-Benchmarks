@@ -33,5 +33,15 @@
     "path": "third_party/AMGX",
     "url": "https://github.com/NVIDIA/AMGX.git",
     "revision": "3188dce5bdc22e96407d609e398925bed6aa010d"
+  },
+  {
+    "path": "third_party/darknet",
+    "url": "https://github.com/pjreddie/darknet.git",
+    "revision": "f6afaabcdf85f77e7aff2ec55c020c0e297c77f9"
+  },
+  {
+    "path": "third_party/llama2.c",
+    "url": "https://github.com/karpathy/llama2.c.git",
+    "revision": "350e04fe35433e6d2941dce5a1f53308f87058eb"
   }
 ]

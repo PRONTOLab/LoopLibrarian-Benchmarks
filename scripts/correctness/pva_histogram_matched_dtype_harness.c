@@ -25,7 +25,11 @@ enum { H = 192, W = 256, PIXELS = H * W };
 #define STRINGIFY_INNER(value) #value
 #define STRINGIFY(value) STRINGIFY_INNER(value)
 
+#ifdef PVA_HIST_FIXED_SHAPE
+void PVA_HIST_FUNCTION(const input_t [H][W], output_t [256]);
+#else
 void PVA_HIST_FUNCTION(int, int, const input_t *, output_t (*)[256]);
+#endif
 
 int main(void) {
   input_t *input = malloc(sizeof(input_t) * PIXELS);
@@ -35,7 +39,11 @@ int main(void) {
     input[i] = (input_t)(i * 40503u + i / 17u + 0x9e37u);
     ++reference[((uint32_t)input[i]) >> PVA_HIST_SHIFT];
   }
+#ifdef PVA_HIST_FIXED_SHAPE
+  PVA_HIST_FUNCTION((const input_t (*)[W])input, output);
+#else
   PVA_HIST_FUNCTION(H, W, input, &output);
+#endif
   size_t mismatches = 0;
   unsigned long long max_error = 0, total_output = 0;
   for (int bin = 0; bin < 256; ++bin) {
