@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential ca-certificates clang-14 cmake curl gfortran git graphviz \
     gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libffi-dev libncurses-dev \
-    libopenblas-dev libxml2-dev lld-14 llvm-14-dev ninja-build \
+    libopenblas-dev libxml2-dev lld-14 llvm-14-dev ninja-build openssh-client \
     pkg-config poppler-utils python3 python3-dev python3-numpy python3-pip \
     python3-venv texlive-latex-extra texlive-pictures time unzip xxd zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -73,6 +73,9 @@ RUN git init . \
     && git reset --quiet --mixed FETCH_HEAD
 COPY . .
 FROM prepared AS artifact
+# Remove build-stage transport tools from the published runtime. Keeping this
+# separate from compiler compilation allows reuse of the unchanged toolchain.
+RUN apt-get purge -y openssh-client && ! command -v ssh && ! command -v scp
 RUN python3 -m unittest discover -s tests > /opt/container-tests.log 2>&1 \
     || { tail -80 /opt/container-tests.log; exit 1; }
 ENTRYPOINT ["/bin/bash", "/opt/looplibrarian/docker/entrypoint.sh"]
