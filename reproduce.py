@@ -56,6 +56,7 @@ def main():
         p.error('Use a fresh output for match/all; resume with build/run/report/plot')
     out.mkdir(parents=True, exist_ok=True)
     env = environment(LL_ARTIFACT_OUTPUT=out, LL_ARTIFACT_SUITE=a.suite)
+    env.setdefault('NETLIB_REF', str(Path(env['POLYGEIST_DEPENDENCY_ROOT']) / 'lapack'))
     os.environ.update(env)
     provenance(out if stage in ('match', 'all') or (stage == 'build' and not (out/'provenance.json').exists())
                else out/('stage-'+stage))

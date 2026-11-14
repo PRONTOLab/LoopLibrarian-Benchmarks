@@ -1,0 +1,49 @@
+diff --git a/mlir/lib/Dialect/ControlFlow/IR/ControlFlowOps.cpp b/mlir/lib/Dialect/ControlFlow/IR/ControlFlowOps.cpp
+index fab6f3416999..64b60900c51d 100644
+--- a/mlir/lib/Dialect/ControlFlow/IR/ControlFlowOps.cpp
++++ b/mlir/lib/Dialect/ControlFlow/IR/ControlFlowOps.cpp
+@@ -503,7 +503,7 @@ static ParseResult parseSwitchOpCases(
+     return failure();
+   if (succeeded(parser.parseOptionalLParen())) {
+     if (parser.parseOperandList(defaultOperands, OpAsmParser::Delimiter::None,
+-                                /*allowResultNumber=*/false) ||
++                                /*allowResultNumber=*/true) ||
+         parser.parseColonTypeList(defaultOperandTypes) || parser.parseRParen())
+       return failure();
+   }
+@@ -524,7 +524,7 @@ static ParseResult parseSwitchOpCases(
+       return failure();
+     if (succeeded(parser.parseOptionalLParen())) {
+       if (failed(parser.parseOperandList(operands, OpAsmParser::Delimiter::None,
+-                                         /*allowResultNumber=*/false)) ||
++                                         /*allowResultNumber=*/true)) ||
+           failed(parser.parseColonTypeList(operandTypes)) ||
+           failed(parser.parseRParen()))
+         return failure();
+diff --git a/mlir/test/Dialect/ControlFlow/ops.mlir b/mlir/test/Dialect/ControlFlow/ops.mlir
+index 8453c2b7038f..db582ae01bba 100644
+--- a/mlir/test/Dialect/ControlFlow/ops.mlir
++++ b/mlir/test/Dialect/ControlFlow/ops.mlir
+@@ -38,3 +38,22 @@ func.func @switch_i64(%flag : i64, %caseOperand : i32) {
+   ^bb3(%bb3arg : i32):
+     return
+ }
++
++// CHECK-LABEL: func @switch_numbered_result(
++func.func @switch_numbered_result(%flag : i32, %condition : i1) {
++  %values:2 = scf.if %condition -> (i32, i32) {
++    %c1 = arith.constant 1 : i32
++    %c2 = arith.constant 2 : i32
++    scf.yield %c1, %c2 : i32, i32
++  } else {
++    %c3 = arith.constant 3 : i32
++    %c4 = arith.constant 4 : i32
++    scf.yield %c3, %c4 : i32, i32
++  }
++  cf.switch %flag : i32, [
++    default: ^bb1(%values#0 : i32),
++    1: ^bb1(%values#1 : i32)
++  ]
++^bb1(%value : i32):
++  return
++}

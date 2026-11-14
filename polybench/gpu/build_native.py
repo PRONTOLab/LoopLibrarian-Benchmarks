@@ -8,8 +8,9 @@ import re
 import subprocess
 import sys
 from build import ROOT, OUT, PB, CASES, command, sha
+from ll_paths import DEPENDENCIES
 
-UP = ROOT/'third_party/polybenchGpu'
+UP = DEPENDENCIES/'polybenchGpu'
 from common import INPUTS, setting
 OLD = INPUTS/'polybenchgpu_adapters'
 SOURCES = dict(zip(CASES, ['2MM/2mm','3MM/3mm','ATAX/atax','BICG/bicg',

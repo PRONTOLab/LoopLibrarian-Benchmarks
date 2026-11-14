@@ -1,0 +1,8 @@
+{
+  "url": "https://github.com/llvm/llvm-project.git",
+  "revision": "26eb4285b56edd8c897642078d91f16ff0fd3472",
+  "patched_revision": "db258e98d032449f66e70d4f8b3e954d1cd3d480",
+  "tree": "df33520572088e6318e76a86788629e5b6141956",
+  "patch": "llvm-switch-operands.patch",
+  "patch_sha256": "09d90bcf8c5f4e44e6dfbcc2d9980039d6462a4008cd815f850d936b78bc0148"
+}

@@ -56,10 +56,11 @@ Orin PVA accelerator and a separately installed SDK.
 | Software | Version used |
 |---|---|
 | Polygeist | Pinned `third_party/Polygeist` commit |
-| LLVM/MLIR/Clang | LLVM 18 development revision `26eb4285b56edd8c897642078d91f16ff0fd3472` |
+| LLVM/MLIR/Clang | LLVM 18 revision `26eb4285b56edd8c897642078d91f16ff0fd3472` with the [included parser patch](dependency_sources/llvm-switch-operands.patch) |
 | Host tools | Clang 14.0.0; AArch64 GCC/G++ 11.4.0; Python 3.10.12 |
 | Python libraries | egglog 11.4.0; NumPy 1.21.5 |
 | CUDA | Toolkit 12.6, nvcc 12.6.85; target runtime 12.6.77 |
+| Library reference headers | [Pinned public packages](dependency_sources/cuda-headers.json) for source imports and API checks |
 | CUDA libraries | cuBLAS/cuBLASLt 12.6.4.1; cuSPARSE 12.5.4.2; cuSOLVER 11.7.1.2 |
 | Tensor libraries | cuDNN 9.25.1; cuTENSOR 2.7.0 |
 | Native ATen comparison | CUDA libtorch `2.6.0a0+df5bbc09d1.nv24.12` |
@@ -72,13 +73,18 @@ Configure the target before timing; the scripts do not change its power settings
 
 ## Getting started
 
+For a container with the compiler and build dependencies installed, follow the
+[Docker setup](docker/README.md). For a native installation, use the steps below.
+
 Install the [required tools and SDKs](docs/reproduction.md#dependencies), then:
 
 ```
-git clone --recurse-submodules https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
+git clone https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
 cd LoopLibrarian-Benchmarks
+git submodule update --init third_party/Polygeist
 cp config.example.json config.json
 # Edit config.json for the installed SDKs and execution target.
+python3 dependency_sources/prepare_cuda_headers.py
 python3 setup.py sources
 python3 setup.py compiler
 python3 setup.py specs

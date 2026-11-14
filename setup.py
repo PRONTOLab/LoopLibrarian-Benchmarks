@@ -146,7 +146,8 @@ def specs():
              '--timeout','300'],LOG,timeout=14400)
 
 def compiler():
-    command(['git','-C',COMPILER,'submodule','update','--init','--recursive'],LOG,timeout=7200)
+    command([PYTHON, ARTIFACT/'dependency_sources/prepare_llvm.py',
+             COMPILER/'llvm-project'], LOG, timeout=7200)
     llvm=COMPILER/'llvm-project'
     jobs=str(setting('jobs',3))
     command(['cmake','-S',llvm/'llvm','-B',llvm/'build','-G','Ninja',

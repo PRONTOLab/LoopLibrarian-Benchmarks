@@ -47,7 +47,7 @@ POLYGEIST_INLINE_GPU_ENTRY_CALLS=1 \
   "$OUT/session-work/wrapper.o" "$OUT/session-work/harness.o" \
   "$OUT/session-work/spec_runtime.o" "$OUT/iteration-timing.o"
 "$CXX" -O3 -std=c++17 "${DEFS[@]}" "$HERE/llama_extended_ggml_bench.cpp" \
-  -I"${POLYGEIST_GGML_INCLUDE:-$REPO_ROOT/third_party/whisper.cpp/ggml/include}" \
+  -I"${POLYGEIST_GGML_INCLUDE:-$POLYGEIST_DEPENDENCY_ROOT/whisper.cpp/ggml/include}" \
   -L"$GGML_BUILD/ggml/src" -L"$GGML_BUILD/ggml/src/ggml-cuda" \
   -L"$CUDA/lib" -L"$CUDA/lib/stubs" -Wl,--no-as-needed \
   -lggml -lggml-base -lggml-cpu -lggml-cuda -lcublas -lcudart -lcuda \

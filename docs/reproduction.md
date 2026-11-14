@@ -2,14 +2,16 @@
 
 Run commands from the repository root. See the [README](../README.md) for
 hardware specifications, experiment durations, and links to each experiment.
+The [Docker setup](../docker/README.md) automates the compiler and host dependencies.
 
 ## Dependencies
 
+Initialize the compiler with `git submodule update --init third_party/Polygeist`.
 Build the pinned Polygeist and LLVM/MLIR sources; system MLIR releases are not
 interchangeable with this version. Install:
 
 - Python 3.10 or later, `egglog==11.4.0`, and NumPy;
-- CMake, Ninja, Git, GCC/G++, Clang/LLVM 14, and OpenBLAS development files;
+- CMake, Ninja, Git, GCC/G++, Clang/LLVM 14, OpenBLAS development files, `file`, and `zstd`;
 - `gcc-aarch64-linux-gnu` and `g++-aarch64-linux-gnu` for Orin executables;
 - CUDA 12.6, including nvcc, CCCL headers, and the AArch64 SBSA target;
 - AArch64 cuBLAS, cuSOLVER, cuDNN, and cuTENSOR libraries for GPU experiments;
@@ -24,7 +26,7 @@ The [tested versions](../README.md#testing-systems) are listed in the README.
 cp config.example.json config.json
 export POLYGEIST_ROOT="$PWD/third_party/Polygeist"
 export POLYGEIST_DEPENDENCY_ROOT="$PWD/third_party"
-source "$POLYGEIST_ROOT/envsetup.sh"
+python3 dependency_sources/prepare_cuda_headers.py
 python3 setup.py sources
 python3 setup.py compiler
 python3 setup.py specs
@@ -37,10 +39,21 @@ Configuration keys can also be overridden with uppercase `LL_` environment
 variables, for example `LL_SSH_HOST=orin`.
 
 `sources` fetches the public revisions in `dependency_sources/repos.json` and
-checks their hashes against the library reference manifests. `specs` raises
+checks their hashes against the library reference manifests. It also fetches
+LAPACK sources used to check BLAS/LAPACK argument types. `specs` raises
 and validates the `lib_v3` references using the built compiler. Run it again
 if you change the compiler or references. Library specifications and API
 bindings live in `third_party/Polygeist/generic_solver/lib_v3/`.
+
+`prepare_cuda_headers.py` downloads the public header packages listed in
+[`cuda-headers.json`](../dependency_sources/cuda-headers.json) and checks archive
+hashes. These supply source imports and API checks; execution still uses the
+CUDA 12.6 target SDK.
+
+`setup.py compiler` fetches the public LLVM revision in
+`dependency_sources/llvm.json` and applies `llvm-switch-operands.patch`, which
+allows numbered SSA results in `cf.switch` operands. Setup verifies the complete
+source-tree hash against the tested LLVM tree and refuses unrelated local changes.
 
 ## Execution on Orin
 

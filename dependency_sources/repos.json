@@ -43,5 +43,10 @@
     "path": "third_party/llama2.c",
     "url": "https://github.com/karpathy/llama2.c.git",
     "revision": "350e04fe35433e6d2941dce5a1f53308f87058eb"
+  },
+  {
+    "path": "third_party/lapack",
+    "url": "https://github.com/Reference-LAPACK/lapack.git",
+    "revision": "6a1a8b8afd07ef4f6afc9fff320771fa26671f8d"
   }
 ]

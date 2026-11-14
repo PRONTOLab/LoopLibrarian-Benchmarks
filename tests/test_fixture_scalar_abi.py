@@ -8,6 +8,7 @@ import unittest
 HERE=Path(__file__).resolve().parents[1] / 'scripts/correctness'
 sys.path.insert(0,str(HERE))
 import aten_fixture_batch as B
+from ll_paths import DEPENDENCIES
 
 
 class FixtureScalarABI(unittest.TestCase):
@@ -15,9 +16,12 @@ class FixtureScalarABI(unittest.TestCase):
         source=B.harness('probe',configuration).replace('int main(', 'static int unused_main(')
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp);(d/'check.c').write_text(source+'\n'+callee)
-            subprocess.run(['gcc','-O2','-ffunction-sections','-fdata-sections',
-                '-I/usr/local/cuda-12.6/include',str(d/'check.c'),'-Wl,--gc-sections',
-                '-lm','-o',str(d/'check')],check=True,capture_output=True)
+            result = subprocess.run(['gcc','-O2','-ffunction-sections','-fdata-sections',
+                '-I'+str(DEPENDENCIES/'cuda_headers/cudart/include'),
+                '-I'+str(DEPENDENCIES/'cuda_headers/cuda_crt/include'),
+                str(d/'check.c'),'-Wl,--gc-sections','-lm','-o',str(d/'check')],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
             subprocess.run([str(d/'check')],check=True)
 
     def test_integer_and_float_arguments_keep_separate_abi_types(self):

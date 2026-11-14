@@ -1,0 +1,55 @@
+{
+  "packages": [
+    {
+      "component": "cuda_crt",
+      "directory": "cuda_crt",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/cuda_crt/linux-x86_64/cuda_crt-linux-x86_64-13.2.51-archive.tar.xz",
+      "sha256": "fbc31fed55b7255591f3a19f575ca078827f5e6757d317d009f7ec1e69fcde4b"
+    },
+    {
+      "component": "cuda_cudart",
+      "directory": "cudart",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cudart/linux-x86_64/cuda_cudart-linux-x86_64-13.2.51-archive.tar.xz",
+      "sha256": "539edc1056e44d319f2112e9971c6415d78d4dde04b3f6ffbd20ec808e718526"
+    },
+    {
+      "component": "libcutensor-dev-cuda-13",
+      "directory": "cutensor",
+      "url": "https://conda.anaconda.org/nvidia/linux-64/libcutensor-dev-cuda-13-2.6.0.4-h4bcfd30_0.tar.bz2",
+      "sha256": "4360f579c94807e7e643584cc47272b4c3d28e6beaae96be256ecaa76d31dfb2",
+      "format": "tar"
+    },
+    {
+      "component": "libcublas-dev",
+      "directory": "cublas",
+      "url": "https://conda.anaconda.org/nvidia/linux-64/libcublas-dev-13.4.0.1-h7153656_0.conda",
+      "sha256": "b1c0396ccfe90f0f83bbb5720b55387a13d66e7b8403417c7c8a301a31c12726",
+      "format": "conda"
+    },
+    {
+      "component": "libcudnn-dev",
+      "directory": "cudnn",
+      "url": "https://conda.anaconda.org/nvidia/linux-64/libcudnn-dev-9.22.0.52-hf3c2b3b_0.conda",
+      "sha256": "3e0fd8f1524cb0a6133966bff0e2fa13a3684a700ad5a2876fdbb2199d70436a",
+      "format": "conda"
+    },
+    {
+      "component": "libcusolver-dev",
+      "directory": "cusolver",
+      "url": "https://conda.anaconda.org/nvidia/linux-64/libcusolver-dev-12.2.0.1-h1733874_0.conda",
+      "sha256": "00259933bb3cd5aa230a78edbd918e7c5d8344324954ac407588808b274f66c4",
+      "format": "conda"
+    },
+    {
+      "component": "libcusparse-dev",
+      "directory": "cusparse",
+      "url": "https://conda.anaconda.org/nvidia/linux-64/libcusparse-dev-12.7.10.1-h0f76fdb_0.conda",
+      "sha256": "252268e19042f4a7fc4efc68431215fd16e765f4a7753dbcd03dc0b62cc0c397",
+      "format": "conda"
+    }
+  ],
+  "sources": [
+    "https://developer.download.nvidia.com/compute/cuda/redist/redistrib_13.2.0.json",
+    "https://conda.anaconda.org/nvidia/linux-64/repodata.json"
+  ]
+}

@@ -3,7 +3,7 @@ import argparse
 import json
 from pathlib import Path
 import shutil
-from common import ARTIFACT, OUT, PYTHON, command, save
+from common import ARTIFACT, OUT, PYTHON, ROOT, command, save
 from build import CASES
 
 HERE=Path(__file__).resolve().parent

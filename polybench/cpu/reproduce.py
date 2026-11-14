@@ -84,7 +84,9 @@ def build(args):
         "driver_sha256": sha(ROOT / "polybench/runtime/polybench_repeat_driver.c"),
         "script_sha256": sha(__file__), "kernels": []}
     (args.output / "source.diff").write_bytes(subprocess.check_output(
-        ["git", "diff"], cwd=ROOT))
+        # The compiler may be installed outside this checkout; its revision
+        # and binary hashes are recorded separately.
+        ["git", "diff", "--ignore-submodules=all"], cwd=ROOT))
     (args.output / "host-load.txt").write_bytes(subprocess.check_output(["uptime"]))
     for name in args.kernels.split(","):
         matches = list(POLYBENCH.rglob(name + ".c"))
