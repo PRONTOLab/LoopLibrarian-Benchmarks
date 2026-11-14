@@ -2,6 +2,10 @@
 set -euo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$ROOT"
+if ! git diff --quiet HEAD -- .; then
+    echo 'Commit source changes before building release images.' >&2
+    exit 1
+fi
 TARGET=artifact
 DEFAULT_IMAGE=looplibrarian:artifact
 if [[ ${1:-} == --comparisons ]]; then
@@ -11,9 +15,13 @@ if [[ ${1:-} == --comparisons ]]; then
 fi
 REVISION=$(git rev-parse HEAD)
 COMPILER_REVISION=$(git ls-tree HEAD third_party/Polygeist | awk '{print $3}')
-exec docker build --target "$TARGET" \
+# Match the image's revision label even when the checkout has untracked files.
+BUILD_CONTEXT=$(mktemp -d)
+trap 'rm -rf "$BUILD_CONTEXT"' EXIT
+git archive HEAD | tar -x -C "$BUILD_CONTEXT"
+docker build --target "$TARGET" \
     --build-arg "ARTIFACT_REVISION=$REVISION" \
     --build-arg "POLYGEIST_REVISION=$COMPILER_REVISION" \
     --build-arg "BUILD_JOBS=${BUILD_JOBS:-8}" \
     --build-arg "COMPARISON_JOBS=${COMPARISON_JOBS:-4}" \
-    -t "${LL_DOCKER_IMAGE:-$DEFAULT_IMAGE}" "$@" .
+    -t "${LL_DOCKER_IMAGE:-$DEFAULT_IMAGE}" "$@" "$BUILD_CONTEXT"

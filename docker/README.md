@@ -15,6 +15,10 @@ bash docker/build.sh
 bash docker/run.sh polybench_cpu --cases gemm --target host --size MINI --output results/runs/smoke
 ```
 
+The build uses committed files so the image matches its recorded revision.
+Commit source edits before building; local configuration and generated results
+are excluded.
+
 Allow 1–4 hours for the first build. LLVM and Polygeist compilation took about
 48 minutes on the listed build host with `BUILD_JOBS=8` (the default); use fewer
 jobs on smaller machines. Later builds reuse the compiler layers. The build imports

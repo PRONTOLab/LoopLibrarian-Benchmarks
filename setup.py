@@ -12,8 +12,9 @@ from pathlib import Path
 import shutil
 import subprocess
 import tarfile
+import tempfile
 import urllib.request
-from common import ARTIFACT, ROOT, PYTHON, command, environment, required, save, setting
+from common import ARTIFACT, ROOT, PYTHON, command, environment, required, save, setting, sha
 
 DEPS=ROOT/'third_party'
 LOG=DEPS/'setup.log'
@@ -107,25 +108,81 @@ def ginsbach():
     command(['cmake','--build',target/'build','--target','clang','opt','lilac_target','--',
              '-j'+str(setting('jobs',3))],LOG,env,timeout=43200)
 
+SPEQ_ARCHIVE_MD5 = '1070e9bb41a12cf5847c1bcfa7edc267'
+SPEQ_SOURCE_FILES = (
+    'parseIR.py', 'driver.py', 'requirements.txt', 'README.md',
+    'benchmarks/gemm_ref.c', 'analysis/gemm_ref.ll', 'analysis/gemv.ll',
+    'analysis/gemv_sink_perm.ll', 'analysis/histogram.ll',
+)
+
+
+def prepare_speq_sources(archive, target):
+    """Import the recognizer and its inputs, excluding bundled SDKs and binaries."""
+    archive, target = Path(archive), Path(target).resolve()
+    source = target / 'lleq-artifact'
+    record = target / 'source-files.json'
+    if record.exists():
+        saved = json.loads(record.read_text())
+        if (saved.get('archive_md5') != SPEQ_ARCHIVE_MD5 or
+                set(saved.get('files', {})) != set(SPEQ_SOURCE_FILES)):
+            raise RuntimeError('SpEQ source record differs from the selected artifact')
+        for name, expected in saved['files'].items():
+            if not (source/name).is_file() or sha(source/name) != expected:
+                raise RuntimeError('SpEQ source changed or is missing: ' + name)
+        return
+    digest = hashlib.md5()
+    with archive.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024*1024), b''):
+            digest.update(block)
+    if digest.hexdigest() != SPEQ_ARCHIVE_MD5:
+        raise RuntimeError('SpEQ archive checksum mismatch')
+    target.mkdir(parents=True, exist_ok=True)
+    # Stage a complete import before touching an existing checkout. Stream past
+    # unrelated SDK links without extracting them or loading their file lists.
+    with tempfile.TemporaryDirectory(dir=target) as temporary:
+        staged = Path(temporary)
+        remaining = set(SPEQ_SOURCE_FILES)
+        with tarfile.open(archive, 'r|gz') as tar:
+            for member in tar:
+                prefix = 'lleq-artifact/'
+                name = member.name[len(prefix):] if member.name.startswith(prefix) else ''
+                if name not in remaining:
+                    continue
+                if not member.isfile():
+                    raise RuntimeError('SpEQ source must be a regular file: ' + name)
+                destination = staged/name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                with tar.extractfile(member) as reader, destination.open('wb') as writer:
+                    shutil.copyfileobj(reader, writer)
+                remaining.remove(name)
+                if not remaining:
+                    break
+        if remaining:
+            raise RuntimeError('SpEQ archive is missing sources: ' + ', '.join(sorted(remaining)))
+        for name in SPEQ_SOURCE_FILES:
+            destination = source/name
+            if not destination.resolve().is_relative_to(target):
+                raise RuntimeError('SpEQ destination leaves the source directory: ' + name)
+            if destination.exists() and sha(destination) != sha(staged/name):
+                raise RuntimeError('Existing SpEQ source differs; left untouched: ' + name)
+        for name in SPEQ_SOURCE_FILES:
+            destination = source/name
+            if not destination.exists():
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(staged/name, destination)
+        save(record, dict(archive_md5=SPEQ_ARCHIVE_MD5,
+                          files={name: sha(source/name) for name in SPEQ_SOURCE_FILES}))
+
+
 def speq():
     target=Path(required('speq_root')).resolve();target.mkdir(parents=True,exist_ok=True)
     archive=target/'lleq-artifact.tar.gz'
-    if not (target/'lleq-artifact').exists():
+    if not (target/'source-files.json').exists():
         url='https://zenodo.org/api/records/10802555/files/lleq-artifact.tar.gz/content'
         if not archive.exists():
             print('Downloading the 6.3 GB published SpEQ archive',flush=True)
             urllib.request.urlretrieve(url,archive)
-        digest=hashlib.md5()
-        with archive.open('rb') as f:
-            for block in iter(lambda:f.read(1024*1024),b''):digest.update(block)
-        if digest.hexdigest()!='1070e9bb41a12cf5847c1bcfa7edc267':raise RuntimeError('SpEQ archive checksum mismatch')
-        # Extract the source artifact, not its retained binaries/results elsewhere.
-        with tarfile.open(archive) as tar:
-            members=[m for m in tar.getmembers() if Path(m.name).parts[0]=='lleq-artifact']
-            for m in members:
-                if not (target/m.name).resolve().is_relative_to(target):raise RuntimeError('Unsafe archive path')
-                if m.issym() or m.islnk():raise RuntimeError('Inspect archive links before extraction')
-            tar.extractall(target,members=members)
+    prepare_speq_sources(archive, target)
     command(['docker','build','--build-arg','BUILD_JOBS='+str(setting('jobs',3)),
              '-t',setting('speq_image','speq-lleq:extract'),ARTIFACT/'dependency_sources'],LOG,timeout=43200)
 
