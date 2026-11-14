@@ -1,224 +1,106 @@
-# LoopLibrarian artifact
+# Setup and execution
 
-This directory contains fresh-source reproduction commands for eight completed
-evaluation items. Run commands from the repository root. Each run writes its
-commands, compiler and input hashes, intermediate IR, full output checks, and
-raw samples to a separate output directory. Saved historical executables and
-timings are not inputs to these drivers.
+Run commands from the repository root. See the [README](../README.md) for
+hardware specifications, experiment durations, and links to each experiment.
 
-## What is included
+## Dependencies
 
-- `polybench_cpu`: Figure 3, all 17 FP64 LARGE programs, native CPU versus
-  LoopLibrarian/OpenBLAS. Five warmups, five measurements, minimum elapsed time.
-- `polybench_gpu`: Figure 4, all 12 FP64 LARGE kernels, native CUDA versus
-  resident LoopLibrarian. Five warmups, five measurements, minimum CUDA-event
-  compute interval. Separate full-output and actual vendor-call audits.
-- `llama`: all 19 operation fixtures and the complete FP32, one-token,
-  one-layer inference fixture, including the real ggml CUDA implementation.
-- `mfem`: the 18 supported contraction fixtures and integrated PCG updates,
-  with full-output correctness checks.
-- `eqsat`: all 30 PolyBench inputs with full/disabled equality saturation,
-  plus SpEQ on the original inputs and its linearized GEMM.
-- `graph_sizes`: the paired GEMM experiment, retaining the actual serialized
-  LoopLibrarian graphs and SpEQ DOT graphs.
-- `ginsbach`: the author's IDL compiler on all 30 PolyBench programs, then
-  execution and full-output checking of its detected replacements.
-- `kernelfarer`: Table 9, fresh native, real KernelFaRer, and whole-program
-  LoopLibrarian builds for GEMM, SYR2K, 2mm, and 3mm.
+Build the pinned Polygeist and LLVM/MLIR sources; system MLIR releases are not
+interchangeable with this version. Install:
 
-Additional drivers cover [ATen](../aten/README.md), [PVA](../pva/README.md),
-[compilation cost](../compilation_cost/README.md), and the
-[specification inventory](../library_inventory/README.md). Their commands and
-remaining limitations are documented separately. Availability of a driver does
-not establish completion: ATen retains proof and numerical comparison gaps,
-and PVA retains two operator families with different vendor semantics. The PVA
-driver reports BoxFilter separately under an explicit quantization contract.
+- Python 3.10 or later, `egglog==11.4.0`, and NumPy;
+- CMake, Ninja, Git, GCC/G++, Clang/LLVM 14, and OpenBLAS development files;
+- `gcc-aarch64-linux-gnu` and `g++-aarch64-linux-gnu` for Orin executables;
+- CUDA 12.6, including nvcc, CCCL headers, and the AArch64 SBSA target;
+- AArch64 cuBLAS, cuSOLVER, cuDNN, and cuTENSOR libraries for GPU experiments;
+- an AArch64 OpenBLAS sysroot for PolyBench CPU;
+- Docker for SpEQ and graph-size comparisons.
 
-## Machines and dependencies
-
-The GPU evaluations require a Jetson AGX Orin (SM87). Figure 3 also uses its
-CPU, pinned to core 0 with one OpenBLAS thread. An x86 host with a working
-Polygeist build cross-compiles the executables. KernelFaRer and IDL run on the
-x86 host. Record the host model and load when interpreting their timings;
-these are not the Orin Figure 3 baseline. EqSat and graph measurements need
-only the host and Docker.
-
-Install the repository's pinned LLVM/MLIR and Polygeist build as described in
-the root README. Required executables are
-`third_party/Polygeist/build/bin/{cgeist,polygeist-opt}` and the LLVM tools under
-`third_party/Polygeist/llvm-project/build/bin`. Do not substitute a system
-MLIR release. Also install:
-
-- Python 3.10 or later, `egglog==11.4.0`, and NumPy (tested with 1.21.5);
-- CMake, Ninja, Git, GCC/G++, Clang/LLVM 14, OpenBLAS development files;
-- `gcc-aarch64-linux-gnu` and `g++-aarch64-linux-gnu`;
-- CUDA 12.6 with the AArch64 SBSA target, nvcc, cuBLAS/cuSOLVER/cuDNN,
-  and AArch64 cuTENSOR headers and libraries;
-- an AArch64 OpenBLAS sysroot for Figure 3;
-- Docker for the real SpEQ LLVM fork and its older egglog dependency.
-
-Llama and the runtime need CUDA/CCCL headers, including Thrust. The source
-reference importer also verifies the pinned public library sources. NVIDIA
-libraries are obtained separately under their distribution terms; this
-directory does not redistribute those libraries or any PVA SDK source.
-
-Create your local configuration:
+ATen additionally needs AArch64 LibTorch. Its plots use `pdflatex` with
+PGFPlots and `standalone`, plus `pdftoppm`. PVA needs the separately installed [PVA SDK](../pva/README.md).
+The [tested versions](../README.md#testing-systems) are listed in the README.
 
 ```
 cp config.example.json config.json
 export POLYGEIST_ROOT="$PWD/third_party/Polygeist"
 export POLYGEIST_DEPENDENCY_ROOT="$PWD/third_party"
 source "$POLYGEIST_ROOT/envsetup.sh"
+python3 setup.py sources
+python3 setup.py compiler
+python3 setup.py specs
 ```
 
-Edit the paths in `config.json`. It is gitignored. `ssh_host` is an
-ordinary alias from your SSH configuration; authentication and proxy routing
-stay there. `remote_library_path` must contain the target's CUDA, cuDNN,
-cuTENSOR, and other required shared libraries. The literal SSH host `local`
-is supported when execution is already on the target. A site with an existing
-transport can optionally set `transport_module` to a Python module exporting
-`run(command, timeout)` and `upload(local_path, remote_path)`.
+`config.json` is ignored by Git. Set its compiler, library, and sysroot paths
+for your installation. The `environment` mapping supplies compiler variables
+such as `CUDA`, `POLYGEIST_CUTENSOR_ROOT`, and `POLYGEIST_GGML_BUILD`.
+Configuration keys can also be overridden with uppercase `LL_` environment
+variables, for example `LL_SSH_HOST=orin`.
 
-Every configuration key can be overridden by an uppercase `LL_` environment
-variable, for example `LL_SSH_HOST=orin`. The `environment` mapping supplies
-compiler variables such as `CUDA`, `POLYGEIST_CUTENSOR_ROOT`, and
-`POLYGEIST_GGML_BUILD`. `POLYGEIST_NVCC` can override the runtime compiler's
-nvcc path. Keep these consistent with `nvcc` and `cuda_target`.
+`sources` fetches the public revisions in `dependency_sources/repos.json` and
+checks their hashes against the library reference manifests. `specs` raises
+and validates the `lib_v3` references using the built compiler. Run it again
+if you change the compiler or references. Library specifications and API
+bindings live in `third_party/Polygeist/generic_solver/lib_v3/`.
 
-Prepare public dependencies as needed:
+## Execution on Orin
 
-```
-/usr/bin/python3 setup.py sources
-/usr/bin/python3 setup.py verify-sources
-/usr/bin/python3 setup.py specs
-/usr/bin/python3 setup.py kernelfarer
-/usr/bin/python3 setup.py ginsbach
-/usr/bin/python3 setup.py speq
-/usr/bin/python3 setup.py ggml
-```
+Figure 3 uses the Orin CPU; GPU experiments use its GPU. The host compiler
+cross-compiles executables and the shared runner transfers them over SSH.
+Set `ssh_host` to an alias in your SSH configuration, or `local` when running
+on the target itself. Set `remote_library_path` to the target's CUDA, cuDNN,
+cuTENSOR, and other shared-library directories.
 
-`sources` fetches the revisions in `dependency_sources/repos.json` and CCCL
-3.2.0, then checks every upstream file against the specification manifests.
-Existing checkouts with other revisions are rejected rather than reset.
-`specs` raises and numerically validates the V3 references with your compiler;
-run it after building or changing the compiler. The implementation lives in
-the historically named `scripts/correctness/lib_v2` directory, but these
-commands explicitly select **lib_v3**. Reference bodies, not handwritten
-operation recognizers, supply the matching specifications.
+Set the device's power mode and clocks before timing. The preflight records
+clocks, load, temperature, and fan state and checks that the device is ready.
+It does not change system settings. Run timing experiments sequentially on an
+otherwise idle device. The paper used a fixed fan speed; automatic fan control
+is a difference to record when comparing measurements.
 
-The KernelFaRer and IDL setup commands apply the disclosed patches beside
-their drivers. KernelFaRer's plugin is then compiled by its evaluation command.
-SpEQ setup downloads the [published artifact](https://zenodo.org/records/10802555)
-(6.3 GB; checksum recorded in `setup.py`) and builds its LLVM fork at
-`00bd6254b3832d94558b7c38a394ea03d01a2763`. Allow additional space and time for
-the LLVM build. The Dockerfile omits the unrelated comparison toolchains in
-SpEQ's original image; its recognizer, reference library, LLVM passes, and
-5/1/3 saturation schedule are retained.
+## Comparison tools
 
-Configure the Orin's clocks/power for the publication protocol before timing.
-The preflight records clocks, load, temperature, power mode, software, and fan
-state; it rejects busy/hot devices and unlocked CPU clocks. The scripts do
-not silently change system settings. Automatic fan control differs from the
-paper's fixed-fan setting and must be disclosed in a result report.
-
-## Run the evaluations
-
-Use a **new output directory** for every `all` or `build` invocation:
+Install only the tools needed for the selected experiments:
 
 ```
-/usr/bin/python3 reproduce.py polybench_cpu --output results/runs/fig3
-/usr/bin/python3 reproduce.py polybench_gpu --output results/runs/fig4
-/usr/bin/python3 reproduce.py llama --output results/runs/llama
-/usr/bin/python3 reproduce.py mfem --output results/runs/mfem
-/usr/bin/python3 reproduce.py eqsat --output results/runs/eqsat
-/usr/bin/python3 reproduce.py graph_sizes --output results/runs/graphs
-/usr/bin/python3 reproduce.py ginsbach --output results/runs/idl
-/usr/bin/python3 reproduce.py kernelfarer --output results/runs/table9
+python3 setup.py kernelfarer
+python3 setup.py ginsbach
+python3 setup.py speq
+python3 setup.py ggml
 ```
 
-Run timing suites sequentially. Do not compile other programs or share the
-device during performance measurements. `jobs` controls compilation and
-analysis concurrency, not concurrent timing. Host uptime is recorded.
+KernelFaRer and Ginsbach/IDL run on the x86 host. Their setup commands apply
+the patches included beside their experiment drivers. Llama uses ggml's CUDA
+implementation on Orin as its expert baseline.
 
-`--stage plan` prints the command without executing it. `--stage build` creates
-fresh binaries; `--stage run --output ...` executes those exact binaries and
-checks their recorded hashes. For EqSat and graph sizes, the analysis happens
-in `build`, and `run` rechecks/reports those analysis outputs. Most suites also
-support `--stage summarize`; CPU writes its report as part of `run`.
+SpEQ setup downloads its [published artifact](https://zenodo.org/records/10802555)
+(6.3 GB) and builds the included LLVM fork in Docker. Allow additional disk
+space and build time. The image preserves SpEQ's recognizer, library, LLVM
+passes, and 5/1/3 saturation schedule; unrelated comparison tools are omitted.
 
-`--cases gemm` selects a subset for CPU/GPU PolyBench or KernelFaRer.
-MFEM and EqSat also accept explicit case names. Subsets must not be reported
-as full-cohort reproduction. For a host-only CPU harness smoke test:
+## Commands and results
+
+Use `python3 reproduce.py SUITE --output DIRECTORY` to build and run a suite.
+Each experiment's README gives its command and explains the output files.
+Use a new directory for each build. Runs record commands, source and compiler
+hashes, intermediate IR, correctness checks, and raw timing samples.
+
+Common stages are:
+
+- `--stage plan`: print the command without running it;
+- `--stage build`: compile the selected inputs;
+- `--stage run`: execute the binaries in an existing output directory;
+- `--stage summarize`: regenerate reports, where supported.
+
+For EqSat and graph sizes, analysis takes place in `build`; `run` checks and
+reports the analysis output. The CPU driver produces its report during `run`.
+ATen has additional `match` and `plot` stages described in its README.
+
+For a small host-only check:
 
 ```
-/usr/bin/python3 reproduce.py polybench_cpu --cases gemm --target host --size MINI --output results/runs/cpu-smoke
+python3 reproduce.py polybench_cpu --cases gemm --target host --size MINI --output results/runs/smoke
 ```
 
-That smoke test checks the executable path, not Figure 3 performance.
-The drivers can also be called directly with `PYTHONPATH=artifact` and
-`LL_ARTIFACT_OUTPUT` set, but the central launcher records more provenance.
-
-## Acceptance and interpretation
-
-Correctness failure is an error exit and excludes a timing result. A speedup
-difference is reported, not hidden or converted to a pass through a loose
-tolerance. Timing values depend on the recorded machine and clock state.
-
-- **Figure 3:** all 17 full outputs must pass `atol=rtol=1e-8`.
-  `results.json` records raw samples and the paper speedup comparison;
-  `RESULTS.csv` is the compact timing table. C source computation is unchanged;
-  only output precision is increased. Whole-program compilation preserves
-  initialization and helpers.
-- **Figure 4:** `results.csv` reports compute time and speedup after complete
-  FP64 output checks at `atol=rtol=1e-8`. Device compute excludes initial/final
-  transfers and allocation; synchronized end-to-end timing is retained
-  separately. These are separate-kernel ABI harnesses. Ten native computation
-  bodies come from pinned PolyBenchGPU; correlation/covariance use the paper's
-  explicitly labeled local CUDA adaptations. Vendor tracing is a separate
-  run of the same timed executable.
-- **Llama:** `summary.json` reports 14/19 recognition, ABI acceptance separately,
-  five raw runtime samples, and all 32,000 logits compared with real ggml.
-  The expert-output gate is `atol=0.001, rtol=0.0001`. The native CPU comparison
-  is still recorded separately; it is not silently claimed to pass. Reported
-  LL runtime is 12.826 ms; the later observed 11.38 ms is not a hardcoded target.
-  Source accommodations, including split RoPE and branchless masking, remain
-  visible in the committed input fixture.
-- **MFEM:** 18 supported fixtures use `NE=1024`; integrated PCG uses `NE=2`.
-  The extraction harness checks all output buffers and prints explicit
-  correctness evidence. Current cuBLAS call counts and the paper's 128
-  cuTensorNet contraction sites are different counting units. No new timing
-  claim is made here.
-- **EqSat:** the submitted cohort is 17 with EqSat versus 8 without. An
-  additional recognition, currently `ludcmp`, is listed separately, along
-  with its ABI-lowering result. SpEQ's one match is the linearized GEMM;
-  its count on unmodified PolyBench is recorded separately. All 30 inputs
-  and both arms are retained; cases are not selected by their outcome.
-- **Graph sizes:** the paired result is 370 SpEQ nodes versus 21 LL nodes.
-  LL counts the largest accepted scalar proof, including three primitive
-  leaves (18 function nodes). SpEQ counts a whole LLVM loop graph with
-  primitive values inline in labels. These are different graph scopes and
-  conventions; the raw graphs are included in the output.
-- **IDL:** four detected idiom instances occur in correlation (one), covariance
-  (two), and trmm (one). All three programs execute and fail numerical checking.
-  Reproducing those failures is the expected negative result, not successful
-  acceleration. This experiment uses the original PolyBench allocation helpers
-  because the inlined helpers in compiler tests change the author's detection.
-- **KernelFaRer:** all four complete programs must match the native output.
-  Inputs are FP32 LARGE, with `atol=0.011, rtol=0.0005` for the historical
-  two-decimal comparison convention. New native/KF/LL measurements all use
-  five warmups and five samples, minimum time. The paper LL speedups are
-  8.6/366/115/93; KF speedups are 8.6/346/113/112. The historical native runs
-  used a different repetition protocol (one warmup, ten fresh processes);
-  this difference remains explicit. See `summary.csv` and `timing.json`.
-
-## Source adaptations and validation
-
-`inputs/` contains the same C extractions and harnesses used by these
-experiments, with paths made relative to this package. It does not contain
-historical binaries or measured output dumps. MFEM and Llama inputs are
-extracted/transliterated fixtures, not a claim to compile their entire
-unmodified upstream applications.
-
-`VALIDATION.md` records what was actually tested while packaging this branch.
-It distinguishes harness smoke tests from full-cohort experiments. A clean
-rebuild on an independent machine remains the final portability check.
+This checks compilation and execution. Figure 3 performance requires the
+LARGE inputs on Orin. Report subsets, changed hardware, and changed dimensions
+alongside the measurements. See [extending the experiments](extending-experiments.md)
+for examples of changing inputs or adding a library reference.

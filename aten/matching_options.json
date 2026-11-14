@@ -9,8 +9,7 @@
       "ranks": [
         2
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_avg_pool3d",
@@ -22,8 +21,7 @@
       "ranks": [
         2
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_adaptive_avg_pool3d",
@@ -35,8 +33,7 @@
       "ranks": [
         2
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_conv_transpose3d_backward_cpu",
@@ -48,8 +45,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_avg_pool2d_backward_cpu",
@@ -64,8 +60,7 @@
       "specifications": [
         "aten_avg_pool2d_backward_k2_f32"
       ]
-    },
-    "option_source": "Validated whole-reference match from public PyTorch average-pool backward; odd-tail output behavior preserved."
+    }
   },
   {
     "kernel": "aten_narrow_copy_dense_cpu",
@@ -77,8 +72,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_norm_cpu",
@@ -90,8 +84,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_int_mm_out_cpu",
@@ -103,8 +96,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_avg_pool3d_backward_cpu",
@@ -118,8 +110,7 @@
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false,
       "matching_stage": "debuf"
-    },
-    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+    }
   },
   {
     "kernel": "aten_zeros_cpu",
@@ -131,8 +122,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_or_reduce_cpu",
@@ -144,8 +134,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_dilated_convolution_cpu",
@@ -157,8 +146,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_blas_copy_cpu",
@@ -170,8 +158,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_copy_tensor_array_cpu",
@@ -183,8 +170,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_copy_cpu",
@@ -196,8 +182,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_clamp_min_scalar_cpu",
@@ -209,8 +194,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_nested_squeeze_cpu",
@@ -222,8 +206,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_nested_clone_cpu",
@@ -235,8 +218,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_clamp_max_scalar_cpu",
@@ -248,8 +230,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_im2col",
@@ -261,8 +242,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_cat_serial_cpu",
@@ -274,8 +254,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_conv2d_columns_cpu",
@@ -287,8 +266,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_conv_transpose2d",
@@ -301,8 +279,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-next/aten_conv_transpose2d/request.json"
+    }
   },
   {
     "kernel": "aten_stack_serial_cpu",
@@ -314,8 +291,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_compressed_block_convert_cpu",
@@ -327,8 +303,7 @@
       "ranks": [
         2
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_batch_norm",
@@ -340,8 +315,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_outer",
@@ -354,8 +328,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/filter-flatfill-paper/aten_outer/request.json"
+    }
   },
   {
     "kernel": "aten_angle_complex_scalarized",
@@ -367,8 +340,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_blas_axpy_cpu",
@@ -380,8 +352,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_mul_cpu",
@@ -393,8 +364,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_intersection_apply_cpu",
@@ -406,8 +376,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_intersection_launch_cpu",
@@ -419,8 +388,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_add_values_cpu",
@@ -432,8 +400,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_cross_cpu_backend",
@@ -445,8 +412,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_cross",
@@ -458,8 +424,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_cumprod_cpu",
@@ -471,8 +436,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_repeat_compute_cpu",
@@ -484,8 +448,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_as_complex_cpu",
@@ -497,8 +460,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_repeat_tensor_shape_cpu",
@@ -510,8 +472,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_coo_to_csr_cpu",
@@ -521,8 +482,7 @@
       ],
       "numeric_model": "strict",
       "region": true
-    },
-    "option_source": "Default generic raising and region matching."
+    }
   },
   {
     "kernel": "aten_convert_coo_to_csr_cpu",
@@ -532,8 +492,7 @@
       ],
       "numeric_model": "strict",
       "region": true
-    },
-    "option_source": "Default generic raising and region matching."
+    }
   },
   {
     "kernel": "aten_conv2d",
@@ -545,8 +504,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_max_pool2d",
@@ -560,8 +518,7 @@
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false,
       "matching_stage": "debuf"
-    },
-    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+    }
   },
   {
     "kernel": "aten_sparse_addmv_csr_cpu",
@@ -574,8 +531,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-arithmetic/aten_sparse_addmv_csr_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_nested_sum_backward_cpu",
@@ -587,8 +543,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_complex_scalarized",
@@ -600,8 +555,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_nested_all_cpu",
@@ -611,8 +565,7 @@
       ],
       "numeric_model": "strict",
       "region": true
-    },
-    "option_source": "Default generic raising and region matching."
+    }
   },
   {
     "kernel": "aten_adaptive_avg_pool2d",
@@ -624,8 +577,7 @@
       "ranks": [
         2
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_conj_complex_scalarized",
@@ -637,8 +589,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_normal_cpu",
@@ -650,8 +601,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_uniform_cpu",
@@ -663,8 +613,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_blas_scale_cpu",
@@ -676,8 +625,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_nansum_cpu",
@@ -689,8 +637,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_pixel_shuffle",
@@ -702,8 +649,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_channel_shuffle_cpu",
@@ -715,8 +661,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_channel_shuffle",
@@ -728,8 +673,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_batch_norm_transform_cpu",
@@ -741,8 +685,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_nested_sum_dim_cpu",
@@ -754,8 +697,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_and_reduce_cpu",
@@ -767,8 +709,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_pixel_unshuffle_cpu_backend",
@@ -780,8 +721,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_pixel_shuffle_cpu_backend",
@@ -793,8 +733,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_log_normal_cpu",
@@ -806,8 +745,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_matmul_cpu",
@@ -820,8 +758,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-arithmetic/aten_sparse_matmul_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_transpose_copy",
@@ -833,8 +770,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_nested_matmul_broadcast_cpu",
@@ -846,8 +782,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_flatten_nd_linear_cpu",
@@ -859,8 +794,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sum",
@@ -872,8 +806,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_diff_cpu",
@@ -885,8 +818,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_exponential_cpu",
@@ -898,8 +830,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_argmax_cpu",
@@ -913,8 +844,7 @@
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false,
       "matching_stage": "debuf"
-    },
-    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+    }
   },
   {
     "kernel": "aten_argmin_cpu",
@@ -928,8 +858,7 @@
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false,
       "matching_stage": "debuf"
-    },
-    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+    }
   },
   {
     "kernel": "aten_bmm",
@@ -941,8 +870,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_allany_dims_cpu",
@@ -954,8 +882,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_dropout_feature_noise_cpu",
@@ -967,8 +894,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_nested_bmm_cpu",
@@ -980,8 +906,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_sumproduct_pair_cpu",
@@ -993,8 +918,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_geometric_cpu",
@@ -1006,8 +930,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_bmm_cpu",
@@ -1019,8 +942,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_matmul_csr_to_coo_cpu",
@@ -1033,8 +955,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-expand-last/aten_sparse_matmul_csr_to_coo_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_convert_csr_to_coo_cpu",
@@ -1047,8 +968,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-expand-last/aten_convert_csr_to_coo_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_polar_scalarized",
@@ -1060,8 +980,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_cauchy_cpu",
@@ -1073,8 +992,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_cpu_blas_gemm_strided_batched_cpu",
@@ -1086,8 +1004,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_cpu_blas_gemm_batched_cpu",
@@ -1099,8 +1016,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_conv_tbc_cpu",
@@ -1112,8 +1028,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_kron_impl_cpu",
@@ -1125,8 +1040,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_kron_out_cpu",
@@ -1138,8 +1052,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_upsample_bilinear2d",
@@ -1153,8 +1066,7 @@
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false,
       "matching_stage": "debuf"
-    },
-    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+    }
   },
   {
     "kernel": "aten_dirichlet_grad_cpu",
@@ -1166,8 +1078,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_count_nonzero_impl_cpu",
@@ -1179,8 +1090,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_transform_bias_rescale_qkv_cpu",
@@ -1192,8 +1102,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_addmm_cpu",
@@ -1206,8 +1115,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-arithmetic/aten_sparse_addmm_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_depthwise_conv3x3_cpu",
@@ -1219,8 +1127,7 @@
       "region": true,
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "Fresh complete proof in paper115-relaxed-followup; same relaxed arithmetic as archived full-catalog request"
+    }
   },
   {
     "kernel": "aten_gamma_transform_cpu",
@@ -1232,8 +1139,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_hspmm_cpu",
@@ -1246,8 +1152,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-arithmetic/aten_hspmm_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_renorm_scale_factor",
@@ -1259,8 +1164,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_standard_gamma_grad_cpu",
@@ -1272,8 +1176,7 @@
       "ranks": [
         1
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_conv_tbc_backward_cpu",
@@ -1286,8 +1189,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-next/aten_conv_tbc_backward_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_slow_conv3d_backward_input_cpu",
@@ -1300,8 +1202,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-direct/aten_slow_conv3d_backward_input_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_conv_transpose3d_cpu",
@@ -1314,8 +1215,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/backward-data-direct/aten_conv_transpose3d_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_sampled_addmm_sparse_csr_cpu",
@@ -1327,8 +1227,7 @@
       "region": true,
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "Fresh complete proof in paper115-relaxed-followup; same relaxed arithmetic as archived full-catalog request"
+    }
   },
   {
     "kernel": "aten_joint_scaling_cpu",
@@ -1342,8 +1241,7 @@
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false,
       "matching_stage": "debuf"
-    },
-    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+    }
   },
   {
     "kernel": "aten_sspaddmm_cpu",
@@ -1356,8 +1254,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/coo-arithmetic/aten_sspaddmm_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_xor_sum_cpu",
@@ -1369,8 +1266,7 @@
       "ranks": [
         2
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_conv_transpose3d_grad_weight_cpu",
@@ -1383,8 +1279,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/filter-flatfill-paper/aten_conv_transpose3d_grad_weight_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_slow_conv3d_backward_weight_cpu",
@@ -1397,8 +1292,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/filter-flatfill-paper/aten_slow_conv3d_backward_weight_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_cpu_blas_gemm_cpu",
@@ -1410,8 +1304,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_embedding_bag_counts_cpu",
@@ -1424,8 +1317,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/histogram/aten_embedding_bag_counts_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_mm",
@@ -1437,8 +1329,7 @@
       "numeric_model": "strict",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-prior13-options.json"
+    }
   },
   {
     "kernel": "aten_unbind_copy_cpu",
@@ -1450,8 +1341,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_addmm",
@@ -1463,8 +1353,7 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   },
   {
     "kernel": "aten_sparse_addmv_bsr_cpu",
@@ -1478,8 +1367,7 @@
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false,
       "matching_stage": "linalg"
-    },
-    "option_source": "Targeted source raising and proof; recorded independently in current campaign results."
+    }
   },
   {
     "kernel": "aten_conv1d",
@@ -1491,8 +1379,7 @@
       "region": true,
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "Fresh complete proof in paper115-relaxed-followup; same relaxed arithmetic as archived full-catalog request"
+    }
   },
   {
     "kernel": "aten_sparse_csr_addmm_cpu",
@@ -1505,8 +1392,7 @@
       "numeric_model": "relaxed",
       "split_reduction_inputs": false,
       "split_pointwise_inputs": false
-    },
-    "option_source": "results/archive/issues/aten_paper29_followup_run-nhcdgielcn/csr-arithmetic/aten_sparse_csr_addmm_cpu/request.json"
+    }
   },
   {
     "kernel": "aten_quant_col_offsets_cpu",
@@ -1518,7 +1404,6 @@
       "ranks": [
         0
       ]
-    },
-    "option_source": "results/archive/issues/aten_paper86_correctness_run-nhcdgielcn/cohort-final-options.json"
+    }
   }
 ]

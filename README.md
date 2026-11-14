@@ -1,258 +1,121 @@
-# Artifact for "LoopLibrarian: Automatically Targeting Library Functions as a Compiler ISA" (CGO '27)
+# LoopLibrarian artifact
 
-This repository contains the artifact for the paper:
-> **"LoopLibrarian: Automatically Targeting Library Functions as a Compiler ISA"**  
-> *IEEE/ACM International Symposium on Code Generation and Optimization (CGO '27)*
+This repository contains the benchmarks and reproduction scripts for
+**LoopLibrarian: Automatically Targeting Library Functions as a Compiler ISA**
+(CGO ’27). LoopLibrarian raises C computations to MLIR and matches them against
+library specifications to generate library calls. The compiler is pinned under
+`third_party/Polygeist`.
 
-An updated archival release and DOI will be added after package validation.
+## Experiments
 
-[![Artifact badge target: Reusable](https://img.shields.io/badge/Artifact_badge_target-Reusable-lightgrey)](docs/extending-experiments.md)
+Run commands from the repository root after completing [setup](docs/reproduction.md).
+Use `python3 reproduce.py NAME --output results/runs/NAME`, replacing `NAME`
+with an experiment below. Each linked guide describes its inputs, comparison,
+and output files.
 
-Reproduction sources, scripts, correctness checks, and reference measurements
-for the LoopLibrarian paper. Polygeist is a pinned dependency under
-`third_party/Polygeist`; its `artifact-submission` branch contains the compiler,
-runtime adapters, imported reference specifications, and compiler tests.
+| Experiment | Paper result or comparison | Approximate time after setup |
+|---|---|---|
+| [polybench_cpu](polybench/cpu/README.md) | Figure 3: 17 programs, OpenBLAS on Orin CPU | 40 minutes–2 hours |
+| [polybench_gpu](polybench/gpu/README.md) | Figure 4: 12 kernels, CUDA on Orin | 20–50 minutes |
+| [llama](llama/README.md) | 19-operation coverage and one-layer inference versus ggml | 15–40 minutes |
+| [aten](aten/README.md) | Table 5 coverage; Figure 5's 115 timing cases | 1–3 hours for the 115 cases |
+| [mfem](mfem/README.md) | Contraction fixtures and PCG updates | 15–45 minutes |
+| [eqsat](eqsat/README.md) | Matching with/without equality saturation, versus SpEQ | 30 minutes–2 hours |
+| [graph_sizes](graph_sizes/README.md) | GEMM e-graph sizes: LoopLibrarian and SpEQ | 2–10 minutes |
+| [ginsbach](ginsbach/README.md) | IDL detections and output comparisons | 10–30 minutes |
+| [kernelfarer](kernelfarer/README.md) | Table 9: four complete PolyBench programs | 30–90 minutes |
+| [pva](pva/README.md) | Table 7: supported operations and correctness | 6–13 minutes |
+| [compilation_cost](compilation_cost/README.md) | Table 8: compilation measurements | 30–60 hours, estimated |
+| [library_inventory](library_inventory/README.md) | Table 1: library specification counts | Under 2 minutes |
 
-Repository: https://github.com/PRONTOLab/LoopLibrarian-Benchmarks (public).
-
-## Reuse and extension
-
-We target the **Artifacts Evaluated — Reusable** badge described in the
-[CGO artifact evaluation guidance](https://2027.cgo.org/track/cgo-2027-artifact-evaluation).
-The badge above identifies this target; the evaluation badge has not yet been awarded.
-
-Experiments can be extended at several levels: select existing cases or change
-PolyBench dataset sizes through command-line options, configure another testing
-system, add a C benchmark and its correctness harness, or import a new library
-reference through the shared raising and equality-saturation pipeline. A new
-executable library backend also needs an API binding and validation.
-
-The [extension guide](docs/extending-experiments.md) gives commands, identifies
-the files to change and manual work required, and explains how to retain
-correctness and performance evidence. See [expected experiment time](#expected-experiment-time)
-for planning estimates after setup.
-
-Submission preparation is tracked in the
-[artifact checklist](docs/artifact-submission-checklist.md), using the cTuning
-author guidance and CGO 2027 requirements.
+Times include benchmark compilation and execution on the systems below, but
+exclude dependency installation. They are estimates and depend on machine load.
+Run GPU experiments one at a time. Missing matches, failed checks, and differences
+from the published measurements are reported by the drivers; the per-experiment
+guides explain known limits.
 
 ## Testing systems
 
-The following is the **current reproduction environment**.
-Historical paper measurements retain their own provenance; these
-software versions must not be retroactively attributed to the paper.
-Machine-readable details are in [docs/system-specifications.json](docs/system-specifications.json).
+The reproduction uses an x86 Linux build host and a Jetson AGX Orin execution
+target. These are the tested versions; [system-specifications.json](docs/system-specifications.json)
+contains the complete machine and library records.
 
-| Component | Build/comparison host | Execution target |
+| Component | Build host | Execution target |
 |---|---|---|
-| System | KVM virtual machine | NVIDIA Jetson AGX Orin Developer Kit |
-| Architecture | x86-64 | AArch64 |
-| CPU | Intel Xeon Processor (Cascade Lake), 24 exposed vCPUs | 12 online CPU cores |
-| RAM visible to OS | approximately 62 GiB | 64,387,204 KiB, approximately 61.4 GiB |
-| GPU | Not used for target timing | Integrated Orin GPU, CUDA compute capability 8.7 (`sm_87`) |
-| Operating system | Ubuntu 22.04.1 LTS | Ubuntu 24.04.4 LTS |
-| Linux kernel | 5.15.0-151-generic | 6.8.12-1021-tegra |
-| CPU clock policy | Shared VM; record load for every timing | All clusters fixed at 2.2016 GHz |
-| GPU clock policy | Not applicable | Minimum and maximum both 1.3005 GHz |
-| Power mode | VM host-managed | MAXN, mode 0 |
+| Machine | KVM VM, 24 Intel Xeon Cascade Lake vCPUs | Jetson AGX Orin Developer Kit, 12 CPU cores |
+| RAM | 62 GiB | 61.4 GiB |
+| GPU | Not used | Integrated Orin GPU, compute capability 8.7 |
+| OS | Ubuntu 22.04.1, Linux 5.15.0-151-generic | Ubuntu 24.04.4, Linux 6.8.12-1021-tegra |
+| Clocks and power | Shared VM | CPU 2.2016 GHz; GPU 1.3005 GHz; MAXN mode 0 |
 
-Figure 3 runs on the **Orin CPU**, pinned to CPU 0 with one OpenBLAS thread.
-PolyBench GPU, Llama, ATen, and MFEM GPU execution use the Orin. KernelFaRer
-and IDL/Ginsbach host comparisons, EqSat, graph measurements, and compiler
-builds use the x86 host. PVA tests use the Orin's PVA through a separately
-installed SDK; PVA runtime timings are not a paper reproduction target.
+Figure 3 uses CPU 0 on Orin with one OpenBLAS thread. PolyBench GPU, Llama,
+ATen, and MFEM execute on Orin. KernelFaRer, IDL, equality saturation, graph
+measurements, and compilation measurements use the x86 host. PVA requires the
+Orin PVA accelerator and a separately installed SDK.
 
-### Software used
-
-| Component | Recorded version/configuration |
+| Software | Version used |
 |---|---|
-| Polygeist | Exact `third_party/Polygeist` submodule commit; branch `artifact-submission` |
-| LLVM/MLIR/Clang used by Polygeist | LLVM 18.0.0 development revision `26eb4285b56edd8c897642078d91f16ff0fd3472` |
-| System Clang / resource headers | Ubuntu Clang 14.0.0 |
-| AArch64 GCC/G++ | Ubuntu 11.4.0 cross toolchain |
-| Host Python | `/usr/bin/python3`, Python 3.10.12 |
-| Python packages | egglog 11.4.0; NumPy 1.21.5 |
-| CUDA compilation toolkit | CUDA 12.6, nvcc 12.6.85; AArch64 SBSA target |
-| CUDA runtime on target | libcudart 12.6.77 |
-| CUDA driver API reported on target | 13030; this is the driver API value, not the compilation toolkit version |
-| cuBLAS / cuBLASLt | 12.6.4.1 available; per-run loaded-library hashes identify the actual selected files |
-| cuSPARSE | 12.5.4.2 |
-| cuSOLVER | 11.7.1.2 |
-| cuDNN | 9.25.1; runtime API reports 92501 |
-| cuTENSOR | 2.7.0; runtime API reports 20700 |
-| ATen native comparison | Real CUDA libtorch, `2.6.0a0+df5bbc09d1.nv24.12`, built for CUDA 12.6 |
-| OpenBLAS | 0.3.20 on Orin; `DYNAMIC_ARCH`, `NO_AFFINITY`, armv8, built with `MAX_THREADS=64`; measurements use one thread |
-| Other source dependencies | Pinned submodules and `dependency_sources/repos.json` |
-| SpEQ | Published artifact and pinned LLVM fork; separate Docker environment |
+| Polygeist | Pinned `third_party/Polygeist` commit |
+| LLVM/MLIR/Clang | LLVM 18 development revision `26eb4285b56edd8c897642078d91f16ff0fd3472` |
+| Host tools | Clang 14.0.0; AArch64 GCC/G++ 11.4.0; Python 3.10.12 |
+| Python libraries | egglog 11.4.0; NumPy 1.21.5 |
+| CUDA | Toolkit 12.6, nvcc 12.6.85; target runtime 12.6.77 |
+| CUDA libraries | cuBLAS/cuBLASLt 12.6.4.1; cuSPARSE 12.5.4.2; cuSOLVER 11.7.1.2 |
+| Tensor libraries | cuDNN 9.25.1; cuTENSOR 2.7.0 |
+| Native ATen comparison | CUDA libtorch `2.6.0a0+df5bbc09d1.nv24.12` |
+| OpenBLAS on Orin | 0.3.20, armv8, one thread |
+| Other dependencies | Revisions in `dependency_sources/repos.json`; SpEQ uses its own Docker image |
 
-CUDA libraries and PVA SDK components are installed separately. They are not
-redistributed here. The source importer also needs public reference sources and
-vendor API headers. Compiler and benchmark configurations use separate paths;
-no developer home directory is required by the main launcher.
-
-### Measurement settings
-
-- Five warmup executions, followed by five measured samples. ATen uses five
-  alternating, synchronized raised/native pairs. Retained historical twenty-pair
-  results stay explicitly labeled with their original protocol.
-- `OPENBLAS_NUM_THREADS=1`, `OMP_NUM_THREADS=1`, and `MKL_NUM_THREADS=1`.
-- Record CPU affinity, actual CPU/GPU clocks, power mode, host load, target load,
-  temperature, fan state, compiler hash, input shapes, loaded-library hashes,
-  numeric model, and cache settings for every measured campaign.
-- The current Orin uses automatic fan control. The paper's fixed-fan condition
-  differs and must be disclosed when comparing timings. Capture the actual fan
-  state rather than assuming a constant PWM value.
-- Preserve each suite's timing boundary: PolyBench GPU's reported compute time
-  excludes allocation and initial/final transfers; synchronized end-to-end times
-  are retained separately. Library/allocator caches are recorded when enabled.
-- PolyBench CPU/GPU use FP64 LARGE inputs. Llama uses the recorded FP32 one-layer,
-  one-token fixture. ATen uses the paper shape manifest, not its small source
-  defaults, and preserves each fixture's dtype.
-- Run full-output correctness checks before accepting timings. The README for
-  each suite states its actual comparison and tolerance; failed cases remain
-  failed, and timing differences are reported without changing acceptance gates.
-
-## Repository layout
-
-```
-third_party/             pinned compiler and source dependencies
-polybench/cpu/          Figure 3
-polybench/gpu/          Figure 4
-polybench/sources/      original PolyBench inputs
-llama/                 inference fixtures and expert comparison
-aten/                  coverage, correctness, and performance
-mfem/                  contraction fixtures and PCG updates
-pva/                   coverage and correctness; no timing target
-eqsat/                 submitted 17-versus-8-versus-1 comparison
-graph_sizes/           GEMM graph-size comparison
-kernelfarer/           complete-program comparison
-ginsbach/              IDL detection/correctness comparison
-compilation_cost/      compilation measurements
-library_inventory/     imported-specification inventory
-inputs/                shared pinned fixture inputs
-scripts/               shared experiment drivers
-results/archive/       retained evidence and original extraction fixtures
-docs/                  methodology, system metadata, migration record
-```
-
-The eight established suites, ATen, PVA, compilation cost, and the library
-inventory have reproduction entry points. Each suite documents its setup,
-supported cases, and remaining validation work.
-The root launcher provides a common interface; pending evaluations are labeled
-as pending rather than presented as completed reproduction results.
+The preflight checks record clocks, power, temperature, load, and fan state.
+The tested target uses automatic fan control; the paper used a fixed fan setting.
+Configure the target before timing; the scripts do not change its power settings.
 
 ## Getting started
 
+Install the [required tools and SDKs](docs/reproduction.md#dependencies), then:
+
 ```
-git clone --recurse-submodules git@github.com:PRONTOLab/LoopLibrarian-Benchmarks.git
+git clone --recurse-submodules https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
 cd LoopLibrarian-Benchmarks
 cp config.example.json config.json
+# Edit config.json for the installed SDKs and execution target.
 python3 setup.py sources
 python3 setup.py compiler
 python3 setup.py specs
-python3 reproduce.py polybench_cpu --stage plan
+```
+
+A clean compiler build takes roughly 4–12 hours; source downloads take
+15–60 minutes and specification import takes 2–10 minutes. Llama and the
+comparison tools need the additional setup commands in the
+[setup guide](docs/reproduction.md#comparison-tools).
+
+Check the installation with one small CPU case (approximately 1–5 minutes):
+
+```
+python3 reproduce.py polybench_cpu --cases gemm --target host --size MINI --output results/runs/smoke
+```
+
+Then run Figure 3, or the ATen paper experiment and plot:
+
+```
 python3 reproduce.py polybench_cpu --output results/runs/fig3
+python3 reproduce.py aten --cohort paper --timing-correctness publication --output results/runs/aten-paper
 ```
 
-Configure SDK paths, cross-compilation tools, and an SSH alias in `config.json`.
-Keep credentials in SSH/client configuration; `config.json` and fresh run outputs
-are ignored. The benchmark directories contain real source files: `aten/inputs/`,
-`mfem/inputs/`, `llama/inputs/`, and `polybench/sources/`. ATen cohort and shape
-manifests live in `aten/paper_cases.csv` and `aten/paper_shapes.json`; inventories
-and provenance live in `aten/metadata/`. Use `python3 reproduce.py aten --cohort all`
-for the 598-case inventory, or `--cohort paper` for the fixed 115-case timing
-and plotting experiment. See [ATen runner commands](aten/README.md#choose-the-experiment). Saved results under `results/archive/`
-are comparison evidence and are not required to locate these source inputs.
-See [the repository layout](docs/repository-layout.md) for source, metadata,
-compiler dependency, and result locations.
-Each successful run retains its commands, source/compiler hashes,
-intermediate IR, correctness checks, raw samples, and paper comparison.
-See [docs/reproduction.md](docs/reproduction.md) for the original eight evaluation
-protocols and [aten/README.md](aten/README.md) for the incomplete ATen cohort.
+For all 598 ATen inputs, use `--cohort all`; see the [ATen guide](aten/README.md)
+for matching-only runs, selected cases, and GPU requirements.
 
-## Expected experiment time
+## Files and outputs
 
-Budget **2–10 minutes for one selected ATen case**, or **roughly 3–9 hours for
-the eight established evaluation suites**, once their dependencies are built.
-The full ATen campaign is additional. A first installation needs substantially
-longer because it builds LLVM and the comparison toolchains.
+- Benchmark directories contain C inputs, harnesses, experiment settings, and a `reproduce.py` driver.
+- `third_party/` contains the pinned compiler and downloaded dependencies.
+- `scripts/correctness/` contains shared harness and comparison code.
+- `scripts/artifact/` contains configuration, logging, and local/SSH execution support.
+- `results/runs/` receives generated IR, logs, output comparisons, timing samples, and summaries.
+- `docs/` contains setup, system details, source notices, and an [extension guide](docs/extending-experiments.md).
 
-These are **rough wall-clock planning estimates** for the
-systems above. They are not kernel runtimes or measured end-to-end completion
-times for every driver. They assume working SDK/SSH configuration, available
-input files, no competing GPU workload, and the default five warmups and five
-measurements (five raised/native pairs for ATen). Shared-host load, compilation
-parallelism, cold caches, and network speed can move a run outside these ranges.
-Run GPU timing campaigns serially.
-
-### First-time preparation
-
-| Preparation | Rough allowance | Scope |
-|---|---|---|
-| Clone and fetch public sources | 15–60 minutes | Network-dependent; excludes installing vendor SDKs and the SpEQ archive |
-| LLVM/MLIR and Polygeist: `setup.py compiler` | 4–12 hours | Clean build; conservative allowance for the default three build jobs |
-| Reference import and validation: `setup.py specs` | 2–10 minutes | Existing compiler and source dependencies; rerun after compiler/specification changes |
-| ggml CUDA dependency: `setup.py ggml` | 30 minutes–2 hours | First CUDA cross-compilation for Llama |
-| IDL toolchain: `setup.py ginsbach` | 2–6 hours | Separate historical LLVM build |
-| SpEQ environment: `setup.py speq` | 2–6 hours, plus download | Separate LLVM/Docker build and a 6.3 GB artifact download |
-
-Allow one or two days for a complete first setup, including toolchain builds
-and local configuration. This is a scheduling allowance, not an unattended
-installation guarantee. Subsequent experiments reuse these dependencies.
-
-### Experiments after preparation
-
-The following ranges include fresh benchmark compilation/matching, deployment
-where needed, correctness checks, execution, and result summarization. They
-exclude the preparation above. Use the suite name with `python3 reproduce.py`.
-
-| Experiment | Scope | Rough total time |
-|---|---|---|
-| Small smoke test | One PolyBench MINI case on the host | 1–5 minutes |
-| `polybench_cpu` — Figure 3 | All 17 LARGE cases, baseline and raised | 40 minutes–2 hours |
-| `polybench_gpu` — Figure 4 | All 12 LARGE cases, correctness, timing, and vendor-call audit | 20–50 minutes |
-| `llama` | 19 operation fixtures and the one-layer, one-token expert comparison | 15–40 minutes |
-| `mfem` | 18 supported fixtures and integrated PCG updates | 15–45 minutes |
-| `eqsat` | 30 inputs with/without EqSat, plus SpEQ comparisons | 30 minutes–2 hours |
-| `graph_sizes` | Paired GEMM graphs for LoopLibrarian and SpEQ | 2–10 minutes |
-| Additional [ATen pointwise experiments](aten/POINTWISE.md) | Candidate matching; original fixture dimensions, separate from Figure 5 | 20–60 minutes for the matching inventory; 2–10 minutes for one selected complete case |
-| `ginsbach` | 30-input detection sweep and correctness of detected replacements | 10–30 minutes |
-| `kernelfarer` | GEMM, SYR2K, 2mm, and 3mm; three implementations | 30–90 minutes |
-| `library_inventory` | Audit the existing specification catalog | Less than 2 minutes; import is separate |
-| `aten`, selected case | Paper shape, correctness, and five timing pairs | 2–10 minutes; large convolution cases can take longer |
-| `aten`, full 115-case attempt | Matching, builds, correctness, and timings for passing cases | 1–3 hours; cohort still incomplete |
-| `aten --cohort all`, all 598 fixtures | Full matching inventory; GPU validation only where a native adapter and successful build exist | Estimated 1–3 hours matching, plus 1–4 hours supported GPU builds/tests; not yet measured as one full run |
-| `pva` | Seven supported datatype cases; fresh compilation and hardware correctness | 6–13 minutes; excludes SDK setup |
-| `compilation_cost` | 199 inputs, two EqSat arms, five repetitions: 1,990 sequential fresh builds | 30–60 hours; provisional, based on 50–170-second probes |
-
-For repeat runs using valid existing executables, budget approximately
-30–90 minutes for PolyBench CPU, 10–20 minutes for PolyBench GPU, and
-2–10 minutes for Llama. Use `--stage run --output <existing-run-directory>`
-where supported. Rebuild after changing compiler, sources, shapes, or build
-settings; reusing stale executables does not reproduce the new configuration.
-
-The estimates are informed by recent component runs: the recorded
-[Figure 4 campaign](results/archive/issues/fig4_gpu_run-ignecjbdac/) contains 38
-per-process `elapsed_s` records totaling about eight minutes. That total
-excludes compilation and other orchestration, so it is not the full-suite
-duration. Recent source imports took roughly two minutes, and selected ATen
-build/validation runs took minutes. The full-suite ranges above remain planning
-estimates until a complete run of each packaged driver records its duration.
-Timeout settings are failure limits, not expected run times.
-
-The 200-pointwise-case ATen target and the two remaining PVA operator families
-are outside these estimates. The ATen estimate does not promise that all 115
-cases pass or include time to implement missing compiler support. The
-compilation-cost estimate is for collecting the new table; it does not establish
-agreement with the published values.
-
-Record actual elapsed time when running an experiment, for example:
-
-```
-mkdir -p results/runs
-/usr/bin/time -p -o results/runs/fig3-wall-time.txt python3 reproduce.py polybench_cpu --output results/runs/fig3
-```
-
-Use a fresh output directory for each build. The `real` value in the timing file
-is the experiment's wall-clock duration in seconds; keep it with the results
-and recorded machine load when refining these estimates.
+Use a new output directory for each build. `--stage plan` prints a command;
+`--stage build` compiles; `--stage run --output PATH` executes an existing build.
+See each experiment's README for additional stages and result filenames.
+Results include source and executable hashes so that measurements can be traced
+to the tested inputs. [Source notices](docs/SOURCE_NOTICES.md) describe licensing.

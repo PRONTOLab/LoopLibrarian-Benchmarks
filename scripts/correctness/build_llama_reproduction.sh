@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # Build the paper's one-token, one-layer FP32 Llama fixture from source.
 # The session harness owns disjoint arrays, permitting argument residency.
-# No retained compiler objects are used. See results/archive/issues/llama_section42/README.md.
+# No retained compiler objects are used. See llama/README.md.
 set -euo pipefail
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "$HERE/common_env.sh"
 OUT=${1:?usage: build_llama_reproduction.sh OUTPUT_DIRECTORY}
 mkdir -p "$OUT"
 OUT=$(cd "$OUT" && pwd)
-BENCH=${POLYGEIST_LLAMA_BENCH:-"$REPO_ROOT/results/archive/issues/llama_section42"}
-SOURCE=${POLYGEIST_LLAMA_SOURCE:-"$REPO_ROOT/inputs/extracted/cnn-extracted/llama2_extended_forward_bench.c"}
+BENCH=${POLYGEIST_LLAMA_BENCH:-"$REPO_ROOT/llama/inputs"}
+SOURCE=${POLYGEIST_LLAMA_SOURCE:-"$BENCH/llama2_extended_forward_bench.c"}
 CUDA=${CUDA:-/usr/local/cuda-12.6/targets/sbsa-linux}
-GGML_BUILD=${POLYGEIST_GGML_BUILD:-$BENCH/build-ggml-jetson}
+GGML_BUILD=${POLYGEIST_GGML_BUILD:-$REPO_ROOT/build/ggml-aarch64}
 : "${POLYGEIST_CUTENSOR_ROOT:?set to the AArch64 cuTENSOR tree}"
 DEFS=(-DMODEL_DIM=4096 -DFFN_DIM=11008 -DVOCAB=32000 -DSEQ_LEN=2048
       -DNUM_HEADS=32 -DDUMP_ALL=1)

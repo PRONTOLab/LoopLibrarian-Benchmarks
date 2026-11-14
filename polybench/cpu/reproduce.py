@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rebuild and validate all 17 Figure 3 CPU cases from C.
 
-See reproduce_fig3_cpu.txt for the protocol and prerequisites. Board access
+See polybench/cpu/README.md for the protocol and prerequisites. Board access
 is supplied by the public artifact SSH adapter exposing upload(path, destination)
 and run(command, timeout), returning a status and (for run) captured output.
 """

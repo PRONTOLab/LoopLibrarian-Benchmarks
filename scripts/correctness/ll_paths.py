@@ -24,6 +24,4 @@ def source_path(value):
     ):
         if value.startswith(prefix):
             return ROOT / (target + value[len(prefix):])
-    if value.startswith('issues/'):
-        value = 'results/archive/' + value
     return ROOT / value
