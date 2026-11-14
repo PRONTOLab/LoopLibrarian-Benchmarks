@@ -36,7 +36,7 @@ python3 setup.py specs
 for your installation. The `environment` mapping supplies compiler variables
 such as `CUDA`, `POLYGEIST_CUTENSOR_ROOT`, and `POLYGEIST_GGML_BUILD`.
 Configuration keys can also be overridden with uppercase `LL_` environment
-variables, for example `LL_SSH_HOST=orin`.
+variables, for example `LL_JOBS=4`.
 
 `sources` fetches the public revisions in `dependency_sources/repos.json` and
 checks their hashes against the library reference manifests. It also fetches
@@ -57,11 +57,18 @@ source-tree hash against the tested LLVM tree and refuses unrelated local change
 
 ## Execution on Orin
 
-Figure 3 uses the Orin CPU; GPU experiments use its GPU. The host compiler
-cross-compiles executables and the shared runner transfers them over SSH.
-Set `ssh_host` to an alias in your SSH configuration, or `local` when running
-on the target itself. Set `remote_library_path` to the target's CUDA, cuDNN,
-cuTENSOR, and other shared-library directories.
+Figure 3 uses the Orin CPU; GPU experiments use its GPU. Execution is local:
+run the experiments on your own compatible device. Set `library_path` to its
+CUDA, cuDNN, cuTENSOR, and other shared-library directories. No access to the
+authors' machines is required or provided.
+
+The x86 container can cross-compile using `--stage build`. It cannot execute
+the resulting AArch64 binaries. Run `--stage run` directly on an AArch64 target
+with the checkout, dependencies, and build results available at the paths
+recorded during compilation. The current result records retain absolute paths;
+moving a build to a different directory is not supported. Alternatively, use
+the native setup on the target and build and run there. A native AArch64
+compiler build and an AArch64 Docker image have not yet been validated.
 
 Set the device's power mode and clocks before timing. The preflight records
 clocks, load, temperature, and fan state and checks that the device is ready.

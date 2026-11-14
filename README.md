@@ -116,7 +116,7 @@ for matching-only runs, selected cases, and GPU requirements.
 - Benchmark directories contain C inputs, harnesses, experiment settings, and a `reproduce.py` driver.
 - `third_party/` contains the pinned compiler and downloaded dependencies.
 - `scripts/correctness/` contains shared harness and comparison code.
-- `scripts/artifact/` contains configuration, logging, and local/SSH execution support.
+- `scripts/artifact/` contains configuration, logging, and local execution support.
 - `results/runs/` receives generated IR, logs, output comparisons, timing samples, and summaries.
 - `docs/` contains setup, system details, source notices, and an [extension guide](docs/extending-experiments.md).
 

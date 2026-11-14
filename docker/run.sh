@@ -14,9 +14,7 @@ fi
 if [[ -n ${LL_DOCKER_SDK_ROOT:-} ]]; then
     ARGS+=(-v "$(realpath "$LL_DOCKER_SDK_ROOT"):/sdk:ro")
 fi
-if [[ -n ${LL_DOCKER_SSH_DIR:-} ]]; then
-    ARGS+=(-v "$(realpath "$LL_DOCKER_SSH_DIR"):/root/.ssh:ro")
-fi
+
 case "$ACTION" in
     eqsat|graph_sizes|ginsbach|kernelfarer)
         IMAGE=${LL_DOCKER_IMAGE:-looplibrarian:comparisons} ;;

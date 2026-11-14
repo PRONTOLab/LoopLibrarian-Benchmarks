@@ -11,7 +11,7 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/'scripts/artifact'),str(ROOT/'scripts/correctness')]
 from common import COMPILER, OUT, command, environment, save, sha
-import remote
+import local_execution
 
 CASES=[dict(name='morphology_'+dtype,dtype=dtype,ctype=ctype,minimum=minimum,
             family='Morphology',vendor='pvaMorphologySubmit',
@@ -174,18 +174,19 @@ def check_output(case,pattern,rc,log):
 
 
 def run(case,output):
+    local_execution.require_aarch64()
     dest=output/case['name'];build=json.loads((dest/'build.json').read_text())
     if sha(dest/'program')!=build['executable_sha256']:raise RuntimeError('Executable changed')
     if build['case']!=case:raise RuntimeError('Build configuration changed; rebuild the case')
     target='/tmp/looplibrarian-artifact-pva/'+case['name']
-    if remote.upload(dest/'program',target):raise RuntimeError('Upload failed')
+    if local_execution.stage(dest/'program',target):raise RuntimeError('Local staging failed')
     checks=[]
     patterns=['original','random','impulse','constant','quantization'] if 'filter_kind' in case else ['original']
     for pattern in patterns:
-        cmd=('chmod +x '+shlex.quote(target)+'; '+remote.runtime_env()+
+        cmd=('chmod +x '+shlex.quote(target)+'; '+local_execution.runtime_env()+
              ' POLYGEIST_V2_TRACE=1 PVA_FILTER_INPUT_PATTERN='+pattern+
              ' timeout 120 '+shlex.quote(target))
-        rc,log=remote.run(cmd,timeout=140);(dest/('run-'+pattern+'.log')).write_text(log)
+        rc,log=local_execution.run(cmd,timeout=140);(dest/('run-'+pattern+'.log')).write_text(log)
         if pattern=='original':(dest/'run.log').write_text(log)
         checks.append(check_output(case,pattern,rc,log))
     passed=all(c['correctness'] for c in checks)

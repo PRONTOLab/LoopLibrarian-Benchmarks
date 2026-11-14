@@ -198,8 +198,7 @@ def main():
     parser.add_argument('--jobs', type=int, default=4)
     parser.add_argument('--ready-only', action='store_true',help='Run only cases whose executable build has finished')
     parser.add_argument('--resume', action='store_true',help='Keep existing runtime evidence for the same binary and options')
-    parser.add_argument('--transport')
-    parser.add_argument('--remote-library-path', default='/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
+    parser.add_argument('--library-path', default='/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
     parser.add_argument('--cutensor-root', type=Path)
     parser.add_argument('--native-paper-inputs', action='store_true',
                         help='Where separately recorded, also test and time native-harness inputs; keep original raised-input failures')

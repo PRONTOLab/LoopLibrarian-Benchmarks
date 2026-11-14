@@ -38,7 +38,7 @@ def main():
     if a.suite == 'polybench_cpu':
         if stage == 'summarize':
             p.error('PolyBench CPU writes RESULTS.csv during --stage run')
-        cmd += ['--output', str(out), '--remote-helper', str(ROOT/'scripts/artifact/remote.py'),
+        cmd += ['--output', str(out),
                 '--cpu', str(setting('cpu', 0))]
         if setting('openblas_root'):
             cmd += ['--openblas-root', str(setting('openblas_root'))]

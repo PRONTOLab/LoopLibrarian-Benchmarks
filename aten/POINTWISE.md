@@ -11,9 +11,9 @@ python3 aten/pointwise.py --cases exp2 expm1 erfc --output results/runs/pointwis
 Omit `--cases` to process the full inventory. Use `--stage match`, `build`, `run`,
 or `report` to run individual stages. Start matching in a new output directory;
 later stages reuse that directory. Configure the compiler, CUDA, LibTorch, and
-SSH/local execution as described in the [ATen guide](README.md). Jiterator
+local execution as described in the [ATen guide](README.md). Jiterator
 operations also require CUDA 12.6 NVRTC and matching `libnvrtc-builtins` libraries
-on the target, included in `remote_library_path`.
+on the target, included in `library_path`.
 
 Allow 2–10 minutes for a selected case, or 20–60 minutes for matching the full
 inventory, plus compilation and GPU time for executable cases. `summary.json`

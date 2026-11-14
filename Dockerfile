@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential ca-certificates clang-14 cmake curl gfortran git graphviz \
     gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libffi-dev libncurses-dev \
-    libopenblas-dev libxml2-dev lld-14 llvm-14-dev ninja-build openssh-client \
+    libopenblas-dev libxml2-dev lld-14 llvm-14-dev ninja-build \
     pkg-config poppler-utils python3 python3-dev python3-numpy python3-pip \
     python3-venv texlive-latex-extra texlive-pictures time unzip xxd zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*

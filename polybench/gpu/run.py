@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import hashlib
-import importlib.util
 import json
 import math
 from pathlib import Path
@@ -12,6 +11,7 @@ import subprocess
 import time
 
 from common import ROOT, OUT as HERE, setting
+import local_execution as executor
 
 def stats(xs):
     q = statistics.quantiles(xs, n=4, method='inclusive')
@@ -20,14 +20,11 @@ def stats(xs):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('--remote-helper', required=True)
     p.add_argument('--trace', action='store_true', help='separate vendor execution audit, not primary timing')
     p.add_argument('kernel')
     p.add_argument('variant')
     args = p.parse_args()
-    spec = importlib.util.spec_from_file_location('board', args.remote_helper)
-    board = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(board)
+    executor.require_aarch64()
     d = HERE / args.kernel
     exe = d / args.variant
     if args.variant == 'raised':
@@ -38,24 +35,19 @@ def main():
     if args.trace:
         assert args.variant == 'raised'
         args.variant = 'raised-trace'
-    remote = '/tmp/looplibrarian-artifact-gpu-' + hashlib.sha256(str(HERE).encode()).hexdigest()[:12]
-    target = remote + '/' + args.kernel + '-' + args.variant
-    def clean(text):
-        for key, value in getattr(board, 'c', {}).items():
-            if isinstance(value, str) and len(value)>2 and ('HOST' in key or 'PASS' in key):
-                text = text.replace(value, '[private]')
-        return text
+    staging = '/tmp/looplibrarian-artifact-gpu-' + hashlib.sha256(str(HERE).encode()).hexdigest()[:12]
+    target = staging + '/' + args.kernel + '-' + args.variant
     probe = (ROOT/'scripts/correctness/fig3_board_preflight.py').read_text()
-    rc, out = board.run("python3 - <<'PY'\n"+probe+"\nPY",timeout=40)
-    (d/(args.variant+'-preflight.json')).write_text(clean(out))
+    rc, out = executor.run("python3 - <<'PY'\n"+probe+"\nPY",timeout=40)
+    (d/(args.variant+'-preflight.json')).write_text(out)
     if rc:
         raise SystemExit('Board preflight rejected; no executable started')
-    rc, out = board.run('mkdir -p '+remote,timeout=30)
-    if rc or board.upload(exe,target):
-        raise SystemExit('Deployment failed')
+    rc, out = executor.run('mkdir -p '+staging,timeout=30)
+    if rc or executor.stage(exe,target):
+        raise SystemExit('Local staging failed')
     monitor = target+'.thermal'
     command = ('ulimit -c 0; chmod +x '+target+'; '
-               'export LD_LIBRARY_PATH='+shlex.quote(setting('remote_library_path', '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu'))+'; '
+               'export LD_LIBRARY_PATH='+shlex.quote(setting('library_path', '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu'))+'; '
                'tegrastats --interval 100 > '+monitor+' 2>&1 & monitor=$!; '
                'taskset -c '+str(int(setting('cpu',0)))+' env OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '
                'POLYGEIST_CUDA_GRAPH=0 POLYGEIST_V2_TRACE='+str(int(args.trace))+' timeout 900 '+target+'; '
@@ -63,10 +55,10 @@ def main():
     start=time.time()
     executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest()
     host_uptime=subprocess.check_output(['uptime'],text=True).strip()
-    rc,out=board.run(command,timeout=940)
-    (d/(args.variant+'.log')).write_text(clean(out))
-    tr,thermal=board.run('cat '+monitor,timeout=30)
-    (d/(args.variant+'-thermal.log')).write_text(clean(thermal))
+    rc,out=executor.run(command,timeout=940)
+    (d/(args.variant+'.log')).write_text(out)
+    tr,thermal=executor.run('cat '+monitor,timeout=30)
+    (d/(args.variant+'-thermal.log')).write_text(thermal)
     row=dict(kernel=args.kernel,variant=args.variant,rc=rc,elapsed_s=time.time()-start,
              sha256=executable_sha256,cuda_graph=False,started_at_unix=start,
              host_uptime=host_uptime)

@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import shlex
 from common import ROOT, OUT, command, environment, save, setting, sha
-import remote
+import local_execution
 
 BASE=ROOT/'mfem/inputs'
 CASES=json.loads((BASE/'manifest.json').read_text())
@@ -30,12 +30,13 @@ def build(row):
          executable_sha256=sha(d/'program'),emitted=proof['emitted']))
 
 def run(row):
+    local_execution.require_aarch64()
     name=row['kernel'];d=OUT/name;b=json.loads((d/'build.json').read_text())
     assert sha(d/'program')==b['executable_sha256']
     target='/tmp/looplibrarian-artifact-mfem/'+name
-    assert remote.upload(d/'program',target)==0
-    cmd='ulimit -s unlimited; chmod +x '+shlex.quote(target)+'; '+remote.runtime_env()+' POLYGEIST_V2_TRACE=1 timeout 300 '+shlex.quote(target)
-    rc,log=remote.run(cmd,timeout=320);(d/'run.log').write_text(log)
+    assert local_execution.stage(d/'program',target)==0
+    cmd='ulimit -s unlimited; chmod +x '+shlex.quote(target)+'; '+local_execution.runtime_env()+' POLYGEIST_V2_TRACE=1 timeout 300 '+shlex.quote(target)
+    rc,log=local_execution.run(cmd,timeout=320);(d/'run.log').write_text(log)
     valid=rc==0 and ('correctness=PASS' in log or ('ALL CHECKS PASSED' in log))
     calls=re.findall(r'POLYGEIST_V2_CALL backend=cuda call=(\S+)',log)
     valid=valid and bool(calls)

@@ -188,8 +188,8 @@ def main():
                 first = runtime.index('--cases') + 1
                 last = runtime.index('--rank')
                 runtime[first:last] = runnable
-                command([*runtime,'--stage','run','--transport',ROOT/'scripts/artifact/remote.py',
-                    '--remote-library-path',setting('remote_library_path',
+                command([*runtime,'--stage','run',
+                    '--library-path',setting('library_path',
                         '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')],
                     out/'run.log',env=env,timeout=21600)
     if args.stage != 'report':

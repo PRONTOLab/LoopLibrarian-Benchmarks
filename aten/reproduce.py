@@ -152,8 +152,8 @@ def main(argv=None):
     if args.stage in ('build','all'):
         command([*runtime,'--stage','build','--jobs',str(args.jobs)], out/'build.log', timeout=21600)
     if args.stage in ('run','all'):
-        command([*runtime,'--stage','run','--transport', ROOT/'scripts/artifact/remote.py',
-                 '--remote-library-path', setting('remote_library_path',
+        command([*runtime,'--stage','run',
+                 '--library-path', setting('library_path',
                     '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')], out/'run.log', timeout=21600)
     report = paper_report(out, runtime)
     if args.stage in ('plot','all'):

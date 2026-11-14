@@ -8,7 +8,6 @@ The default uses the original fixture dimensions, not paper-sized timings.
 import argparse
 import concurrent.futures
 import hashlib
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -646,12 +645,9 @@ def correctness_summary(rc, log, expected, modes):
 
 
 def run_gpu(names, args):
-    transport = args.transport or os.environ.get('POLYGEIST_REMOTE_TRANSPORT')
-    if not transport:
-        raise ValueError('--transport or POLYGEIST_REMOTE_TRANSPORT must point to the site SSH adapter')
-    loader=importlib.util.spec_from_file_location('aten_board',transport)
-    board=importlib.util.module_from_spec(loader); loader.loader.exec_module(board)
-    environment = 'LD_LIBRARY_PATH='+shlex.quote(args.remote_library_path)+' '
+    import local_execution as board
+    board.require_aarch64()
+    environment = 'LD_LIBRARY_PATH='+shlex.quote(args.library_path)+' '
     if args.cudnn_plan_cache:
         environment += 'POLYGEIST_CUDNN_PLAN_CACHE=1 '
     if getattr(args,'gpu_workspace_cache',False):
@@ -685,10 +681,10 @@ def run_gpu(names, args):
             continue
         program=dest/'raised-program'
         if sha(program)!=built['binary_sha256']:raise RuntimeError('Binary changed after build')
-        remote='/tmp/ll-aten-fixture-'+name+'-'+built['binary_sha256'][:12]
-        if board.upload(program,remote):raise RuntimeError('Upload failed: '+name)
-        rc,log=board.run('chmod +x '+shlex.quote(remote)+' && sha256sum '+shlex.quote(remote),timeout=20)
-        (dest/'remote-hash.log').write_text(log)
+        staged='/tmp/ll-aten-fixture-'+name+'-'+built['binary_sha256'][:12]
+        if board.stage(program,staged):raise RuntimeError('Local staging failed: '+name)
+        rc,log=board.run('chmod +x '+shlex.quote(staged)+' && sha256sum '+shlex.quote(staged),timeout=20)
+        (dest/'executable-hash.log').write_text(log)
         if rc or built['binary_sha256'] not in log:raise RuntimeError('Remote hash check failed')
         row=dict(kernel=name,run_id=run_id,binary_sha256=built['binary_sha256'],
                  timing_correctness=getattr(args,'timing_correctness','strict'),
@@ -708,7 +704,7 @@ def run_gpu(names, args):
             raise ValueError('Native-paper validation requires a recorded input recipe')
         row['correctness_scope'] = kinds
         for kind in kinds:
-            rc,log=board.run(environment+'POLYGEIST_V2_TRACE=1 timeout '+str(run_timeout)+' '+shlex.quote(remote)+' '+kind,timeout=run_timeout+5)
+            rc,log=board.run(environment+'POLYGEIST_V2_TRACE=1 timeout '+str(run_timeout)+' '+shlex.quote(staged)+' '+kind,timeout=run_timeout+5)
             (dest/(kind+'-gpu.log')).write_text(log)
             row['correctness'][kind]=correctness_summary(rc,log,expected,2 if kind in ('paper','native-paper') else modes)
             print(name,kind,row['correctness'][kind]['passed'],flush=True);save(args.output/'gpu-results.json',results)
@@ -732,7 +728,7 @@ def run_gpu(names, args):
                 and (not getattr(args,'require_full_correctness',False) or row['fully_validated'])
                 and (all_raised_ok or args.time_validated_normal_inputs)
                 and row['correctness'].get(timing_input,{}).get(timing_check)):
-            rc,log=board.run(environment+'timeout '+str(run_timeout)+' '+shlex.quote(remote)+' timing '+shlex.quote(timing_input),timeout=run_timeout+5)
+            rc,log=board.run(environment+'timeout '+str(run_timeout)+' '+shlex.quote(staged)+' timing '+shlex.quote(timing_input),timeout=run_timeout+5)
             (dest/'timing-gpu.log').write_text(log)
             samples=[dict(path=a,sample=int(b),ms=float(c)) for a,b,c in re.findall(r'SAMPLE path=(\w+) sample=(\d+) ms=([\deE.+-]+)',log)]
             count=cfg.get('timing_samples',5)
@@ -793,8 +789,7 @@ def main():
     p.add_argument('--cutensor-root',type=Path,
                    default=Path(os.environ['POLYGEIST_CUTENSOR_ROOT']) if os.environ.get('POLYGEIST_CUTENSOR_ROOT') else None)
     p.add_argument('--stage',choices=['build','run'],default='build')
-    p.add_argument('--transport')
-    p.add_argument('--remote-library-path',default='/home/nvidia/polygeist_aten_native_24_12:/home/nvidia/polygeist_cuda_libs:/home/nvidia/jetson-cuda-libs:/home/nvidia/cuda-12.6/lib64:/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
+    p.add_argument('--library-path',default='/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
     args=p.parse_args();args.output=args.output.resolve();args.campaign=args.campaign.resolve()
     names=[n if n.startswith('aten_') else 'aten_'+n for n in args.cases]
     if any(n.removeprefix('aten_') not in NATIVE for n in names):

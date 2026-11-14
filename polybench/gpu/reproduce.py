@@ -28,8 +28,8 @@ def main():
     if a.stage in ('run','all'):
         for name in a.cases:
             for variant in ['reference', 'paper-baseline' if name in ('correlation','covariance') else 'native', 'raised']:
-                command([PYTHON,HERE/'run.py','--remote-helper',ROOT/'scripts/artifact/remote.py',name,variant],OUT/'run.log')
-            command([PYTHON,HERE/'run.py','--remote-helper',ROOT/'scripts/artifact/remote.py','--trace',name,'raised'],OUT/'run.log')
+                command([PYTHON,HERE/'run.py',name,variant],OUT/'run.log')
+            command([PYTHON,HERE/'run.py','--trace',name,'raised'],OUT/'run.log')
     if a.stage in ('run','summarize','all'):
         command([PYTHON,HERE/'audit.py'],OUT/'audit.log')
         command([PYTHON,HERE/'report.py'],OUT/'report.log')

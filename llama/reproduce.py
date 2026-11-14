@@ -9,7 +9,7 @@ import statistics
 import sys
 from common import ROOT, OUT, command, environment, save, setting, sha
 from coverage import campaign
-import remote
+import local_execution
 
 INPUT=ROOT/'llama/inputs'
 BINARIES=['llama_native','llama_resident','llama_ggml']
@@ -27,30 +27,31 @@ def build():
          expert_source_sha256=sha(ROOT/'scripts/correctness/llama_extended_ggml_bench.cpp')))
 
 def run():
+    local_execution.require_aarch64()
     build=json.loads((OUT/'build.json').read_text())
     target='/tmp/looplibrarian-artifact-llama-'+sha(OUT/'build.json')[:12]
     ggml=Path(os.environ['POLYGEIST_GGML_BUILD'])
     deps={}
     for lib in (ggml/'ggml/src').rglob('libggml*.so.0'):
-        if remote.upload(lib.resolve(),target+'/'+lib.name):raise RuntimeError('ggml library deployment failed')
+        if local_execution.stage(lib.resolve(),target+'/'+lib.name):raise RuntimeError('ggml library staging failed')
         deps[lib.name]=sha(lib)
     if len(deps)<4:raise RuntimeError('Expected ggml, ggml-base, ggml-cpu and ggml-cuda libraries')
     save(OUT/'ggml-libraries.json',deps)
     probe=(ROOT/'scripts/correctness/fig3_board_preflight.py').read_text()
     rows=[]
     for name in BINARIES:
-        rc,log=remote.run("python3 - <<'PY'\n"+probe+"\nPY",40)
+        rc,log=local_execution.run("python3 - <<'PY'\n"+probe+"\nPY",40)
         (OUT/(name+'-preflight.json')).write_text(log)
         if rc:raise RuntimeError('Board preflight failed')
         if sha(OUT/name)!=build['binaries'][name]:raise RuntimeError('Executable changed since build')
         exe=target+'/'+name
-        if remote.upload(OUT/name,exe):raise RuntimeError('Llama executable deployment failed')
-        libs=target+':'+setting('remote_library_path','/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
+        if local_execution.stage(OUT/name,exe):raise RuntimeError('Llama executable staging failed')
+        libs=target+':'+setting('library_path','/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
         cmd=('chmod +x '+shlex.quote(exe)+'; OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '
              'POLYGEIST_CUDA_GRAPH=1 LD_LIBRARY_PATH='+shlex.quote(libs)+' timeout 900 taskset -c '+
              str(int(setting('cpu',0)))+' '+shlex.quote(exe))
         if name=='llama_ggml':cmd+=' --warmup 5 --iters 5 --dump-all'
-        rc,log=remote.run(cmd,940);(OUT/(name+'.log')).write_text(log)
+        rc,log=local_execution.run(cmd,940);(OUT/(name+'.log')).write_text(log)
         samples=[float(line.split(',')[-1]) for line in log.splitlines()
                  if line.startswith(('RESIDENT_SAMPLE,','TIMING_SAMPLE,'))]
         row=dict(name=name,returncode=rc,command=cmd,sha256=sha(OUT/name),samples_ms=samples)

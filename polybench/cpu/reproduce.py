@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 """Rebuild and validate all 17 Figure 3 CPU cases from C.
 
-See polybench/cpu/README.md for the protocol and prerequisites. Board access
-is supplied by the public artifact SSH adapter exposing upload(path, destination)
-and run(command, timeout), returning a status and (for run) captured output.
+See polybench/cpu/README.md for the protocol and prerequisites.
+Executables run locally on the machine invoking --stage run.
 """
 from ll_paths import COMPILER
 
 import argparse
 import csv
 import hashlib
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -23,6 +21,7 @@ import time
 
 
 from common import ROOT
+import local_execution
 SCRIPTS = ROOT / "scripts/correctness"
 POLYBENCH = ROOT / "polybench/sources"
 DEFAULTS = "2mm,3mm,atax,bicg,cholesky,correlation,covariance,doitgen,gemm,gemver,gesummv,mvt,symm,syr2k,syrk,trisolv,trmm"
@@ -172,18 +171,15 @@ def stats(samples):
 
 
 def run(args, manifest):
-    remote = None
+    executor = None
     destination = "/tmp/looplibrarian-spec-reevaluation-cpu"
     if args.target == "jetson-cpu":
-        if not args.remote_helper:
-            raise ValueError("--remote-helper is required for board execution")
-        spec = importlib.util.spec_from_file_location("board", args.remote_helper)
-        remote = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(remote)
-        rc, output = remote.run("mkdir -p " + shlex.quote(destination), timeout=30)
+        local_execution.require_aarch64()
+        executor = local_execution
+        rc, output = executor.run("mkdir -p " + shlex.quote(destination), timeout=30)
         if rc:
             raise RuntimeError("Could not prepare board directory")
-        if remote.upload(Path(manifest["openblas"]).resolve(),
+        if manifest["openblas"] and executor.stage(Path(manifest["openblas"]).resolve(),
                          destination + "/libopenblas.so.0"):
             raise RuntimeError("Library deployment failed")
     rows = []
@@ -201,16 +197,16 @@ def run(args, manifest):
             exe = dest / variant
             if sha(exe) != built[variant + "_sha256"]:
                 raise RuntimeError("Executable changed since build")
-            if remote:
+            if executor:
                 # The probe samples /proc over two seconds, rather than using
                 # process-lifetime CPU averages to decide whether the board is idle.
                 probe = (SCRIPTS / "fig3_board_preflight.py").read_text()
-                rc, output = remote.run("python3 - <<'PY'\n" + probe + "\nPY", timeout=40)
+                rc, output = executor.run("python3 - <<'PY'\n" + probe + "\nPY", timeout=40)
                 (dest / (variant + "-preflight.log")).write_text(output)
                 if rc:
                     raise RuntimeError("Board preflight failed; no benchmark started")
                 target = destination + "/" + name + "-" + variant
-                if remote.upload(exe, target):
+                if executor.stage(exe, target):
                     raise RuntimeError("Executable deployment failed")
                 cmd = ("chmod +x " + shlex.quote(target) + "; "
                        "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 POLYGEIST_DUMP_LAST=1 POLYGEIST_V2_TRACE=1 "
@@ -224,9 +220,9 @@ def run(args, manifest):
                     " 2>&1 & monitor_pid=$!; " + cmd +
                     "; bench_status=$?; kill $monitor_pid; wait $monitor_pid 2>/dev/null; "
                     "exit $bench_status")
-                rc, output = remote.run(measured_cmd, timeout=args.timeout + 30)
+                rc, output = executor.run(measured_cmd, timeout=args.timeout + 30)
                 (dest / (variant + ".log")).write_text(output)
-                thermal_rc, thermal = remote.run("cat " + monitor, timeout=30)
+                thermal_rc, thermal = executor.run("cat " + monitor, timeout=30)
                 (dest / (variant + "-thermal.log")).write_text(thermal)
                 if thermal_rc:
                     rc = rc or thermal_rc
@@ -279,7 +275,6 @@ def main():
     p.add_argument("--stage", choices=("build", "run", "all"), default="all")
     p.add_argument("--target", choices=("jetson-cpu", "host"), default="jetson-cpu")
     p.add_argument("--openblas-root", type=Path)
-    p.add_argument("--remote-helper", type=Path)
     p.add_argument("--kernels", default=DEFAULTS)
     p.add_argument("--memory-form", default="cholesky")
     p.add_argument("--preserve-views", default="")

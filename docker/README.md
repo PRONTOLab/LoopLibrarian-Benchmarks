@@ -3,7 +3,8 @@
 The root `Dockerfile` builds an x86-64 build host with LLVM, MLIR, Polygeist,
 OpenBLAS, Python dependencies, AArch64 cross-compilers, public library references,
 and plot tools. Use Linux with Docker, at least 32 GB RAM, and about 100 GB free
-space. Orin experiments still execute on the target through SSH.
+space. These images are x86-64 build environments. Orin executables run locally
+on the reviewer's own AArch64 target; the images do not emulate its GPU or PVA.
 
 ## Build and check
 
@@ -54,23 +55,23 @@ SpEQ sources remain in `third_party/speq` on the host.
 
 ## Orin experiments
 
-Prepare `config.docker.json` from `config.example.json`. Set `ssh_host` and
-`remote_library_path` for Orin. Configure SDK paths as seen **inside** the
-container, for example `/sdk/cuda/bin/nvcc`, `/sdk/cuda/targets/sbsa-linux`,
-`/sdk/cutensor`, and `/sdk/openblas`. The last path is the AArch64 OpenBLAS sysroot.
+Prepare `config.docker.json` from `config.example.json`. Configure SDK paths
+as seen **inside** the container, for example `/sdk/cuda/bin/nvcc`,
+`/sdk/cuda/targets/sbsa-linux`, `/sdk/cutensor`, and `/sdk/openblas`.
+The last path is the AArch64 OpenBLAS sysroot.
 
 ```
 export LL_DOCKER_CONFIG="$PWD/config.docker.json"
 export LL_DOCKER_SDK_ROOT=/path/to/installed-sdks
-export LL_DOCKER_SSH_DIR="$HOME/.ssh"
-bash docker/run.sh polybench_gpu --output results/runs/polybench_gpu
+bash docker/run.sh polybench_gpu --stage build --output results/runs/polybench_gpu
 ```
 
-SDKs and SSH credentials are mounted read-only at run time. They are excluded
-from the build context. The image downloads the pinned public CUDA headers
-needed for source imports and API checks; execution SDKs are supplied separately.
-The target needs the libraries in the
-[system specifications](../README.md#testing-systems).
+SDKs are mounted read-only and excluded from the build context. The image
+downloads pinned public CUDA headers for source imports and API checks;
+execution SDKs are supplied separately. Execute the built programs locally on
+your own compatible target following the [execution guide](../docs/reproduction.md#execution-on-orin).
+The target needs the libraries in the [system specifications](../README.md#testing-systems).
+An AArch64 runtime image has not yet been built or tested.
 
 For Llama, set `environment.POLYGEIST_GGML_BUILD` in the configuration to
 `/opt/looplibrarian/build/ggml-aarch64`, then run `bash docker/run.sh setup ggml`.
@@ -82,3 +83,18 @@ native baseline and set `environment.ATEN_NATIVE_TORCH_ROOT` and
 `environment.ATEN_NATIVE_CUDA_ROOT`. For PVA, also supply the separately installed
 SDK described in the [PVA guide](../pva/README.md). These target SDKs and LibTorch
 are not built by the host image.
+
+## Publishing images
+
+After committing the sources and building both images, authenticate Docker to
+the chosen registry and run:
+
+```
+bash docker/publish.sh
+```
+
+The default destination is `ghcr.io/prontolab/looplibrarian-benchmarks`. Pass a
+different registry/repository as the first argument if needed. The script checks
+that both images record the current source revision, then pushes the `artifact`
+and `comparisons` tags and tags containing that revision. A successful build
+does not publish an image; the registry push must also succeed.

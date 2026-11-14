@@ -6,7 +6,7 @@
 - `compilation_cost/` and `library_inventory/`: compilation measurements and
   library specification counts.
 - `inputs/`: additional extracted sources and shared benchmark utilities.
-- `scripts/artifact/`: shared configuration, command recording, and SSH/local
+- `scripts/artifact/`: shared configuration, command recording, and local
   execution helpers.
 - `scripts/correctness/`: source preparation, compilation, and output checks
   used by the experiment drivers.

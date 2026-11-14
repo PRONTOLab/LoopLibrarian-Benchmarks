@@ -1,6 +1,5 @@
 {
-  "ssh_host": "jetson-orin",
-  "remote_library_path": "/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu",
+  "library_path": "/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu",
   "cpu": 0,
   "host_cpu": 0,
   "jobs": 3,
