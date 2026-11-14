@@ -1,4 +1,4 @@
-# ATen paper-cohort reproduction
+# ATen full-suite and paper-cohort reproduction
 
 The timing cohort contains 115 cases. The 598 extracted/transliterated source
 fixtures are ordinary files in `aten/inputs/`; the cohort, paper dimensions,
@@ -7,8 +7,86 @@ matching configuration, and original timing records are in `paper_cases.csv`,
 Extraction provenance is in `aten/metadata/`. Fresh reproduction does not
 require the evidence archive.
 
+## Choose the experiment
+
+Run every extracted ATen fixture through matching, then build and execute
+complete matches that have a real ATen CUDA adapter:
+
+```
+python3 reproduce.py aten --cohort all --output results/runs/aten-all
+```
+
+`all_cases.csv` fixes all 598 source paths and hashes. The report retains all
+selected cases, including raising failures, incomplete matches, missing native
+adapters, build failures, and failed output comparisons. At present 170 fixtures
+have native adapters; having an adapter does not imply a successful build or
+comparison. Only complete matches with successful builds are sent to the GPU.
+The runner uses strict matching by default and five timing pairs after strict
+GPU checks. The established generic normalization settings are reused for cases
+also in the paper cohort; the full-suite numerical model overrides their saved
+model. `--numeric-model relaxed` is an explicit alternative recorded in the
+results, not an IEEE equivalence claim.
+
+For matching alone, without GPU builds or execution:
+
+```
+python3 reproduce.py aten --cohort all --stage match --output results/runs/aten-all-match
+```
+
+Full-suite measurements use unchanged fixture dimensions. They must not be
+presented as reproductions of Figure 5. They produce `summary.json` and
+`summary.csv`, with matching coverage, native-adapter availability, build status,
+GPU correctness, and timing results kept separate.
+
+Run only the fixed 115-case Figure 5 cohort at its recorded paper dimensions,
+then produce the validated timing plot:
+
+```
+python3 reproduce.py aten --cohort paper --timing-correctness publication --output results/runs/aten-paper
+```
+
+`paper` remains the default cohort, so earlier commands keep their meaning.
+This mode retains the recorded per-case matching models and all strict numerical
+diagnostics. The explicit `publication` option selects the historical comparison
+criterion for admitting timings; omit it to require the stricter criterion.
+The default `all` stage generates `plots/aten-current.pdf`, a PNG, and a CSV
+retaining missing or failed cases. If no timings pass, it writes a plot-status
+record instead of inventing points.
+
+## Resume or plot saved results
+
+Use `--stage match`, `build`, `run`, `report`, or `plot` to separate the stages.
+`match` and `all` require a fresh output directory. `build` performs matching if
+needed and otherwise uses the saved campaign. The other stages reuse it.
+`summarize` remains an alias for `report`. The selected cases, source hashes,
+cohort and numerical policies are saved in `selection.json`; resumed runs cannot
+silently change them. Omit `--cases` when resuming to retain the saved subset.
+
+```
+python3 reproduce.py aten --cohort all --stage build --output results/runs/aten-all-match
+python3 reproduce.py aten --cohort all --stage run --output results/runs/aten-all-match
+python3 reproduce.py aten --cohort paper --stage plot --output results/runs/aten-paper
+```
+
+The `plot` stage reads saved measurements and does not rerun the GPU. Add
+`--paper-figure path/to/original.pdf` to include the original figure alongside
+it. Full-suite and pointwise reports are rejected by the paper plotter.
+Use `--cases aten_mm` for a selected case, and `--jobs` to control compilation
+parallelism. GPU timings remain serial and use five pairs.
+
+Planning estimates with an existing compiler are 1–3 hours for matching all 598
+fixtures, plus roughly 1–4 hours for supported GPU builds and tests, depending on
+coverage, host load and available SDKs. These are estimates, not measurements of
+a completed full-suite run. The 115-case paper experiment typically needs
+1–3 hours; matching one selected case usually takes 1–3 minutes. Plotting saved
+results takes seconds. Logs record actual command durations.
+
+## Paper protocol details
+
 The separate [pointwise experiment](POINTWISE.md) inventories and tests additional
 scalar-operation candidates without changing the 115-case paper cohort.
+The [additional matching experiment](ADDITIONAL_MATCHES.md) records a separate
+32-candidate search beyond both existing cohorts, retaining unsuccessful cases.
 
 ```
 python3 reproduce.py aten --timing-correctness publication --output results/runs/aten-paper

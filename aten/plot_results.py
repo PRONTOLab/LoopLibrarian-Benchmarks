@@ -9,6 +9,17 @@ from pathlib import Path
 import subprocess
 
 
+def validate_paper_cohort(data):
+    """Keep full-inventory and pointwise results out of the paper figure."""
+    with (Path(__file__).parent/'paper_cases.csv').open() as stream:
+        paper = {r['kernel'] for r in csv.DictReader(stream)}
+    names = [r['kernel'] for r in data['cases']]
+    if data.get('cohort', 'paper') != 'paper' or not names or set(names)-paper:
+        raise ValueError('This plot requires results from the 115-case paper cohort')
+    if len(names) != len(set(names)):
+        raise ValueError('Duplicate cases in paper plotting report')
+
+
 def band_counts(points):
     ratios = [y / x for x, y in points]
     return dict(timed=len(ratios), more_than_2x_faster=sum(r < .5 for r in ratios),
@@ -40,6 +51,7 @@ def main():
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
     data = json.loads(report.read_text())
+    validate_paper_cohort(data)
     groups = {'paper': [], 'publication': [], 'alternative': []}
     rows = []
     for case in data['cases']:

@@ -4,10 +4,18 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'aten'))
-from plot_results import timing_group
+from plot_results import timing_group, validate_paper_cohort
 
 
 class PlotCriteria(unittest.TestCase):
+    def test_plot_rejects_full_inventory_and_duplicate_cases(self):
+        validate_paper_cohort(dict(cases=[dict(kernel='aten_mm')]))
+        for data in (dict(cohort='all',cases=[dict(kernel='aten_mm')]),
+                     dict(cases=[dict(kernel='aten_gather_cpu')]),
+                     dict(cases=[dict(kernel='aten_mm')]*2)):
+            with self.assertRaises(ValueError):
+                validate_paper_cohort(data)
+
     def result(self, recipe='paper', policy='strict', strict=False, publication=False):
         return dict(timing=dict(input_kind=recipe, correctness_policy=policy),
                     correctness={recipe: dict(passed=strict, publication_passed=publication)})

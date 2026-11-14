@@ -1,0 +1,2 @@
+kernel,paper_family,source,source_sha256,status,historical_scope,paper_115,pointwise_268
+aten_upsample_nearest_exact2d_cpu,resampling,aten/inputs/aten_upsample_nearest_exact2d_cpu.c,1cbe03eb07020e0723fef49c00db1a0d2bbe6ab4391a32bc31d42ee061565bfb,not_in_current_validated_aggregate,not_audited,False,False

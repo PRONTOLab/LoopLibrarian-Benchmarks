@@ -84,6 +84,107 @@ Known source-semantic distinctions remain explicit. For example, the saved
 round uses ties to even. Importing one primitive does not establish equivalence
 to the other. The driver does not modify fixtures or relax checks to hide this.
 
+## Fixed 50-case matching batch
+
+`pointwise_batch50.csv` records 50 historical graph candidates, their unchanged
+C source hashes, archived call/IR hashes, and the earlier matching status. The
+batch contains 38 previously complete matches and 12 previously incomplete
+ones. It is fixed before the new run; cases are not selected from its passing
+results.
+
+```
+python3 aten/pointwise.py --stage match --checklist aten/pointwise_batch50.csv --output results/runs/aten-pointwise-batch50 --jobs 6
+```
+
+This performs fresh C raising, strict imported-reference matching, proof
+verification and ABI lowering for all 50. It does not build GPU executables or
+run GPU correctness/performance experiments. A complete match requires no
+remaining Linalg computation or loops, in addition to emitted calls and a valid
+ABI. `summary.json` separates baseline and newly complete matches from GPU
+validation and timing counts. Use a fresh output directory for a repeat run.
+
+Comparison/selection compositions are imported from the public ATen scalar
+comparison and `where` definitions. Generic prefix splitting exposes pure
+conditional subexpressions; it preserves branch order rather than assuming
+that nested conditionals are equivalent to min/max for all bounds. These
+references use the existing cuDNN graph emitter. The rounding reference uses
+actual `roundf` semantics, which remain distinct from native ATen ties-to-even
+rounding. Matching the saved C fixture does not establish native-API equivalence.
+
+## Previously unmatched 50-case batch
+
+`pointwise_unmatched50.csv` is a separate, fixed cohort whose 50 entries were
+incomplete in the recorded inventory and were not among the earlier batch's
+completed matches. A fresh baseline identified `add_clamp` as already complete;
+it was excluded before fixing this cohort and replaced by the unmatched `where`
+fixture. The cohort contains 22 special-function traversals and 28 arithmetic,
+comparison, integer, or selection cases. Original C sources and hashes are kept.
+
+```
+python3 aten/pointwise.py --stage match --checklist aten/pointwise_unmatched50.csv --output results/runs/aten-pointwise-unmatched50 --jobs 6
+```
+
+Special-function fixtures and references import and inline their pinned public
+ATen scalar definitions before raising. The shared source-dependency configuration
+is `generic_solver/lib_v3/support/aten_scalar_frontend.json` in the compiler.
+Remaining helper calls, including recursive implementation calls, fail this step.
+The earlier wrapper-only results do not establish matching of those computations.
+Public comparison/where compositions and integer transform references cover the
+other primitive operations. These are library specifications, not application-specific
+recognizers.
+
+To check just the 22 affected special-function cases, use the same command with
+`--checklist aten/pointwise_inline_helpers.csv` and a fresh output directory.
+Each case saves the generated C++ input, the expanded frontend IR, the raised IR,
+and any matching/ABI evidence. Original fixture files and hashes remain unchanged.
+
+This command checks raising, imported-reference matching, and ABI emission. It
+does not run GPU correctness or timing experiments. The CPU reference-import
+checks and CUDA wrapper compilation are separate checks; neither establishes
+GPU output correctness for these 50 fixtures.
+
+## Remaining-case cohorts
+
+The original remaining-63 cohort is saved in `pointwise_remaining63.csv`.
+It includes the twelve formerly incomplete cases from the 22-helper cohort;
+there are 51 other cases, not 63 additional cases. The six further typed
+reference imports have a fixed cohort in `pointwise_reference_extensions.csv`.
+For example:
+
+```
+python3 aten/pointwise.py --stage match --checklist aten/pointwise_reference_extensions.csv --output results/runs/aten-pointwise-reference-extensions --jobs 6
+```
+
+The combined helper/remaining cohort contains 73 unique cases. Run it with
+`--checklist aten/pointwise_inlining_cohort.csv`; run only the current unresolved
+cases with `--checklist aten/pointwise_remaining.csv`. The latter list is a
+checkpoint, while `pointwise_remaining63.csv` preserves the original cohort.
+
+The latest complete-cohort check also exercises imported counting-iterator
+division and remainder, integer comparisons, and offset copy/negate operations:
+
+```
+python3 aten/pointwise.py --stage match --checklist aten/pointwise_inlining_cohort.csv --output results/runs/aten-pointwise-integer-captures --jobs 6
+```
+
+Use another fresh output directory when repeating the command. These references
+describe public Thrust operations and retain their integer types and conversions.
+They use the same raising and proof pipeline as the other imports. This command
+checks matching and ABI lowering; it does not execute CUDA or measure performance.
+
+Smaller fixed follow-ups are `pointwise_typed_primitives.csv` (typed arithmetic),
+`pointwise_sequence.csv` (sequence generation), and `pointwise_typed_copy.csv`
+(integer copies and logspace). For example:
+
+```
+python3 aten/pointwise.py --stage match --checklist aten/pointwise_typed_copy.csv --output results/runs/aten-pointwise-index-copy --jobs 3
+```
+
+The default operand rank limit is one. `--ranks 1 2` explicitly tests both
+limits through the same normalization and matching pipeline. The report still
+requires a complete computation and successful ABI emission; raising or a
+partial initializer match does not count as completion.
+
 ## Extending the experiment
 
 Add an unchanged extracted fixture to `aten/inputs/`, inspect its raised IR, and

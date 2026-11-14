@@ -67,7 +67,8 @@ def worker(request):
     started = time.monotonic()
     try:
         raised = recipe.raise_c(recipe.PRODUCTION, str(ROOT / req['source']),
-                                req['kernel'], str(dest / 'source'), [], 120)
+                                req['kernel'], str(dest / 'source'), [], 120,
+                                frontend_support=req.get('frontend_support'))
         save(dest / 'raise.json', {k: dataclasses.asdict(v) if dataclasses.is_dataclass(v)
                                  else v for k, v in raised.items()})
         result['stages'] = {k: dict(ok=raised[k].ok, recovery=raised[k].recovery)
@@ -168,6 +169,8 @@ def main():
     p.add_argument('--cases', nargs='+')
     p.add_argument('--case-options', type=Path,
                    help='Cohort JSON with previously validated per-case matching options')
+    p.add_argument('--frontend-support', type=Path,
+                   help='Pinned source definitions to inline before raising')
     p.add_argument('--include-validated', action='store_true', help='Also allow earlier validated cases from the checklist')
     p.add_argument('--shape-specs', type=Path, help='Pinned benchmark dimensions for fresh source copies')
     p.add_argument('--summarize', action='store_true')
@@ -195,6 +198,9 @@ def main():
               COMPILER / 'generic_solver/lib_v3/import_manifest.json',
               COMPILER / 'generic_solver/kernel_library_v3.mlir', args.checklist]
     shapes = None
+    if args.frontend_support:
+        args.frontend_support = args.frontend_support.resolve()
+        inputs.append(args.frontend_support)
     if args.shape_specs:
         from aten_paper_shapes import load_shapes, materialize
         shapes = load_shapes(args.shape_specs)
@@ -221,6 +227,7 @@ def main():
             row.update(original_source=row['source'], original_source_sha256=sha(original),
                        source=str(source), shape_record=shapes[row['kernel']])
         row.update(ranks=args.ranks, region=args.region, region_budget=args.region_budget, specifications=args.specifications,
+                   frontend_support=str(args.frontend_support) if args.frontend_support else None,
                    split_reduction_inputs=args.split_reduction_inputs,
                    split_pointwise_inputs=args.split_pointwise_inputs,
                    numeric_model=args.numeric_model, matching_stage=args.matching_stage,

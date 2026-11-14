@@ -18,11 +18,13 @@ SUITES = ['polybench_cpu', 'polybench_gpu', 'llama', 'mfem', 'eqsat',
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('suite', choices=SUITES)
-    p.add_argument('--stage', choices=['plan', 'build', 'run', 'summarize', 'all'], default='all')
+    p.add_argument('--stage', choices=['plan', 'match', 'build', 'run', 'report', 'summarize', 'plot', 'all'], default='all')
     p.add_argument('--output', type=Path)
     p.add_argument('--cases', nargs='+', help='Explicit subset; omit for the full paper cohort')
     a, extra = p.parse_known_args()
-    if a.stage in ('run', 'summarize') and a.output is None:
+    if a.stage in ('match', 'report', 'plot') and a.suite != 'aten':
+        p.error('match/report/plot stages are currently available for ATen only')
+    if a.stage in ('run', 'report', 'summarize', 'plot') and a.output is None:
         p.error('--output is required when resuming a built experiment')
     stamp = uuid.uuid4().hex[:12]
     out = (a.output or ROOT/'results/runs'/f'{a.suite}-{stamp}').resolve()
@@ -31,6 +33,8 @@ def main():
     script = ROOT/directories[a.suite]/'reproduce.py'
     stage = 'all' if a.stage == 'plan' else a.stage
     cmd = [sys.executable, str(script), '--stage', stage]
+    if a.suite == 'aten':
+        cmd += ['--output', str(out)]
     if a.suite == 'polybench_cpu':
         if stage == 'summarize':
             p.error('PolyBench CPU writes RESULTS.csv during --stage run')
@@ -47,12 +51,14 @@ def main():
         print(' '.join(cmd))
         print('Output:', out)
         return 0
-    if stage in ('all', 'build') and out.exists() and any(out.iterdir()):
-        p.error('Use a fresh output directory for build/all; run/summarize reuse existing outputs')
+    fresh = stage in ('all', 'match') or (stage == 'build' and a.suite != 'aten')
+    if fresh and out.exists() and any(out.iterdir()):
+        p.error('Use a fresh output for match/all; resume with build/run/report/plot')
     out.mkdir(parents=True, exist_ok=True)
     env = environment(LL_ARTIFACT_OUTPUT=out, LL_ARTIFACT_SUITE=a.suite)
     os.environ.update(env)
-    provenance(out if stage in ('build', 'all') else out/('stage-'+stage))
+    provenance(out if stage in ('match', 'all') or (stage == 'build' and not (out/'provenance.json').exists())
+               else out/('stage-'+stage))
     save(out/('command-'+stage+'.json'), cmd)
     # Keep timing campaigns serial. The drivers may parallelize compilation only.
     return subprocess.run(cmd, cwd=ROOT, env=env).returncode

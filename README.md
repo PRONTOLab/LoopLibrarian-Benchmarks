@@ -159,7 +159,9 @@ Keep credentials in SSH/client configuration; `config.json` and fresh run output
 are ignored. The benchmark directories contain real source files: `aten/inputs/`,
 `mfem/inputs/`, `llama/inputs/`, and `polybench/sources/`. ATen cohort and shape
 manifests live in `aten/paper_cases.csv` and `aten/paper_shapes.json`; inventories
-and provenance live in `aten/metadata/`. Saved results under `results/archive/`
+and provenance live in `aten/metadata/`. Use `python3 reproduce.py aten --cohort all`
+for the 598-case inventory, or `--cohort paper` for the fixed 115-case timing
+and plotting experiment. See [ATen runner commands](aten/README.md#choose-the-experiment). Saved results under `results/archive/`
 are comparison evidence and are not required to locate these source inputs.
 See [the repository layout](docs/repository-layout.md) for source, metadata,
 compiler dependency, and result locations.
@@ -219,6 +221,7 @@ exclude the preparation above. Use the suite name with `python3 reproduce.py`.
 | `library_inventory` | Audit the existing specification catalog | Less than 2 minutes; import is separate |
 | `aten`, selected case | Paper shape, correctness, and five timing pairs | 2–10 minutes; large convolution cases can take longer |
 | `aten`, full 115-case attempt | Matching, builds, correctness, and timings for passing cases | 1–3 hours; cohort still incomplete |
+| `aten --cohort all`, all 598 fixtures | Full matching inventory; GPU validation only where a native adapter and successful build exist | Estimated 1–3 hours matching, plus 1–4 hours supported GPU builds/tests; not yet measured as one full run |
 | `pva` | Seven supported datatype cases; fresh compilation and hardware correctness | 6–13 minutes; excludes SDK setup |
 | `compilation_cost` | 199 inputs, two EqSat arms, five repetitions: 1,990 sequential fresh builds | 30–60 hours; provisional, based on 50–170-second probes |
 
