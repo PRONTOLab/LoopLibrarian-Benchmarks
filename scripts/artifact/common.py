@@ -74,6 +74,19 @@ def command(args, log, env=None, timeout=7200, cwd=ROOT, check=True):
     return rc
 
 def provenance(out):
+    bundle_path = os.environ.get('LL_EXECUTION_BUNDLE')
+    if bundle_path:
+        bundle = json.loads(Path(bundle_path).read_text())
+        suite = os.environ['LL_ARTIFACT_SUITE']
+        # Build records remain unchanged; this is evidence of a new target run.
+        save(Path(out) / 'provenance.json', dict(
+            build_provenance=bundle['suites'][suite]['build_provenance'],
+            execution_sources=bundle['runtime_sources'],
+            bundle_sha256=sha(bundle_path),
+            uptime=subprocess.check_output(['uptime'], text=True).strip(),
+            machine=subprocess.check_output(['uname', '-srm'], text=True).strip(),
+            suite=suite, specification_suite='lib_v3'))
+        return
     save(Path(out) / "provenance.json", dict(
         compiler_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=COMPILER, text=True).strip(),
         git_head=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),

@@ -12,6 +12,45 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GPUProvenance(unittest.TestCase):
+    def test_changed_manifest_is_rejected_before_snapshot(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            code = '''
+import json
+from pathlib import Path
+import save_provenance as provenance
+root = Path(__import__('sys').argv[1])
+provenance.COMPILER = root / 'compiler'
+provenance.OUT = root / 'output'
+compiler, output = provenance.COMPILER, provenance.OUT
+expected = {}
+for name in ['build/bin/polygeist-opt', 'library.mlir', 'import_manifest.json']:
+    path = compiler / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(name)
+    expected[name] = provenance.sha(path)
+proof = output / 'gemm/export/match.json'
+proof.parent.mkdir(parents=True)
+proof.write_text(json.dumps(dict(semantic_inputs={'import_manifest.json': expected['import_manifest.json']},
+    library='library.mlir', library_sha256=expected['library.mlir'])))
+(output / 'cases.json').write_text('["gemm"]')
+(output / 'gemm/build.json').write_text(json.dumps(dict(proof_sha256=provenance.sha(proof),
+    compiler_sha256=expected['build/bin/polygeist-opt'])))
+provenance.verify_build_inputs(output, compiler)
+(compiler / 'import_manifest.json').write_text('new image')
+try:
+    provenance.main()
+except RuntimeError as error:
+    assert 'import_manifest.json differs from the build' in str(error), error
+else:
+    raise AssertionError('Mismatched manifest accepted')
+assert not (output / 'source-snapshot-final').exists()
+assert not (output / 'final-provenance.json').exists()
+'''
+            env = dict(os.environ, PYTHONPATH=os.pathsep.join(str(ROOT / p) for p in
+                       ['polybench/gpu', 'scripts/artifact', 'scripts/correctness']))
+            subprocess.check_call([sys.executable, '-c', code, tmp], env=env,
+                                  stdout=subprocess.DEVNULL)
+
     def test_native_build_with_dependencies_outside_checkout(self):
         with tempfile.TemporaryDirectory() as tmp:
             code = '''

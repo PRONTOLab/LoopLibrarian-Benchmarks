@@ -13,6 +13,11 @@ SOURCE=${POLYGEIST_LLAMA_SOURCE:-"$BENCH/llama2_extended_forward_bench.c"}
 CUDA=${CUDA:-/usr/local/cuda-12.6/targets/sbsa-linux}
 GGML_BUILD=${POLYGEIST_GGML_BUILD:-$REPO_ROOT/build/ggml-aarch64}
 : "${POLYGEIST_CUTENSOR_ROOT:?set to the AArch64 cuTENSOR tree}"
+# Apply the same generic view normalization to application and library IR.
+# This exposes matrix operations whose parallel dimensions were split in C.
+export POLYGEIST_NORMALIZE_PARALLEL_DIMS=1
+# The complete layer searches a larger specification catalog than one kernel.
+export POLYGEIST_MATCH_REGION_BUDGET=${POLYGEIST_MATCH_REGION_BUDGET:-180}
 DEFS=(-DMODEL_DIM=4096 -DFFN_DIM=11008 -DVOCAB=32000 -DSEQ_LEN=2048
       -DNUM_HEADS=32 -DDUMP_ALL=1)
 CC=${AARCH64_CC:-aarch64-linux-gnu-gcc}

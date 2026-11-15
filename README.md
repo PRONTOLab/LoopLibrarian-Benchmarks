@@ -211,17 +211,51 @@ export LL_DOCKER_SDK_ROOT=/path/to/installed-sdks
 bash docker/run.sh polybench_gpu --stage build --output results/runs/fig4
 ```
 
-SDKs are mounted read-only and excluded from the image. Make the checkout,
-build results, compiler files needed by the driver, and runtime dependencies
-available on the target at the same absolute paths, then execute there:
+SDKs are mounted read-only and excluded from the image. Package the built
+experiment on the build host:
 
 ```
-python3 reproduce.py polybench_gpu --stage run --output results/runs/fig4
+python3 target.py pack --build polybench_gpu=results/runs/fig4 --output results/bundles/gpu
 ```
 
-Build records retain absolute paths; relocating them to a different directory
-is not supported. A native AArch64 compiler build and AArch64 Docker image have
-not been validated. No access to the authors' machines is needed or provided.
+Copy this bundle to any directory on Orin, then run it there:
+
+```
+python3 target.py run --bundle . --library-path /usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu
+```
+
+The bundle contains executables, input sources, validation scripts, and unchanged
+build records. It needs Python 3.10 or later and the target runtime libraries;
+Git and the compiler are not needed. `--verify-only` checks the bundle's hashes
+on either machine. Outputs and logs are written to `runs/` inside the bundle.
+The original build paths remain in provenance records but are not required on
+the target. Existing output directories are not overwritten.
+
+Alternatively, transfer and execute on a machine you control through an existing
+SSH configuration. This command also retrieves the results if an experiment fails:
+
+```
+python3 target.py remote --bundle results/bundles/gpu --host user@orin --results results/runs/orin-gpu
+```
+
+Use `--jump-host user@gateway` if needed and `--library-path` for additional
+target libraries. On Orin, select the runtime libraries supplied for its JetPack
+installation, including cuBLAS; the cross-compilation SDK is for building only.
+Authentication uses your SSH keys or agent; no host or
+credentials are included in the artifact. If you use a local `SSH_ASKPASS` helper,
+pass `--ssh-option BatchMode=no`; other OpenSSH settings can be supplied with
+repeated `--ssh-option KEY=VALUE` arguments. No access to the authors' machines is
+needed or provided. A native AArch64 compiler build and AArch64 Docker image have
+not been validated.
+
+Repeat `--build SUITE=PATH` to include `llama`, `mfem`, or the `aten` paper
+selection in one bundle. Llama also needs `--ggml-build PATH` when packaging,
+which copies the four built ggml shared libraries. When packaging from Docker,
+that path is `/opt/looplibrarian/build/ggml-aarch64`. Vendor SDKs and shared
+libraries remain separate installations on the target. Experiments run serially;
+`--suites polybench_gpu llama` selects part of a bundle. Each suite retains its
+correctness checks and timing protocol, including five measured samples where
+the experiment measures performance.
 
 Additional target configuration:
 
@@ -291,7 +325,14 @@ Check 19 operation fixtures and FP32, one-token, one-layer inference against ggm
 CUDA. `coverage.json` separates recognition from executable lowering; the paper
 reports 14/19. `summary.json` records five timing samples and compares all 32,000
 logits with `atol=0.001, rtol=0.0001`. The reported LoopLibrarian runtime is
-12.826 ms. The separate serial CPU comparison may fail its strict tolerance.
+12.826 ms. Each run includes the native CPU program, LoopLibrarian, and the
+hand-optimized ggml CUDA baseline. The summary reports their minimum and median
+times. LoopLibrarian records both the GPU interval used for the paper comparison
+and synchronized wall time; ggml reports synchronized wall time.
+The driver measures resident GPU execution with CUDA graph replay
+enabled by default and records that setting with the timings. Set
+`LL_CUDA_GRAPH=0` to disable replay for a diagnostic run. The separate
+serial CPU comparison may fail its strict tolerance.
 Fixtures in `llama/inputs` include frontend adaptations such as split RoPE and
 branchless masking.
 

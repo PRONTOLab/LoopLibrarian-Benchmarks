@@ -28,6 +28,9 @@ def build():
 
 def run():
     local_execution.require_aarch64()
+    cuda_graph = int(setting('cuda_graph', 1))
+    if cuda_graph not in (0, 1):
+        raise ValueError('cuda_graph must be 0 or 1')
     build=json.loads((OUT/'build.json').read_text())
     target='/tmp/looplibrarian-artifact-llama-'+sha(OUT/'build.json')[:12]
     ggml=Path(os.environ['POLYGEIST_GGML_BUILD'])
@@ -48,13 +51,18 @@ def run():
         if local_execution.stage(OUT/name,exe):raise RuntimeError('Llama executable staging failed')
         libs=target+':'+setting('library_path','/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
         cmd=('chmod +x '+shlex.quote(exe)+'; OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '
-             'POLYGEIST_CUDA_GRAPH=1 LD_LIBRARY_PATH='+shlex.quote(libs)+' timeout 900 taskset -c '+
+             'POLYGEIST_CUDA_GRAPH='+str(cuda_graph)+' LD_LIBRARY_PATH='+shlex.quote(libs)+' timeout 900 taskset -c '+
              str(int(setting('cpu',0)))+' '+shlex.quote(exe))
         if name=='llama_ggml':cmd+=' --warmup 5 --iters 5 --dump-all'
         rc,log=local_execution.run(cmd,940);(OUT/(name+'.log')).write_text(log)
         samples=[float(line.split(',')[-1]) for line in log.splitlines()
                  if line.startswith(('RESIDENT_SAMPLE,','TIMING_SAMPLE,'))]
-        row=dict(name=name,returncode=rc,command=cmd,sha256=sha(OUT/name),samples_ms=samples)
+        row=dict(name=name,returncode=rc,command=cmd,sha256=sha(OUT/name),samples_ms=samples,
+                 cuda_graph_replay=bool(cuda_graph),
+                 timing_scope='device interval' if name=='llama_resident' else 'wall time')
+        if name=='llama_resident':
+            row['wall_samples_ms']=[float(line.split(',')[-2]) for line in log.splitlines()
+                                    if line.startswith('RESIDENT_SAMPLE,')]
         rows.append(row);save(OUT/'runs.json',rows)
         if rc or len(samples)!=5 or not all(math.isfinite(v) and v>0 for v in samples):
             raise RuntimeError(f'{name}: run or timing sample validation failed')
@@ -67,18 +75,32 @@ def summarize():
             [('llama_resident','llama_ggml'),('llama_resident','llama_native'),('llama_ggml','llama_native')]}
     covered=json.loads((OUT/'coverage.json').read_text())
     rows=json.loads((OUT/'runs.json').read_text())
+    if sorted(r['name'] for r in rows)!=sorted(BINARIES):
+        raise RuntimeError('Expected one timing run each for native CPU, LoopLibrarian and ggml')
     for r in rows:
-        if r['returncode'] or len(r['samples_ms'])!=5:raise RuntimeError('Invalid saved run')
+        if (r['returncode'] or len(r['samples_ms'])!=5 or
+            not all(math.isfinite(v) and v>0 for v in r['samples_ms'])):
+            raise RuntimeError('Invalid saved run')
         r.update(minimum_ms=min(r['samples_ms']), median_ms=statistics.median(r['samples_ms']))
+        if 'wall_samples_ms' in r:
+            wall=r['wall_samples_ms']
+            if len(wall)!=5 or not all(math.isfinite(v) and v>0 for v in wall):
+                raise RuntimeError('Invalid saved wall-time samples')
+            r.update(wall_minimum_ms=min(wall), wall_median_ms=statistics.median(wall))
     recognized=sum(r['recognized'] for r in covered)
     passed=checks['llama_resident_vs_llama_ggml']['strict_failures']==0
     result=dict(operations=len(covered),recognized=recognized,abi_lowered=sum(r['abi_ok'] for r in covered),
                 coverage_matches_paper=recognized==14 and len(covered)==19, expert_comparison_passed=passed,
+                coverage_count_meets_paper=recognized>=14 and len(covered)==19,
                 comparisons=checks,timings=rows,paper_looplibrarian_ms=12.826,
                 protocol='FP32, one token/layer; five warmups and five samples, minimum device interval for LL; native CPU strict comparison disclosed separately.')
     save(OUT/'summary.json',result)
     print('Llama',recognized,'/',len(covered),'expert comparison',passed)
-    if not passed or not result['coverage_matches_paper']:raise RuntimeError('Llama result differs; see summary.json')
+    for r in rows:
+        print(f"{r['name']}: minimum {r['minimum_ms']:.3f} ms, median {r['median_ms']:.3f} ms")
+        if 'wall_minimum_ms' in r:
+            print(f"  wall time: minimum {r['wall_minimum_ms']:.3f} ms, median {r['wall_median_ms']:.3f} ms")
+    if not passed or not result['coverage_count_meets_paper']:raise RuntimeError('Llama result differs; see summary.json')
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)

@@ -6,6 +6,7 @@
 !README.md
 !setup.py
 !reproduce.py
+!target.py
 !config.example.json
 !aten/**
 !compilation_cost/**

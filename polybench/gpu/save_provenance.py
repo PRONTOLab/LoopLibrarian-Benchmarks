@@ -26,7 +26,28 @@ def revision(path):
                                    text=True).strip()
 
 
+def verify_build_inputs(output, compiler):
+    """Do not replace a build's source record with files from another image."""
+    actual = {}
+    for case in json.loads((output / 'cases.json').read_text()):
+        build = json.loads((output / case / 'build.json').read_text())
+        proof_path = output / case / 'export/match.json'
+        proof = json.loads(proof_path.read_text())
+        if sha(proof_path) != build['proof_sha256']:
+            raise RuntimeError(f'{case}: matching proof changed since build')
+        expected = dict(proof['semantic_inputs'])
+        expected['build/bin/polygeist-opt'] = build['compiler_sha256']
+        expected[proof['library']] = proof['library_sha256']
+        for name, digest in expected.items():
+            if name not in actual:
+                actual[name] = sha(compiler / name)
+            if actual[name] != digest:
+                raise RuntimeError(f'{case}: {name} differs from the build; '
+                                   'use the original build image or rebuild the experiment')
+
+
 def main():
+    verify_build_inputs(OUT, COMPILER)
     dest = OUT / 'source-snapshot-final'
     here = Path(__file__).resolve().parent
     benchmark_files = list((ROOT / 'scripts/correctness').rglob('*.py'))
