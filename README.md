@@ -64,7 +64,8 @@ Orin PVA accelerator and a separately installed SDK.
 | Python libraries | egglog 11.4.0; NumPy 1.21.5 |
 | CUDA | Toolkit 12.6, nvcc 12.6.85; target runtime 12.6.77 |
 | Library reference headers | [Pinned public packages](dependency_sources/cuda-headers.json) for source imports and API checks |
-| CUDA libraries | cuBLAS/cuBLASLt 12.6.4.1; cuSPARSE 12.5.4.2; cuSOLVER 11.7.1.2 |
+| cuBLAS/cuBLASLt | 12.6.1 on Orin; 12.6.4.1 in the cross-compilation SDK |
+| Other CUDA libraries | cuSPARSE 12.5.4.2; cuSOLVER 11.7.1.2 |
 | Tensor libraries | cuDNN 9.25.1; cuTENSOR 2.7.0 |
 | Native ATen comparison | CUDA libtorch `2.6.0a0+df5bbc09d1.nv24.12` |
 | OpenBLAS on Orin | 0.3.20, armv8, one thread |
@@ -85,12 +86,12 @@ cd LoopLibrarian-Benchmarks
 Use x86-64 Linux with Docker, at least 32 GB RAM, and about 100 GB free disk space.
 The image includes LLVM, MLIR, Polygeist, OpenBLAS, Python dependencies,
 AArch64 cross-compilers, imported library specifications, and plotting tools.
-Pull the image built from artifact revision `ab0a3de1345a` and give it the local
+Pull the image built from artifact revision `ed470507e472` and give it the local
 name used by the runner:
 
 ```
-docker pull ghcr.io/prontolab/looplibrarian-benchmarks:artifact-ab0a3de1345a
-docker tag ghcr.io/prontolab/looplibrarian-benchmarks:artifact-ab0a3de1345a looplibrarian:artifact
+docker pull ghcr.io/prontolab/looplibrarian-benchmarks:artifact-ed470507e472
+docker tag ghcr.io/prontolab/looplibrarian-benchmarks:artifact-ed470507e472 looplibrarian:artifact
 bash docker/run.sh polybench_cpu --cases gemm --target host --size MINI --output results/runs/smoke
 ```
 
@@ -159,8 +160,8 @@ For Docker, pull the extended image once. The runner selects it automatically
 for KernelFaRer, Ginsbach/IDL, equality saturation, and graph sizes:
 
 ```
-docker pull ghcr.io/prontolab/looplibrarian-benchmarks:comparisons-ab0a3de1345a
-docker tag ghcr.io/prontolab/looplibrarian-benchmarks:comparisons-ab0a3de1345a looplibrarian:comparisons
+docker pull ghcr.io/prontolab/looplibrarian-benchmarks:comparisons-ed470507e472
+docker tag ghcr.io/prontolab/looplibrarian-benchmarks:comparisons-ed470507e472 looplibrarian:comparisons
 ```
 
 For a native installation, build only the tools needed for your experiment:
@@ -453,8 +454,9 @@ python3 reproduce.py eqsat --output results/runs/eqsat
 
 Compile all 30 PolyBench programs with equality saturation enabled and disabled,
 then compare recognition with SpEQ on the x86 host. `summary.json` separates
-recognition from executable lowering. Expect 17 recognized programs with equality
-saturation and 8 without for the paper's set; additional recognitions are separate.
+recognition from executable lowering. The paper reports 17 recognized programs
+with equality saturation and 8 without. The current compiler recognizes 17 and 11
+in that set; additional programs outside the set are recorded separately.
 SpEQ's reported single match uses GEMM with linearized indexing; results on
 unmodified PolyBench are also recorded.
 
