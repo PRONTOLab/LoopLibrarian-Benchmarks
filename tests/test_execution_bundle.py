@@ -109,6 +109,33 @@ class ExecutionBundle(unittest.TestCase):
             self.assertLess(calls[0].index('BatchMode=no'), calls[0].index('BatchMode=yes'))
             self.assertEqual(target.read(base/'collected/transport.json')['returncode'], 9)
 
+    def test_pva_relocation_retains_matching_evidence_and_selected_cases(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            build = self.fixture(base)
+            proof = build/'fixture/proof.json'
+            target.save(proof, {'emitted': ['reference_spec']})
+            (build/'fixture/matched.mlir').write_text('module {}')
+            target.save(build/'fixture/raise.json', {'raised': True})
+            record = target.read(build/'fixture/build.json')
+            record['proof_sha256'] = target.sha(proof)
+            target.save(build/'fixture/build.json', record)
+            bundle = base/'bundle'
+            target.pack(bundle, {'pva': build})
+            self.assertEqual(target.sha(bundle/'builds/pva/fixture/proof.json'), record['proof_sha256'])
+            self.assertTrue((bundle/'pva/reproduce.py').is_file())
+            calls = []
+            def execute(command, **kwargs):
+                calls.append(command)
+                return subprocess.CompletedProcess(command, 0, '', '')
+            uname = type('Machine', (), {'machine': 'aarch64'})()
+            with patch.object(target.os, 'uname', return_value=uname), patch.object(target.subprocess, 'run', side_effect=execute):
+                self.assertEqual(target.run(bundle), 0)
+            self.assertEqual(calls[-1][-2:], ['--cases', 'fixture'])
+            proof.write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'proof differs'):
+                target.pack(base/'changed-proof', {'pva': build})
+
 
 if __name__ == '__main__':
     unittest.main()

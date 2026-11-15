@@ -49,6 +49,13 @@ def main():
     command = ('ulimit -c 0; chmod +x '+target+'; '
                'export LD_LIBRARY_PATH='+shlex.quote(setting('library_path', '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu'))+'; '
                'tegrastats --interval 100 > '+monitor+' 2>&1 & monitor=$!; '
+               # Short reference programs can finish before tegrastats starts.
+               # Await a real sample before entering the executable's timers.
+               'sample_wait=0; while ! grep -Eq "@[0-9]+([.][0-9]+)?C" '+monitor+'; do '
+               'sample_wait=$((sample_wait+1)); '
+               'if [ "$sample_wait" -ge 200 ] || ! kill -0 "$monitor" 2>/dev/null; then '
+               'kill "$monitor" 2>/dev/null; wait "$monitor" 2>/dev/null; exit 125; fi; '
+               'sleep 0.01; done; '
                'taskset -c '+str(int(setting('cpu',0)))+' env OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '
                'POLYGEIST_CUDA_GRAPH=0 POLYGEIST_V2_TRACE='+str(int(args.trace))+' timeout 900 '+target+'; '
                'rc=$?; kill "$monitor" 2>/dev/null; wait "$monitor" 2>/dev/null; exit "$rc"')

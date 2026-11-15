@@ -44,7 +44,9 @@ def command(argv, log, env):
         except subprocess.TimeoutExpired:
             return 124
 
-def build(name):
+def build(name, size='LARGE'):
+    if size not in ('MINI', 'SMALL', 'MEDIUM', 'LARGE', 'EXTRALARGE'):
+        raise ValueError('Unknown PolyBench dataset: ' + size)
     d = OUT / name
     d.mkdir(exist_ok=True)
     if (d/'build.json').exists():
@@ -63,7 +65,7 @@ def build(name):
     (d / header.name).write_text(re.sub(r'(#\s*define DATA_PRINTF_MODIFIER )"%0\.2l?f "',
                                       r'\1"%.17g "', header.read_text()))
     text = original.read_text()
-    fn = 'kernel_' + name
+    fn = 'kernel_' + name.replace('-', '_')
     prototype, _ = function(text, fn)
     prototype = re.sub(r'^static\s+', '', prototype)
     harness = ('/* Test fixture: original initialization and output routines,\n'
@@ -76,7 +78,7 @@ def build(name):
         harness += function(text, helper)[1] + '\n'
     (d / 'harness.c').write_text(harness)
     flags = ['-O3', '-I' + str(PB / 'utilities'), '-I' + str(d),
-             '-DLARGE_DATASET', '-DDATA_TYPE_IS_DOUBLE', '-DPOLYBENCH_TIME']
+             '-D' + size + '_DATASET', '-DDATA_TYPE_IS_DOUBLE', '-DPOLYBENCH_TIME']
     env = dict(os.environ, PYTHON='/usr/bin/python3', POLYGEIST_KEEP_WORK='1', POLYGEIST_NUMERIC_MODEL='relaxed',
                POLYGEIST_CGEIST_FLAGS='--no-inline', POLYGEIST_WRAP_KERNEL_PIPELINE='0',
                POLYGEIST_MINIMAL_CUDA_RUNTIME='1', POLYGEIST_SKIP_LINK='1',
@@ -89,6 +91,7 @@ def build(name):
     row = dict(kernel=name, source=str(original.relative_to(ROOT)),
                source_sha256=sha(original), harness_sha256=sha(d / 'harness.c'),
                header_sha256=sha(d / header.name), flags=flags,
+               dataset=size,
                scope='isolated compiler-generated kernel, explicit ABI test harness')
     macros = subprocess.check_output(['aarch64-linux-gnu-gcc', *flags, '-dM', '-E',
                                       str(source)], text=True)

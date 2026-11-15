@@ -14,6 +14,15 @@ fi
 if [[ -n ${LL_DOCKER_SDK_ROOT:-} ]]; then
     ARGS+=(-v "$(realpath "$LL_DOCKER_SDK_ROOT"):/sdk:ro")
 fi
+for ENTRY in PVA_OPERATOR_INCLUDE:operator NVCV_INCLUDE:nvcv CUPVA_SDK_ROOT:cupva PVA_LIB_STAGE:lib; do
+    VARIABLE=${ENTRY%%:*}
+    MOUNT_NAME=${ENTRY#*:}
+    HOST_VARIABLE=LL_DOCKER_$VARIABLE
+    if [[ -n ${!HOST_VARIABLE:-} ]]; then
+        ARGS+=(-v "$(realpath "${!HOST_VARIABLE}"):/pva/$MOUNT_NAME:ro"
+               -e "$VARIABLE=/pva/$MOUNT_NAME")
+    fi
+done
 
 case "$ACTION" in
     eqsat|graph_sizes|ginsbach|kernelfarer)

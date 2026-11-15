@@ -18,11 +18,14 @@ EXPECTED = {
 }
 ATOL = RTOL = 1e-8
 
-def arrays(path, expected):
+def arrays(path, expected, *, enclosing_markers=True):
     text = path.read_text()
     assert text.count('==BEGIN DUMP_ARRAYS==') == 1, 'missing/duplicate dump start'
     assert text.count('==END   DUMP_ARRAYS==') == 1, 'missing/duplicate dump end'
-    text = text.split('==BEGIN DUMP_ARRAYS==')[1].split('==END   DUMP_ARRAYS==')[0]
+    if enclosing_markers:
+        text = text.split('==BEGIN DUMP_ARRAYS==')[1].split('==END   DUMP_ARRAYS==')[0]
+    # Some upstream print_array routines place the outer end marker early.
+    # Their per-array markers, names, sizes and finite values remain mandatory.
     matches = re.findall(r'begin dump: (\w+)\s*(.*?)end\s+dump: \1', text, re.S)
     assert len(matches) == len(expected), 'array count'
     result = {}

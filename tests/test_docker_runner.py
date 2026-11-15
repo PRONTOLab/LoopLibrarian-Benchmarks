@@ -47,6 +47,20 @@ class DockerRunner(unittest.TestCase):
         args = self.invoke('shell', extra_env={'LL_DOCKER_SSH_DIR': '/missing/private-keys'})
         self.assertFalse(any('/root/.ssh' in arg or '/missing/private-keys' in arg for arg in args))
 
+    def test_installed_pva_dependencies_are_read_only_mounts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            settings = {'PVA_OPERATOR_INCLUDE': 'operator', 'NVCV_INCLUDE': 'nvcv',
+                        'CUPVA_SDK_ROOT': 'cupva', 'PVA_LIB_STAGE': 'lib'}
+            env = {}
+            for variable, name in settings.items():
+                path = Path(directory)/name
+                path.mkdir()
+                env['LL_DOCKER_'+variable] = str(path)
+            args = self.invoke('pva', '--stage', 'build', extra_env=env)
+            for variable, name in settings.items():
+                self.assertIn(env['LL_DOCKER_'+variable]+':/pva/'+name+':ro', args)
+                self.assertIn(variable+'=/pva/'+name, args)
+
 
 if __name__ == '__main__':
     unittest.main()

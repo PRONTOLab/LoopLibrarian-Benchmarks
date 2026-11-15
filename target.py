@@ -15,7 +15,7 @@ import time
 import uuid
 
 ROOT = Path(__file__).resolve().parent
-SUITES = ('polybench_gpu', 'llama', 'mfem', 'aten')
+SUITES = ('polybench_gpu', 'llama', 'mfem', 'aten', 'pva', 'eqsat_extra')
 DEFAULT_LIBRARIES = '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu'
 
 
@@ -53,6 +53,17 @@ def build_files(suite, source):
             executables += [f'{case}/{name}' for name in ('reference', baseline, 'raised')]
             if sha(source/case/'raised') != build['raised_sha256']:
                 raise ValueError('Executable differs from build: ' + case)
+    elif suite == 'eqsat_extra':
+        files.append('cases.json')
+        for case in read(source/'cases.json'):
+            build = read(source/case/'build.json')
+            if any(build.get(k, 1) for k in ('source_build_rc', 'gpu_build_rc', 'reference_build_rc')):
+                raise ValueError('Unsuccessful build: ' + case)
+            files += [f'{case}/{name}' for name in ('build.json', 'export/match.json', 'gpu/gpu_resident.mlir')]
+            for variant in ('reference', 'raised'):
+                if sha(source/case/variant) != build[variant+'_sha256']:
+                    raise ValueError('Executable differs from build: ' + case)
+                executables.append(f'{case}/{variant}')
     elif suite == 'llama':
         build = read(source/'build.json')
         files += ['build.json', 'coverage.json']
@@ -60,15 +71,25 @@ def build_files(suite, source):
         for name, expected in build['binaries'].items():
             if sha(source/name) != expected:
                 raise ValueError('Executable differs from build: ' + name)
-    elif suite == 'mfem':
+    elif suite in ('mfem', 'pva'):
         for path in sorted(source.glob('*/build.json')):
             case = path.parent.name
             if sha(path.parent/'program') != read(path)['executable_sha256']:
                 raise ValueError('Executable differs from build: ' + case)
             files.append(f'{case}/build.json')
+            if suite == 'pva':
+                proof = path.parent/'proof.json'
+                if sha(proof) != read(path)['proof_sha256']:
+                    raise ValueError('Matching proof differs from build: ' + case)
+                files += [f'{case}/{name}' for name in ('proof.json', 'matched.mlir', 'raise.json')]
             executables.append(f'{case}/program')
         if not executables:
-            raise ValueError('No MFEM builds found')
+            raise ValueError('No ' + suite.upper() + ' builds found')
+        if suite == 'pva' and (source/'vendor-build.json').exists():
+            if sha(source/'vendor-comparison') != read(source/'vendor-build.json')['executable_sha256']:
+                raise ValueError('Vendor executable differs from build')
+            files.append('vendor-build.json')
+            executables.append('vendor-comparison')
     else:
         selection = read(source/'selection.json')
         if selection['cohort'] != 'paper':
@@ -103,10 +124,13 @@ def pack(destination, builds, ggml_build=None, root=ROOT):
         # Only first-party tracked source files; never SDKs, credentials, or saved runs.
         tracked = subprocess.check_output(['git', '-c', 'safe.directory='+str(root.resolve()),
                                            'ls-files', '-z'], cwd=root).decode().split('\0')
-        allowed = {'scripts', 'polybench', 'llama', 'mfem', 'aten'}
+        allowed = {'scripts', 'polybench', 'llama', 'mfem', 'aten', 'pva', 'eqsat'}
+        required_sources = {'target.py'}
+        if 'eqsat_extra' in builds:
+            required_sources.add('eqsat/execute.py')
         sources = sorted({name for name in tracked if name and
                           (Path(name).parts[0] in allowed or name in ('reproduce.py', 'README.md', 'LICENSE'))}
-                         | {'target.py'})
+                         | required_sources)
         for name in sources:
             path = root/name
             if not path.is_file() or path.is_symlink():
@@ -195,7 +219,7 @@ def run(bundle, suites=None, library_path=DEFAULT_LIBRARIES, verify_only=False):
             statuses[suite] = dict(returncode=1, error='Missing runtime libraries; see runtime-dependencies.json')
         else:
             cmd = [sys.executable, str(bundle/'reproduce.py'), suite, '--stage', 'run', '--output', str(output)]
-            if suite == 'mfem':
+            if suite in ('mfem', 'pva'):
                 cmd += ['--cases', *sorted(p.parent.name for p in output.glob('*/build.json'))]
             started = time.monotonic()
             with (results/(suite+'.log')).open('w') as log:

@@ -148,7 +148,7 @@ setup. They depend on machine load. Run GPU timing experiments one at a time.
 | [Graph sizes](#gemm-e-graph-sizes) | Section 4.4.3 | 2–10 minutes |
 | [Ginsbach/IDL](#ginsbachidl) | Section 4.4.1 | 10–30 minutes |
 | [KernelFaRer](#kernelfarer-table-9) | Table 9 | 30–90 minutes |
-| [PVA](#pva-table-7) | Table 7 | 6–13 minutes |
+| [PVA](#pva-table-7) | Table 7 | 15–30 minutes |
 | [Compilation cost](#compilation-cost-table-8) | Table 8 | 30–60 hours, estimated |
 | [Library inventory](#library-inventory-table-1) | Table 1 | Under 2 minutes |
 
@@ -222,7 +222,7 @@ repeated `--ssh-option KEY=VALUE` arguments. No access to the authors' machines 
 needed or provided. A native AArch64 compiler build and AArch64 Docker image have
 not been validated.
 
-Repeat `--build SUITE=PATH` to include `llama`, `mfem`, or the `aten` paper
+Repeat `--build SUITE=PATH` to include `llama`, `mfem`, `pva`, or the `aten` paper
 selection in one bundle. Llama also needs `--ggml-build PATH` when packaging,
 which copies the four built ggml shared libraries. When packaging from Docker,
 that path is `/opt/looplibrarian/build/ggml-aarch64`. Vendor SDKs and shared
@@ -429,6 +429,18 @@ in that set; additional programs outside the set are recorded separately.
 SpEQ's reported single match uses GEMM with linearized indexing; results on
 unmodified PolyBench are also recorded.
 
+To execute the additional `fdtd-2d` and `ludcmp` recognitions on Orin:
+
+```
+bash docker/run.sh eqsat_extra --stage build --output results/runs/eqsat-extra
+python3 target.py pack --build eqsat_extra=results/runs/eqsat-extra --output results/eqsat-extra-bundle
+```
+
+Run the bundle as described under [Execution on Orin](#execution-on-orin).
+These checks use MINI inputs, compare every output with the original C program,
+and record five timing samples after five warmups. They validate the additional
+matches separately from the paper's performance figures.
+
 ### GEMM e-graph sizes
 
 After [SpEQ setup](#comparison-tools):
@@ -477,31 +489,50 @@ protocol. Host hardware and load also affect the comparison.
 
 ### PVA (Table 7)
 
-After installing the SDK and configuring [target paths](#execution-on-orin):
+Install the PVA Solutions operator headers, NVCV headers, cuPVA SDK, and
+AArch64 operator libraries separately. Configure their paths as described under
+[Execution on Orin](#execution-on-orin). For Docker, existing installations can
+be mounted read-only without copying them into the image:
 
 ```
-python3 reproduce.py pva --output results/runs/pva
+export LL_DOCKER_PVA_OPERATOR_INCLUDE=/path/to/operator/include
+export LL_DOCKER_NVCV_INCLUDE=/path/to/nvcv/include
+export LL_DOCKER_CUPVA_SDK_ROOT=/path/to/cupva-sdk
+export LL_DOCKER_PVA_LIB_STAGE=/path/to/aarch64-pva-libraries
+bash docker/run.sh pva --stage build --vendor-compatibility --output results/runs/pva
+python3 target.py pack --build pva=results/runs/pva --output results/pva-bundle
 ```
+
+Transfer the bundle to Orin and use `target.py run` with the installed CUDA and
+PVA libraries in `--library-path`, as in the execution instructions above. The
+operator library and cuPVA runtime must be compatible with the installed target.
 
 Raise public C fixtures, match imported OpenCV references, emit typed PVA calls,
 and compare full outputs. This is a correctness experiment, without PVA timings.
-The eight cases cover dilation for four integer types, 8-bit-input histograms with
-signed/unsigned 32-bit outputs, 8-bit 3×3 Gaussian filtering, and 8-bit 3×3 box
-filtering. Histograms and filters use 192×256 inputs. Select a case with
+The 18 cases cover dilation, 3×3 Gaussian and box filtering for four integer
+types; 8/16-bit-input histograms with signed/unsigned 32-bit outputs; and 8-bit
+bilateral filtering and histogram equalization. Histograms and filters use
+192×256 inputs. Select a case with
 `--cases morphology_u8`; resume execution with `--stage run`.
 
 `summary.json` records results. Per-case files include raised IR, matching proof,
 API configuration, and checks. Gaussian and box filters test original, random,
 impulse, constant, and quantization-edge inputs, including borders, input
-preservation, and guards. Gaussian requires exact equality; its API parameters
+preservation, and guards. The 8-bit unsigned Gaussian case requires exact equality; its API parameters
 come from the imported coefficients. BoxFilter permits a recorded quantization
 error bound of 3 over 8-bit pixels. Build records retain the coefficient/rounding
-model and accepted bound; results distinguish exact from bounded agreement.
+model and accepted bound. The other typed filters, bilateral and equalization
+use explicitly declared approximate backend bindings: output errors are recorded
+without an asserted bound. Their execution checks require the selected vendor
+call, intact input and guard regions, and correct border handling. Results
+distinguish exact equality, bounded agreement, and recorded approximation.
 
-BilateralFilter and HistogramEqualization are unsupported because their library
-semantics differ from the fixtures. Other Gaussian pixel types and 16-bit-input
-histograms are also outside this driver. These eight cases do not establish
-reproduction of every Table 7 entry.
+`--vendor-compatibility` additionally builds a direct API comparison for Box,
+Bilateral, and HistogramEqualization. The bundle runs it and records all output
+differences in `vendor-result.json`; these are separate from compiler matches.
+Bilateral uses a different neighborhood from the fixture. Equalization's
+normalization and constant-image behavior are covered by its declared approximation.
+The 18 execution cases cover six supported operator families.
 
 ### Compilation cost (Table 8)
 

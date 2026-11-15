@@ -12,6 +12,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GPUProvenance(unittest.TestCase):
+    def test_early_outer_dump_marker_still_requires_every_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            code = '''
+from pathlib import Path
+import audit
+p=Path(__import__('sys').argv[1])/'output.log'
+p.write_text('==BEGIN DUMP_ARRAYS==\\nbegin dump: ex\\n1 2\\nend dump: ex\\n'
+             '==END   DUMP_ARRAYS==\\nbegin dump: ey\\n3 4\\nend dump: ey\\n')
+expected={'ex':2,'ey':2}
+assert audit.arrays(p,expected,enclosing_markers=False)=={'ex':[1,2],'ey':[3,4]}
+for body in [p.read_text().replace('3 4','3'),p.read_text().replace('3 4','3 nan')]:
+    p.write_text(body)
+    try: audit.arrays(p,expected,enclosing_markers=False)
+    except AssertionError: pass
+    else: raise AssertionError('Invalid output accepted')
+'''
+            env=dict(os.environ,PYTHONPATH=os.pathsep.join(str(ROOT/p) for p in
+                     ['polybench/gpu','scripts/artifact','scripts/correctness']))
+            subprocess.check_call([sys.executable,'-c',code,tmp],env=env)
+
     def test_changed_manifest_is_rejected_before_snapshot(self):
         with tempfile.TemporaryDirectory() as tmp:
             code = '''
