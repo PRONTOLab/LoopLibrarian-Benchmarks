@@ -1,80 +1,21 @@
-# LoopLibrarian artifact
+# Artifact for "LoopLibrarian: Automatically Targeting Library Functions as a Compiler ISA" (CGO '27)
 
-This repository contains the benchmarks and reproduction scripts for
-**LoopLibrarian: Automatically Targeting Library Functions as a Compiler ISA**
-(CGO ’27). LoopLibrarian raises C computations to MLIR and matches them against
+This repository contains the artifact for the paper:
+> **"LoopLibrarian: Automatically Targeting Library Functions as a Compiler ISA"**  
+> *IEEE/ACM International Symposium on Code Generation and Optimization (CGO '27)*
+
+Artifact DOI: [![DOI](https://zenodo.org/badge/1455872115.svg)](https://zenodo.org/badge/latestdoi/1455872115)
+
+LoopLibrarian raises C computations to MLIR and matches them against
 library specifications to generate library calls. The compiler is pinned under
 `third_party/Polygeist`.
 
-All setup and experiment instructions are below. Run commands from the repository root.
-
-- [Experiments and estimated runtimes](#experiments-and-estimated-runtimes)
-- [Testing systems](#testing-systems)
-- [Setup and smoke test](#setup-and-smoke-test)
-- [Execution on Orin](#execution-on-orin)
-- [Running experiments](#running-experiments)
-- [Extending the experiments](#extending-the-experiments)
-- [Repository files and licenses](#repository-files-and-licenses)
-- [Building and publishing Docker images](#building-and-publishing-docker-images)
-
-## Experiments and estimated runtimes
-
-Times include benchmark compilation and execution on the systems below, but exclude
-setup. They depend on machine load. Run GPU timing experiments one at a time.
-
-| Experiment | Paper result or comparison | Approximate time after setup |
-|---|---|---|
-| [PolyBench CPU](#polybench-cpu-figure-3) | Figure 3: 17 programs, OpenBLAS on Orin CPU | 40 minutes–2 hours |
-| [PolyBench GPU](#polybench-gpu-figure-4) | Figure 4: 12 kernels, CUDA on Orin | 20–50 minutes |
-| [Llama](#llama) | 19-operation coverage and one-layer inference versus ggml | 15–40 minutes |
-| [ATen](#aten-table-5-and-figure-5) | Table 5 coverage; Figure 5's 115 timing cases | 1–3 hours for the 115 cases |
-| [MFEM](#mfem) | Contraction fixtures and PCG updates | 15–45 minutes |
-| [Equality saturation](#equality-saturation) | Matching with/without equality saturation, versus SpEQ | 30 minutes–2 hours |
-| [Graph sizes](#gemm-e-graph-sizes) | GEMM e-graph sizes: LoopLibrarian and SpEQ | 2–10 minutes |
-| [Ginsbach/IDL](#ginsbachidl) | IDL detections and output comparisons | 10–30 minutes |
-| [KernelFaRer](#kernelfarer-table-9) | Table 9: four complete PolyBench programs | 30–90 minutes |
-| [PVA](#pva-table-7) | Table 7: supported operations and correctness | 6–13 minutes |
-| [Compilation cost](#compilation-cost-table-8) | Table 8: compilation measurements | 30–60 hours, estimated |
-| [Library inventory](#library-inventory-table-1) | Table 1: library specification counts | Under 2 minutes |
-
-## Testing systems
-
-The reproduction uses an x86 Linux build host and a Jetson AGX Orin execution
-target. [system-specifications.json](docs/system-specifications.json) contains
-the complete machine and library records.
-
-| Component | Build host | Execution target |
-|---|---|---|
-| Machine | KVM VM, 24 Intel Xeon Cascade Lake vCPUs | Jetson AGX Orin Developer Kit, 12 CPU cores |
-| RAM | 62 GiB | 61.4 GiB |
-| GPU | Not used | Integrated Orin GPU, compute capability 8.7 |
-| OS | Ubuntu 22.04.1, Linux 5.15.0-151-generic | Ubuntu 24.04.4, Linux 6.8.12-1021-tegra |
-| Clocks and power | Shared VM | CPU 2.2016 GHz; GPU 1.3005 GHz; MAXN mode 0 |
-
-Figure 3 uses CPU 0 on Orin with one OpenBLAS thread. PolyBench GPU, Llama,
-ATen, and MFEM execute on Orin. KernelFaRer, IDL, equality saturation, graph
-measurements, and compilation measurements use the x86 host. PVA requires the
-Orin PVA accelerator and a separately installed SDK.
-
-| Software | Version used |
-|---|---|
-| Polygeist | Pinned `third_party/Polygeist` commit |
-| LLVM/MLIR/Clang | LLVM 18 revision `26eb4285b56edd8c897642078d91f16ff0fd3472` with the [included parser patch](dependency_sources/llvm-switch-operands.patch) |
-| Host tools | Clang 14.0.0; AArch64 GCC/G++ 11.4.0; Python 3.10.12 |
-| Python libraries | egglog 11.4.0; NumPy 1.21.5 |
-| CUDA | Toolkit 12.6, nvcc 12.6.85; target runtime 12.6.77 |
-| Library reference headers | [Pinned public packages](dependency_sources/cuda-headers.json) for source imports and API checks |
-| cuBLAS/cuBLASLt | 12.6.1 on Orin; 12.6.4.1 in the cross-compilation SDK |
-| Other CUDA libraries | cuSPARSE 12.5.4.2; cuSOLVER 11.7.1.2 |
-| Tensor libraries | cuDNN 9.25.1; cuTENSOR 2.7.0 |
-| Native ATen comparison | CUDA libtorch `2.6.0a0+df5bbc09d1.nv24.12` |
-| OpenBLAS on Orin | 0.3.20, armv8, one thread |
-| Other dependencies | Revisions in [repos.json](dependency_sources/repos.json); SpEQ uses its own Docker image |
-
-## Setup and smoke test
-
-Choose Docker for the prebuilt x86 compiler, or install the tools natively.
-Both use the same benchmark drivers.
+## Initial setup
+The artifact repository includes a prebuilt Docker image for ease of testing. 
+We recommend you use the pre-built Docker image, as building the compiler requires
+building LLVM, which takes a significant amount of time. 
+If you would prefer to install dependencies natively, please scroll down to 
+[Native setup](#native-setup).
 
 ```
 git clone https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
@@ -96,23 +37,22 @@ bash docker/run.sh polybench_cpu --cases gemm --target host --size MINI --output
 ```
 
 The smoke test takes approximately 1–5 minutes and compares every output of
-native and raised GEMM. It checks installation, not Figure 3 performance.
-If the registry requires authentication, use an account with package access or
+native and raised GEMM. If the registry requires authentication, use an 
+account with package access or
 [build the image locally](#building-and-publishing-docker-images).
 
 `docker/run.sh` accepts the same suites and options as `reproduce.py`. In the
 experiment commands below, replace `python3 reproduce.py` with `bash docker/run.sh`
-to use Docker. Results stay in the host checkout; installed tools remain under
-`/opt/looplibrarian`. The `looplibrarian-builds` volume retains additional builds.
-Use `bash docker/run.sh shell` for an interactive shell. To select another image,
-set `LL_DOCKER_IMAGE`. Docker runs as root; if necessary, restore result ownership:
+to use Docker. Alternatively, use `bash docker/run.sh shell` for an interactive shell. 
+To select another image, set `LL_DOCKER_IMAGE`. 
+Docker runs as root; if necessary, restore result ownership:
 
 ```
 sudo chown -R "$(id -u):$(id -g)" results/runs
 ```
 
-These are x86-64 build images. They do not execute AArch64 programs or emulate
-Orin's GPU or PVA; follow [Execution on Orin](#execution-on-orin) for those runs.
+These are x86-64 build images, and as such they do not execute AArch64 programs or emulate
+Orin's GPU or PVA. Follow [Execution on Orin](#execution-on-orin) for those runs.
 
 ### Native setup
 
@@ -191,14 +131,50 @@ SpEQ retains its recognizer, library, LLVM passes, and 5/1/3 saturation schedule
 The Docker runner mounts the host Docker socket for SpEQ setup and the two
 comparison experiments, granting those containers access to the host daemon.
 
+
+## Experiments and estimated runtimes
+
+Times include benchmark compilation and execution on the systems below, but exclude
+setup. They depend on machine load. Run GPU timing experiments one at a time.
+
+| Experiment | Paper result | Approximate time after setup |
+|---|---|---|
+| [PolyBench CPU](#polybench-cpu-figure-3) | Figure 3 | 40 minutes–2 hours |
+| [PolyBench GPU](#polybench-gpu-figure-4) | Figure 4 | 20–50 minutes |
+| [Llama](#llama) | 19-operation coverage and one-layer inference versus ggml | 15–40 minutes |
+| [ATen](#aten-table-5-and-figure-5) | Table 5 and Figure 5 | 1–3 hours |
+| [MFEM](#mfem) | Contraction fixtures and PCG updates | 15–45 minutes |
+| [Equality saturation](#equality-saturation) | Table 10 | 30 minutes–2 hours |
+| [Graph sizes](#gemm-e-graph-sizes) | Section 4.4.3 | 2–10 minutes |
+| [Ginsbach/IDL](#ginsbachidl) | Section 4.4.1 | 10–30 minutes |
+| [KernelFaRer](#kernelfarer-table-9) | Table 9 | 30–90 minutes |
+| [PVA](#pva-table-7) | Table 7 | 6–13 minutes |
+| [Compilation cost](#compilation-cost-table-8) | Table 8 | 30–60 hours, estimated |
+| [Library inventory](#library-inventory-table-1) | Table 1 | Under 2 minutes |
+
+## Testing systems
+To obtain the results in the paper, we have used an x86 Linux build host and a Jetson AGX Orin execution
+target.
+
+| Component | Build host | Execution target |
+|---|---|---|
+| Machine | KVM VM, 24 Intel Xeon Cascade Lake vCPUs | Jetson AGX Orin Developer Kit, 12 CPU cores |
+| RAM | 62 GiB | 61.4 GiB |
+| GPU | Not used | Integrated Orin GPU, compute capability 8.7 |
+| OS | Ubuntu 22.04.1, Linux 5.15.0-151-generic | Ubuntu 24.04.4, Linux 6.8.12-1021-tegra |
+| Clocks and power | Shared VM | CPU 2.2016 GHz; GPU 1.3005 GHz; MAXN mode 0 |
+
+Figure 3 uses CPU 0 on Orin with one OpenBLAS thread. PolyBench GPU, Llama,
+ATen, and MFEM execute on Orin. KernelFaRer, IDL, equality saturation, graph
+measurements, and compilation measurements use the x86 host. PVA requires the
+Orin PVA accelerator and a separately installed SDK.
+
 ## Execution on Orin
 
-Execute programs locally on your own compatible device. Set `library_path` in
-`config.json` to its CUDA, cuDNN, cuTENSOR, and other shared-library directories.
-Configure power mode and clocks before timing, and use an otherwise idle device.
-Preflight records clocks, load, temperature, power, and fan state without changing
-settings. The tested target uses automatic fan control; the paper used a fixed fan
-setting. Record this and any other hardware or input differences with your results.
+### Local execution
+Our artifact supports running programs locally on your own compatible device.
+To do this, set `library_path` in `config.json` to its CUDA, cuDNN, cuTENSOR, 
+and other shared-library directories.
 
 The x86 image can cross-compile with `--stage build`. Supply `config.docker.json`
 with paths as seen inside the container, such as `/sdk/cuda/bin/nvcc`,
@@ -226,11 +202,9 @@ python3 target.py run --bundle . --library-path /usr/local/cuda/lib64:/usr/lib/a
 ```
 
 The bundle contains executables, input sources, validation scripts, and unchanged
-build records. It needs Python 3.10 or later and the target runtime libraries;
-Git and the compiler are not needed. `--verify-only` checks the bundle's hashes
-on either machine. Outputs and logs are written to `runs/` inside the bundle.
-The original build paths remain in provenance records but are not required on
-the target. Existing output directories are not overwritten.
+build records. It needs Python 3.10 or later and the target runtime libraries. 
+`--verify-only` checks the bundle's hashes on either machine. Outputs and logs 
+are written to `runs/` inside the bundle.
 
 Alternatively, transfer and execute on a machine you control through an existing
 SSH configuration. This command also retrieves the results if an experiment fails:
@@ -242,8 +216,7 @@ python3 target.py remote --bundle results/bundles/gpu --host user@orin --results
 Use `--jump-host user@gateway` if needed and `--library-path` for additional
 target libraries. On Orin, select the runtime libraries supplied for its JetPack
 installation, including cuBLAS; the cross-compilation SDK is for building only.
-Authentication uses your SSH keys or agent; no host or
-credentials are included in the artifact. If you use a local `SSH_ASKPASS` helper,
+Authentication uses your SSH keys or agent. If you use a local `SSH_ASKPASS` helper,
 pass `--ssh-option BatchMode=no`; other OpenSSH settings can be supplied with
 repeated `--ssh-option KEY=VALUE` arguments. No access to the authors' machines is
 needed or provided. A native AArch64 compiler build and AArch64 Docker image have
@@ -295,8 +268,7 @@ Run the 17 FP64 LARGE programs on Orin CPU 0 with one OpenBLAS thread, comparing
 original C with complete LoopLibrarian programs. Each uses five warmups and five
 measurements; report the minimum. Every output must pass `atol=rtol=1e-8`.
 `results.json` contains checks, samples, and paper speedups; `RESULTS.csv` contains
-the timing table. Select a case with `--cases gemm`. `--target host --size MINI`
-is a smoke test rather than a Figure 3 measurement.
+the timing table. Select a case with `--cases gemm`. 
 
 ### PolyBench GPU (Figure 4)
 
@@ -378,10 +350,7 @@ python3 reproduce.py aten --cohort all --stage report --output results/runs/aten
 python3 reproduce.py aten --cohort paper --stage plot --output results/runs/aten-paper
 ```
 
-Plotting takes seconds. Add `--paper-figure path/to/figure.pdf` for a side-by-side
-comparison. The horizontal axis is native CUDA time; the vertical axis is
-LoopLibrarian GPU time, in microseconds. The diagonal marks equal time; the
-other reference lines mark a factor of two.
+Add `--paper-figure path/to/figure.pdf` for a side-by-side comparison. 
 
 **Checks and comparison limits.** The paper command uses FP32 tolerance
 `0.002 * (1 + abs(reference))`. A stricter check, `1e-5 + 1e-4 * abs(reference)`,
@@ -470,9 +439,7 @@ python3 reproduce.py graph_sizes --output results/runs/graphs
 
 `summary.json` reports the counts, with serialized LoopLibrarian graphs and SpEQ
 DOT files beside it. The reported result is 370 SpEQ nodes versus 21 LoopLibrarian
-nodes. These count different scopes: LoopLibrarian's largest accepted scalar proof
-has 18 function nodes and three primitive leaves; SpEQ counts a whole LLVM loop
-graph, with primitive values inline in node labels.
+nodes.
 
 ### Ginsbach/IDL
 
@@ -554,9 +521,7 @@ python3 reproduce.py compilation_cost --cases aten/aten_avg_pool2d --repetitions
 
 `compilation-table.csv` reports median build times by suite; `measurement-tables.csv`
 contains stage times, proof measurements, and peak memory. `summary.json` retains
-raw repetitions and failures. A case enters the table only if all repetitions
-link successfully; exclusions are reported. Proofs have a ten-second deadline;
-timeouts cannot authorize replacements.
+raw repetitions and failures.
 
 The paper used three repetitions; `first-three-compilation-table.csv` reports
 repetitions 1–3. Agreement with the paper's measurement boundary and input set
@@ -654,16 +619,3 @@ Allow 1–4 hours for a first main-image build. LLVM and Polygeist took about
 machines. The image imports specifications and runs script tests. The comparison
 build adds IDL and KernelFaRer with `COMPARISON_JOBS=4` by default. Later builds
 reuse unchanged compiler layers. SpEQ is built through [its setup command](#comparison-tools).
-
-For maintainers publishing updated images, commit and build the matching sources,
-log Docker into the registry, then run:
-
-```
-bash docker/publish.sh
-```
-
-This checks revision labels and pushes `artifact` and `comparisons`, plus tags
-containing the source revision, to `ghcr.io/prontolab/looplibrarian-benchmarks`.
-It does not publish SpEQ. A different registry/repository can be passed as the
-first argument. To allow reviewers to pull without authentication, the GitHub
-container package must have public visibility.
