@@ -44,6 +44,14 @@ def environment(**extra):
                MKL_NUM_THREADS="1")
     env["PATH"] = str(COMPILER / "build/bin") + ":" + str(COMPILER / "llvm-project/build/bin") + ":" + env.get("PATH", "")
     env["PYTHONPATH"] = str(ROOT / "scripts/artifact") + ":" + str(COMPILER / "scripts/correctness") + ":" + str(ROOT / "scripts/correctness") + ":" + str(COMPILER / "scripts/correctness/lib_v2") + ":" + env.get("PYTHONPATH", "")
+    # The cross-linker and CUDA compiler wrappers use separate environment
+    # variables for the same configured toolkit installation.
+    if setting("cuda_target"):
+        env["CUDA"] = str(setting("cuda_target"))
+        env["POLYGEIST_CUDA_CROSS_ROOT"] = str(setting("cuda_target"))
+    if setting("nvcc"):
+        env["POLYGEIST_NVCC"] = str(setting("nvcc"))
+        env["POLYGEIST_REAL_NVCC"] = str(setting("nvcc"))
     for key, value in CONFIG.get("environment", {}).items():
         env[key] = str(value)
     env.update({key: str(value) for key, value in extra.items()})

@@ -12,7 +12,7 @@ RUN python3 -m pip install --no-cache-dir egglog==11.4.0
 RUN ln -s /usr/bin/ld.lld-14 /usr/local/bin/ld.lld
 
 FROM tools AS compiler
-ARG POLYGEIST_REVISION=7acb7b96299ecc40cbb3ae7ec3fc679db0d15886
+ARG POLYGEIST_REVISION=80dd656edae3157653c3a207dd3572f563bf473d
 ARG BUILD_JOBS=8
 ENV POLYGEIST_ROOT=/opt/looplibrarian/third_party/Polygeist \
     POLYGEIST_DEPENDENCY_ROOT=/opt/looplibrarian/third_party \

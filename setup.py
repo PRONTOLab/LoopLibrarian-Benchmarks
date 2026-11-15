@@ -188,13 +188,15 @@ def speq():
 
 def ggml():
     target=Path(environment()['POLYGEIST_GGML_BUILD']).resolve()
+    nvcc=Path(setting('nvcc','/usr/local/cuda/bin/nvcc')).resolve()
     command(['cmake','-S',ROOT/'third_party/whisper.cpp','-B',target,'-G','Ninja',
         '-DCMAKE_TOOLCHAIN_FILE='+str(ARTIFACT/'dependency_sources/aarch64-cuda.cmake'),
         '-DCMAKE_BUILD_TYPE=Release','-DGGML_CUDA=ON','-DGGML_CUDA_NCCL=OFF','-DGGML_NATIVE=OFF',
         '-DGGML_CCACHE=OFF','-DGGML_OPENMP=OFF','-DGGML_CUDA_FA=OFF','-DWHISPER_BUILD_EXAMPLES=OFF',
         '-DWHISPER_BUILD_TESTS=OFF','-DWHISPER_BUILD_SERVER=OFF','-DCMAKE_CUDA_ARCHITECTURES=87',
         '-DCMAKE_CUDA_FLAGS=-target-dir sbsa-linux',
-        '-DCMAKE_CUDA_COMPILER='+str(setting('nvcc','/usr/local/cuda/bin/nvcc'))],LOG)
+        '-DCMAKE_CUDA_COMPILER='+str(nvcc),
+        '-DCUDAToolkit_ROOT='+str(nvcc.parent.parent)],LOG)
     command(['cmake','--build',target,'-j',str(setting('jobs',3))],LOG,timeout=43200)
 
 def specs():

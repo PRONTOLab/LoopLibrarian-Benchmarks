@@ -533,7 +533,8 @@ def build(name, args):
                       Path('/usr/lib/ccache/aarch64-linux-gnu-gcc').is_file() else None)
     if compiler_cache:
         env['PATH'] = str(compiler_cache) + os.pathsep + env.get('PATH', '')
-        env.setdefault('POLYGEIST_NVCC', str(HERE/'cached_nvcc.sh'))
+        if env.get('POLYGEIST_NVCC') in (None, env.get('POLYGEIST_REAL_NVCC')):
+            env['POLYGEIST_NVCC'] = str(HERE/'cached_nvcc.sh')
     if cutensor_root:
         env['POLYGEIST_CUTENSOR_ROOT']=str(cutensor_root)
     if args.persistent_workspace:

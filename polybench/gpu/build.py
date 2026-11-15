@@ -109,9 +109,13 @@ def build(name):
                    POLYGEIST_GPU_DATA_RESIDENCY_ASSUME_NO_ALIAS='1',
                    POLYGEIST_GPU_REGION_TIMING='1',
                    POLYGEIST_GPU_REGION_TIMING_FUNCTION=fn)
+        # Forward the companion objects selected by library emission. The GPU
+        # builder provides the shared Thrust runtime itself.
+        runtime_objects = sorted(p for p in (d / 'export').glob('*_runtime.o')
+                                 if p.name != 'thrust_runtime.o')
         rc = command([SCRIPTS / 'build_jetson.sh', d / 'export/abi.mlir',
                       d / 'raised', d / 'export/wrapper.o', d / 'export/harness.o',
-                      d / 'export/polybench.o', d / 'export/spec_runtime.o', OUT / 'iteration_driver.o'], log, env)
+                      d / 'export/polybench.o', *runtime_objects, OUT / 'iteration_driver.o'], log, env)
         row['gpu_build_rc'] = rc
     if not rc:
         row['raised_sha256'] = sha(d / 'raised')
