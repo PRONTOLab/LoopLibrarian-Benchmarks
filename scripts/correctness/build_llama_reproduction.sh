@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build the paper's one-token, one-layer FP32 Llama fixture from source.
 # The session harness owns disjoint arrays, permitting argument residency.
-# No retained compiler objects are used. See llama/README.md.
+# No retained compiler objects are used. See README.md#llama.
 set -euo pipefail
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "$HERE/common_env.sh"

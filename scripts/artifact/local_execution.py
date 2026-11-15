@@ -14,7 +14,7 @@ def require_aarch64():
     if platform.machine().lower() not in ('aarch64', 'arm64'):
         raise RuntimeError(
             'These executables require an AArch64 machine. Build with --stage build, '
-            'then run with --stage run on your own compatible target; see docs/reproduction.md.')
+            'then run with --stage run on your own compatible target; see README.md#execution-on-orin.')
 
 
 def run(command, timeout=300):

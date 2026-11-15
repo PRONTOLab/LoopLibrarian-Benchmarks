@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rebuild and validate all 17 Figure 3 CPU cases from C.
 
-See polybench/cpu/README.md for the protocol and prerequisites.
+See README.md#polybench-cpu-figure-3 for the protocol and prerequisites.
 Executables run locally on the machine invoking --stage run.
 """
 from ll_paths import COMPILER
