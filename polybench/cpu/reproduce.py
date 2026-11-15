@@ -61,6 +61,7 @@ def build(args):
                POLYGEIST_ITERATION_DRIVER="", POLYGEIST_WARMUP_RUNS="5",
                POLYGEIST_TIMED_RUNS="5",
                POLYGEIST_LOWER_SUBMAP_BEFORE_DEBUFFERIZE="1")
+    env.setdefault("POLYGEIST_MATCH_REGION_BUDGET", "300")
     cc = "aarch64-linux-gnu-gcc" if args.target == "jetson-cpu" else "gcc"
     if args.openblas_root:
         base = args.openblas_root.resolve()
@@ -136,6 +137,14 @@ def build(args):
             cmd.insert(1, "--no-debuf")
         row["raised_build_rc"] = command(cmd, log, env)
         if row["raised_build_rc"] == 0:
+            row["calls"] = re.findall(r"kernel.launch @([^ (]+)",
+                                      (dest / "work/matched.mlir").read_text())
+            if not row["calls"]:
+                row["raised_build_rc"] = 1
+                row["error"] = "No imported library call was emitted; see work/match.json"
+                with log.open("a") as stream:
+                    stream.write(row["error"] + "\n")
+        if row["raised_build_rc"] == 0:
             # Rename only the complete program's entry after compilation.
             # Kernel bodies and source helpers remain compiler-generated.
             objcopy = "aarch64-linux-gnu-objcopy" if args.target == "jetson-cpu" else "objcopy"
@@ -151,9 +160,6 @@ def build(args):
                 row["raised_build_rc"] = command(link, log, env)
                 if row["raised_build_rc"]:
                     break
-        if row["raised_build_rc"] == 0:
-            row["calls"] = re.findall(r"kernel.launch @([^ (]+)",
-                                      (dest / "work/matched.mlir").read_text())
         for variant in ("native", "raised"):
             if row[variant + "_build_rc"] == 0:
                 row[variant + "_sha256"] = sha(dest / variant)
