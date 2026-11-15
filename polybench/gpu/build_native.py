@@ -102,7 +102,7 @@ def build(name):
     code+='\n\n'.join(blocks)+'\n'+host+'\n'
     (d/'native_common.cuh').write_text(COMMON)
     (d/'native_adapter.cu').write_text(code)
-    record={'upstream_source':str(original.relative_to(ROOT)), 'upstream_sha256':sha(original),
+    record={'upstream_source':str(Path('third_party') / original.relative_to(DEPENDENCIES)), 'upstream_sha256':sha(original),
             'kernel_sha256':[hashlib.sha256(x.encode()).hexdigest() for x in blocks],
             'computational_bodies_verbatim':True,'qualifier':qualifier,
             'generated_source_sha256':sha(d/'native_adapter.cu')}
@@ -120,8 +120,10 @@ def build(name):
     if not rc:record['executable_sha256']=sha(d/'native')
     (d/'native-build.json').write_text(json.dumps(record,indent=2)+'\n')
     print(name,'native build',rc,flush=True)
+    return rc
 
 if __name__=='__main__':
     actual=subprocess.check_output(['git','-C',str(UP),'rev-parse','HEAD'],text=True).strip()
     assert actual=='5584aaa7d0be810ff5eb0b61c49fb64ecc81ba4c',actual
-    for name in sys.argv[1:] or CASES:build(name)
+    results = [build(name) for name in sys.argv[1:] or CASES]
+    sys.exit(int(any(results)))

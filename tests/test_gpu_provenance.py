@@ -12,6 +12,33 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GPUProvenance(unittest.TestCase):
+    def test_native_build_with_dependencies_outside_checkout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            code = '''
+import json
+from pathlib import Path
+import build_native as native
+root = Path(__import__('sys').argv[1])
+native.DEPENDENCIES = root / 'installed/dependencies'
+native.UP = native.DEPENDENCIES / 'polybenchGpu'
+native.OUT = root / 'output'
+source = native.UP / 'CUDA/2MM/2mm.cu'
+source.parent.mkdir(parents=True)
+source.write_text('__global__ void mm2_kernel() {}')
+source.with_suffix('.cuh').write_text('#define DIM_THREAD_BLOCK_X 32')
+(native.OUT / '2mm').mkdir(parents=True)
+native.command = lambda *args, **kwargs: 7
+rc = native.build('2mm')
+record = json.loads((native.OUT / '2mm/native-build.json').read_text())
+assert rc == 7 and record['build_rc'] == 7, record
+assert record['upstream_source'] == 'third_party/polybenchGpu/CUDA/2MM/2mm.cu', record
+assert 'executable_sha256' not in record
+'''
+            env = dict(os.environ, PYTHONPATH=os.pathsep.join(str(ROOT / p) for p in
+                       ['polybench/gpu', 'scripts/artifact', 'scripts/correctness']))
+            subprocess.check_call([sys.executable, '-c', code, tmp], env=env,
+                                  stdout=subprocess.DEVNULL)
+
     def test_separate_roots_preserve_compiler_hash_keys(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
