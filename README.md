@@ -25,14 +25,14 @@ cd LoopLibrarian-Benchmarks
 ### Docker setup
 
 Use x86-64 Linux with Docker, at least 32 GB RAM, and about 100 GB free disk space.
-The image includes LLVM, MLIR, Polygeist, OpenBLAS, Python dependencies,
-AArch64 cross-compilers, imported library specifications, and plotting tools.
-Pull the image built from artifact revision `ed470507e472` and give it the local
-name used by the runner:
+One image includes LLVM, MLIR, Polygeist, OpenBLAS, Python dependencies,
+AArch64 cross-compilers, imported library specifications, plotting tools, the
+native x86 CUDA libraries, and the KernelFaRer and Ginsbach/IDL comparison tools.
+Pull the image built from `main` and give it the local name used by the runner:
 
 ```
-docker pull ghcr.io/prontolab/looplibrarian-benchmarks:artifact-ed470507e472
-docker tag ghcr.io/prontolab/looplibrarian-benchmarks:artifact-ed470507e472 looplibrarian:artifact
+docker pull ghcr.io/prontolab/looplibrarian-benchmarks:latest
+docker tag ghcr.io/prontolab/looplibrarian-benchmarks:latest looplibrarian:artifact
 bash docker/run.sh polybench_cpu --cases gemm --target host --size MINI --output results/runs/smoke
 ```
 
@@ -51,27 +51,23 @@ Docker runs as root; if necessary, restore result ownership:
 sudo chown -R "$(id -u):$(id -g)" results/runs
 ```
 
-For GPU experiments on an x86 NVIDIA GPU server, build the updated base and GPU
-images from this checkout:
+GPU experiments on an x86 NVIDIA GPU server use the same image:
 
 ```
-bash docker/build.sh
-bash docker/build.sh --gpu
 bash docker/run.sh polybench_gpu --cases gemm --output results/runs/gpu-smoke
 ```
 
 The host needs an NVIDIA driver compatible with CUDA 12.6 and the
 [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
-The GPU image installs CUDA, cuDNN, cuTENSOR, PyTorch and the ggml baseline.
+The image installs CUDA, cuDNN, cuTENSOR, PyTorch and the ggml baseline.
 Library paths are configured inside the image; no host SDK mounts or manual
-`library_path` setting are needed. Building it takes approximately 20–60 minutes
-and needs additional disk space for CUDA and PyTorch. The runner enables GPU
-access for execution; `--stage build` does not require a GPU. Use
-`LL_DOCKER_GPUS=device=0` to select one GPU on a shared server.
+`library_path` setting are needed. The runner enables GPU access for execution;
+`--stage build` does not require a GPU. Use `LL_DOCKER_GPUS=device=0` to select
+one GPU on a shared server.
 
 GPU experiments default to `--gpu-target x86_64` and `sm_80` (A100). Use
 `--gpu-arch sm_90`, for example, when building for H100; build the corresponding
-ggml image with `LL_GPU_ARCH=90 bash docker/build.sh --gpu`. The chosen target
+ggml baseline with `LL_GPU_ARCH=90 bash docker/build.sh`. The chosen target
 is saved with the experiment and reused by `--stage run`. Correctness checks and
 five timing samples are the same on both platforms. Runtimes and speedups on
 a different CPU/GPU are new measurements, not the paper's Orin measurements.
@@ -122,13 +118,8 @@ compiler build, and 2–10 minutes for specification import.
 
 ### Comparison tools
 
-For Docker, pull the extended image once. The runner selects it automatically
-for KernelFaRer, Ginsbach/IDL, equality saturation, and graph sizes:
-
-```
-docker pull ghcr.io/prontolab/looplibrarian-benchmarks:comparisons-ed470507e472
-docker tag ghcr.io/prontolab/looplibrarian-benchmarks:comparisons-ed470507e472 looplibrarian:comparisons
-```
+The Docker image already contains KernelFaRer and Ginsbach/IDL, which the runner
+uses for KernelFaRer, Ginsbach/IDL, equality saturation, and graph sizes.
 
 For a native installation, build only the tools needed for your experiment:
 
@@ -317,7 +308,7 @@ CUDA adaptations. Select a subset with `--cases gemm`.
 
 ### Llama
 
-The native GPU image includes ggml. For Jetson, first build its ggml baseline
+The Docker image includes the native x86 ggml baseline. For Jetson, first build its ggml baseline
 as described under [Execution on Orin](#execution-on-orin):
 
 ```
@@ -689,21 +680,24 @@ and are not redistributed here.
 
 ## Building and publishing Docker images
 
-`Dockerfile` builds the compiler and comparison images.
-`docker/Dockerfile.gpu` extends the compiler image with native x86 CUDA libraries
-and the ggml and PyTorch comparison implementations. Build the base first.
+`Dockerfile` builds one image holding the compiler, the native x86 CUDA libraries
+with the ggml and PyTorch comparison implementations, and the KernelFaRer and
+Ginsbach/IDL comparison tools.
 
 Build locally instead of pulling if you change the compiler or need another image
 revision. Builds use committed sources and exclude local configuration and results:
 
 ```
 bash docker/build.sh
-bash docker/build.sh --comparisons
-bash docker/build.sh --gpu
 ```
 
-Allow 1–4 hours for a first main-image build. LLVM and Polygeist took about
-48 minutes with `BUILD_JOBS=8` on the listed host; lower `BUILD_JOBS` on smaller
-machines. The image imports specifications and runs script tests. The comparison
-build adds IDL and KernelFaRer with `COMPARISON_JOBS=4` by default. Later builds
-reuse unchanged compiler layers. SpEQ is built through [its setup command](#comparison-tools).
+Allow 1–4 hours for a first build, plus 20–60 minutes and additional disk space
+for CUDA and PyTorch. LLVM and Polygeist took about 48 minutes with `BUILD_JOBS=8`
+on the listed host; lower `BUILD_JOBS` on smaller machines. The image imports
+specifications and runs script tests. IDL and KernelFaRer build with
+`COMPARISON_JOBS=4` by default. Later builds reuse unchanged compiler layers.
+SpEQ is built through [its setup command](#comparison-tools).
+
+The [Docker workflow](.github/workflows/docker.yml) builds this image for pull
+requests that change the image inputs. On `main` and tags it also publishes the
+image to `ghcr.io/prontolab/looplibrarian-benchmarks`, with `latest` following `main`.

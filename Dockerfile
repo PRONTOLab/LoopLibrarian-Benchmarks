@@ -44,43 +44,6 @@ RUN cmake -S "$POLYGEIST_ROOT" -B "$POLYGEIST_ROOT/build" -G Ninja \
 RUN cmake --build "$POLYGEIST_ROOT/llvm-project/build" -j "$BUILD_JOBS" \
     --target mlir_c_runner_utils mlir_runner_utils
 
-FROM compiler AS prepared
-ARG BUILD_JOBS=8
-ENV NETLIB_REF=/opt/looplibrarian/third_party/lapack
-WORKDIR /opt/looplibrarian
-RUN apt-get update && apt-get install -y --no-install-recommends file zstd \
-    && rm -rf /var/lib/apt/lists/*
-# Keep public-source setup and specification imports cached when only benchmark
-# drivers or documentation change.
-COPY setup.py config.example.json ./
-COPY scripts/artifact/common.py scripts/artifact/gpu_target.py scripts/artifact/
-COPY scripts/correctness/ll_paths.py scripts/correctness/ll_paths.py
-COPY dependency_sources/repos.json dependency_sources/repos.json
-COPY dependency_sources/prepare_cuda_headers.py dependency_sources/cuda-headers.json dependency_sources/
-COPY docker/configure.py docker/configure.py
-RUN python3 dependency_sources/prepare_cuda_headers.py \
-    && python3 docker/configure.py --jobs "$BUILD_JOBS" \
-    && (python3 setup.py sources || { cat third_party/upstream-audit.json; tail -80 third_party/setup.log; exit 1; })
-RUN python3 setup.py specs || { tail -80 third_party/setup.log; exit 1; }
-ARG ARTIFACT_REVISION=8452b2bc8239602d6bf3efadac531614c3311261
-LABEL org.opencontainers.image.source="https://github.com/PRONTOLab/LoopLibrarian-Benchmarks" \
-      org.opencontainers.image.revision="${ARTIFACT_REVISION}"
-# Fetch only the selected revision's Git metadata, then use the local source
-# context. Credentials, results, SDKs, and host build trees are excluded.
-RUN git init . \
-    && git remote add origin https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git \
-    && git fetch --depth 1 origin "$ARTIFACT_REVISION" \
-    && git reset --quiet --mixed FETCH_HEAD
-COPY . .
-FROM prepared AS artifact
-# Remove build-stage transport tools from the published runtime. Keeping this
-# separate from compiler compilation allows reuse of the unchanged toolchain.
-RUN apt-get purge -y openssh-client && ! command -v ssh && ! command -v scp
-RUN python3 -m unittest discover -s tests > /opt/container-tests.log 2>&1 \
-    || { tail -80 /opt/container-tests.log; exit 1; }
-ENTRYPOINT ["/bin/bash", "/opt/looplibrarian/docker/entrypoint.sh"]
-CMD ["bash"]
-
 # Independent toolchains: changing benchmark inputs need not rebuild IDL.
 FROM tools AS comparison-tools
 ARG COMPARISON_JOBS=4
@@ -100,10 +63,63 @@ RUN (python3 setup.py kernelfarer || { tail -80 third_party/setup.log; exit 1; }
     && cmake --build /opt/comparisons/kernelfarer-build -j "$COMPARISON_JOBS"
 RUN python3 setup.py ginsbach || { tail -80 third_party/setup.log; exit 1; }
 
-FROM artifact AS comparisons
-COPY --from=comparison-tools /opt/comparisons /opt/comparisons
-# The client launches the separate SpEQ image through the host Docker daemon.
-RUN apt-get update && apt-get install -y --no-install-recommends docker.io \
+FROM compiler AS prepared
+ARG BUILD_JOBS=8
+ENV NETLIB_REF=/opt/looplibrarian/third_party/lapack
+WORKDIR /opt/looplibrarian
+# The Docker client launches the separate SpEQ image through the host daemon.
+RUN apt-get update && apt-get install -y --no-install-recommends docker.io file zstd \
     && rm -rf /var/lib/apt/lists/*
+# Keep public-source setup and specification imports cached when only benchmark
+# drivers or documentation change.
+COPY setup.py config.example.json ./
+COPY scripts/artifact/common.py scripts/artifact/gpu_target.py scripts/artifact/
+COPY scripts/correctness/ll_paths.py scripts/correctness/ll_paths.py
+COPY dependency_sources/repos.json dependency_sources/repos.json
+COPY dependency_sources/prepare_cuda_headers.py dependency_sources/cuda-headers.json dependency_sources/
+COPY docker/configure.py docker/configure.py
+RUN python3 dependency_sources/prepare_cuda_headers.py \
+    && python3 docker/configure.py --jobs "$BUILD_JOBS" \
+    && (python3 setup.py sources || { cat third_party/upstream-audit.json; tail -80 third_party/setup.log; exit 1; })
+RUN python3 setup.py specs || { tail -80 third_party/setup.log; exit 1; }
+
+# Native x86 CUDA libraries with the ggml and PyTorch comparison implementations.
+ARG GPU_ARCH=80
+RUN curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb -o /tmp/cuda-keyring.deb \
+    && dpkg -i /tmp/cuda-keyring.deb && rm /tmp/cuda-keyring.deb \
+    && apt-get update && apt-get install -y --no-install-recommends \
+       cuda-nvcc-12-6=12.6.85-1 cuda-libraries-dev-12-6=12.6.3-1 \
+    && rm -rf /var/lib/apt/lists/*
+RUN python3 -m pip install --no-cache-dir torch==2.9.0 --index-url https://download.pytorch.org/whl/cu126 \
+    && python3 -m pip install --no-cache-dir cutensor-cu12==2.3.1
+COPY docker/configure_gpu.py docker/configure_gpu.py
+RUN python3 docker/configure_gpu.py --gpu-arch ${GPU_ARCH}
+ENV PATH="/usr/local/cuda/bin:${PATH}" \
+    NVIDIA_VISIBLE_DEVICES=all NVIDIA_DRIVER_CAPABILITIES=compute,utility
+RUN python3 setup.py ggml || { tail -80 third_party/setup.log; exit 1; }
+
+# KernelFaRer and Ginsbach/IDL.
+COPY --from=comparison-tools /opt/comparisons /opt/comparisons
 ENV LL_GINSBACH_ROOT=/opt/comparisons/ginsbach \
     LL_KERNELFARER_ROOT=/opt/comparisons/KernelFaRer
+
+ARG ARTIFACT_REVISION=8452b2bc8239602d6bf3efadac531614c3311261
+LABEL org.opencontainers.image.source="https://github.com/PRONTOLab/LoopLibrarian-Benchmarks" \
+      org.opencontainers.image.revision="${ARTIFACT_REVISION}"
+# Fetch only the selected revision's Git metadata, then use the local source
+# context. Credentials, results, SDKs, and host build trees are excluded.
+RUN git init . \
+    && git remote add origin https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git \
+    && git fetch --depth 1 origin "$ARTIFACT_REVISION" \
+    && git reset --quiet --mixed FETCH_HEAD
+COPY . .
+
+# One image holds the compiler, the GPU libraries, and the comparison tools.
+FROM prepared AS artifact
+# Remove build-stage transport tools from the published runtime. Keeping this
+# separate from compiler compilation allows reuse of the unchanged toolchain.
+RUN apt-get purge -y openssh-client && ! command -v ssh && ! command -v scp
+RUN python3 -m unittest discover -s tests > /opt/container-tests.log 2>&1 \
+    || { tail -80 /opt/container-tests.log; exit 1; }
+ENTRYPOINT ["/bin/bash", "/opt/looplibrarian/docker/entrypoint.sh"]
+CMD ["bash"]
