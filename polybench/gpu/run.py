@@ -10,6 +10,7 @@ import statistics
 import subprocess
 import time
 
+import gpu_target
 from common import ROOT, OUT as HERE, setting
 import local_execution as executor
 
@@ -24,7 +25,7 @@ def main():
     p.add_argument('kernel')
     p.add_argument('variant')
     args = p.parse_args()
-    executor.require_aarch64()
+    executor.require_gpu_target()
     d = HERE / args.kernel
     exe = d / args.variant
     if args.variant == 'raised':
@@ -46,12 +47,15 @@ def main():
     if rc or executor.stage(exe,target):
         raise SystemExit('Local staging failed')
     monitor = target+'.thermal'
+    monitor_command = ('tegrastats --interval 100' if gpu_target.name() == 'jetson' else
+                       'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits -lms 100')
+    sample_pattern = '@[0-9]+([.][0-9]+)?C' if gpu_target.name() == 'jetson' else '^[0-9]+$'
     command = ('ulimit -c 0; chmod +x '+target+'; '
-               'export LD_LIBRARY_PATH='+shlex.quote(setting('library_path', '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu'))+'; '
-               'tegrastats --interval 100 > '+monitor+' 2>&1 & monitor=$!; '
+               'export LD_LIBRARY_PATH='+shlex.quote(gpu_target.library_path())+'; '
+               +monitor_command+' > '+monitor+' 2>&1 & monitor=$!; '
                # Short reference programs can finish before tegrastats starts.
                # Await a real sample before entering the executable's timers.
-               'sample_wait=0; while ! grep -Eq "@[0-9]+([.][0-9]+)?C" '+monitor+'; do '
+               'sample_wait=0; while ! grep -Eq '+shlex.quote(sample_pattern)+' '+monitor+'; do '
                'sample_wait=$((sample_wait+1)); '
                'if [ "$sample_wait" -ge 200 ] || ! kill -0 "$monitor" 2>/dev/null; then '
                'kill "$monitor" 2>/dev/null; wait "$monitor" 2>/dev/null; exit 125; fi; '
@@ -92,7 +96,7 @@ def main():
         else 'compute_wall_ms synchronizes the CUDA stop event')
     row['measured']=out.count('phase=sample')
     row['dump_count']=out.count('==BEGIN DUMP_ARRAYS==')
-    temperatures=[float(x) for x in re.findall(r'@([0-9.]+)C',thermal)]
+    temperatures=[float(x) for x in re.findall(r'@([0-9.]+)C' if gpu_target.name() == 'jetson' else r'(?m)^([0-9.]+)$',thermal)]
     row['max_temperature_c']=max(temperatures or [0])
     row['thermal_ok']=tr==0 and bool(temperatures) and row['max_temperature_c']<85
     (d/(args.variant+'-run.json')).write_text(json.dumps(row,indent=2)+'\n')

@@ -42,6 +42,7 @@ class ExecutionBundle(unittest.TestCase):
             shutil.rmtree(build)
             manifest = target.verify(moved)
             self.assertFalse((moved/'.git').exists())
+            self.assertTrue((moved/'scripts/artifact/gpu_target.py').is_file())
             self.assertFalse((moved/'third_party/Polygeist').exists())
             self.assertEqual((moved/'builds/mfem/fixture/build.json').read_bytes(), original)
             self.assertEqual(manifest['suites']['mfem']['build_provenance']['compiler_commit'],

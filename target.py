@@ -125,7 +125,7 @@ def pack(destination, builds, ggml_build=None, root=ROOT):
         tracked = subprocess.check_output(['git', '-c', 'safe.directory='+str(root.resolve()),
                                            'ls-files', '-z'], cwd=root).decode().split('\0')
         allowed = {'scripts', 'polybench', 'llama', 'mfem', 'aten', 'pva', 'eqsat'}
-        required_sources = {'target.py'}
+        required_sources = {'target.py', 'scripts/artifact/gpu_target.py'}
         if 'eqsat_extra' in builds:
             required_sources.add('eqsat/execute.py')
         sources = sorted({name for name in tracked if name and
@@ -196,7 +196,7 @@ def run(bundle, suites=None, library_path=DEFAULT_LIBRARIES, verify_only=False):
     results.mkdir(exist_ok=True)
     ggml = bundle/'runtime/ggml'
     libraries = str(ggml/'ggml/src') + ':' + library_path if ggml.exists() else library_path
-    config = dict(library_path=libraries, cpu=0,
+    config = dict(library_path=libraries, cpu=0, gpu_target='jetson',
                   environment={'POLYGEIST_GGML_BUILD': str(ggml)} if ggml.exists() else {})
     save(results/'target-config.json', config)
     env = dict(os.environ, LL_EXECUTION_BUNDLE=str(bundle/'execution-bundle.json'),

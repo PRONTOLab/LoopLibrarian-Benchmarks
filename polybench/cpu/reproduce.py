@@ -279,7 +279,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--stage", choices=("build", "run", "all"), default="all")
-    p.add_argument("--target", choices=("jetson-cpu", "host"), default="jetson-cpu")
+    p.add_argument("--target", choices=("jetson-cpu", "host"), default="host")
     p.add_argument("--openblas-root", type=Path)
     p.add_argument("--kernels", default=DEFAULTS)
     p.add_argument("--memory-form", default="cholesky")

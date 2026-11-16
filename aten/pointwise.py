@@ -44,11 +44,6 @@ def report(out, selected, shape_specs=None, extra_gpu_results=(), scope='pointwi
         matched = json.loads(path.read_text()) if path.exists() else {}
         request_path = out/'matching'/name/'request.json'
         request = json.loads(request_path.read_text()) if request_path.exists() else {}
-        previous = request.get('baseline_complete_match')
-        if previous in ('True','False'):
-            previous = previous == 'True'
-        if not isinstance(previous,bool):
-            previous = None
         variants = [v for v in matched.get('variants', []) if complete_variant(v)]
         considered = [v for v in matched.get('variants', []) if 'counts' in v]
         best = min(considered, key=lambda v: (v['counts']['linalg'],v['counts']['loops'])) if considered else {}
@@ -69,7 +64,6 @@ def report(out, selected, shape_specs=None, extra_gpu_results=(), scope='pointwi
                      'stale_or_incomplete_gpu_evidence' if not same_binary else
                      'validated' if runtime.get('fully_validated') else 'correctness_failed')
         rows.append(dict(kernel=name, complete_match=bool(variants),
-                         baseline_complete_match=previous,
                          numeric_model=request.get('numeric_model','unknown'),
                          match_status=matched.get('status', 'pending'),
                          emitted=best.get('emitted', []),
@@ -83,22 +77,21 @@ def report(out, selected, shape_specs=None, extra_gpu_results=(), scope='pointwi
                    strict_gpu_passes=sum(r['strict_gpu_pass'] for r in rows),
                    timed=sum(bool(r['strict_gpu_pass'] and r['gpu'].get('timing', {}).get('passed')
                                   and r['gpu']['timing'].get('native_over_raised')) for r in rows))
-    if any(r['baseline_complete_match'] is not None for r in rows):
-        summary['baseline_complete_matches'] = sum(r['baseline_complete_match'] is True for r in rows)
-        summary['new_complete_matches'] = sum(r['complete_match'] and
-            r['baseline_complete_match'] is False for r in rows)
     if scope == 'all':
         summary.update(native_adapters=sum(r['native_baseline_available'] for r in rows),
                        build_passes=sum(bool(r['build'] and r['build'].get('rc') == 0) for r in rows),
                        complete_without_native_adapter=sum(r['complete_match'] and
                            not r['native_baseline_available'] for r in rows))
+        if shape_specs is None and (out/'matching/provenance.json').exists():
+            from coverage_table import write_report
+            write_report(out, out/'matching')
     save(out/'summary.json', dict(summary=summary, cases=rows, cohort=scope,
          shape_specs=str(shape_specs) if shape_specs else None,
          scope=(('Full ATen fixture inventory, not the paper 115 timing cohort. ' if scope == 'all'
                  else 'Pointwise IR candidates, not the paper 115 denominator. ')+
                 ('Explicit shape manifest; separate source copies. ' if shape_specs else 'Original fixture dimensions. ')+
                 'Matching/ABI results are separate from optional GPU checks and timings.')))
-    fields = ['kernel','numeric_model','baseline_complete_match','complete_match','strict_gpu_pass','timing_pairs',
+    fields = ['kernel','numeric_model','complete_match','strict_gpu_pass','timing_pairs',
               'native_over_raised','raised_min_ms','native_min_ms','dimension_scope',
               'native_baseline_scope','match_status','execution_status','build_error',
               'emitted','remaining_linalg','remaining_loops']
@@ -108,7 +101,6 @@ def report(out, selected, shape_specs=None, extra_gpu_results=(), scope='pointwi
             runtime = row['gpu'] or {}; timing = runtime.get('timing',{})
             timed = row['strict_gpu_pass'] and timing.get('passed')
             writer.writerow(dict(kernel=row['kernel'],numeric_model=row['numeric_model'],complete_match=row['complete_match'],
-                baseline_complete_match=row['baseline_complete_match'],
                 strict_gpu_pass=row['strict_gpu_pass'],
                 timing_pairs=len(timing['samples'])//2 if timed else '',
                 native_over_raised=timing.get('native_over_raised','') if timed else '',

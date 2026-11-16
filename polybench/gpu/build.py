@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 
+import gpu_target
 from common import ROOT, OUT, ARTIFACT, setting
 SCRIPT = Path(__file__).resolve().parent
 PB = ROOT / 'polybench/sources'
@@ -93,14 +94,14 @@ def build(name, size='LARGE'):
                header_sha256=sha(d / header.name), flags=flags,
                dataset=size,
                scope='isolated compiler-generated kernel, explicit ABI test harness')
-    macros = subprocess.check_output(['aarch64-linux-gnu-gcc', *flags, '-dM', '-E',
+    macros = subprocess.check_output([gpu_target.cc(), *flags, '-dM', '-E',
                                       str(source)], text=True)
     row['dimensions'] = {key: int(value) for key, value in re.findall(
         r'^#define (M|N|NI|NJ|NK|NL|NM|NX|NY) ([0-9]+)$', macros, re.M)}
     row['datatype'] = 'FP64'
     row['numeric_model'] = 'relaxed'
     row['environment'] = {k: v for k, v in env.items() if k.startswith('POLYGEIST_')}
-    rc = command([SCRIPTS / 'polygeist_build.sh', '--target=jetson',
+    rc = command([SCRIPTS / 'polygeist_build.sh', '--target='+gpu_target.compiler_target(),
                   '--function=' + fn, '--harness=' + str(d / 'harness.c'),
                   '-o', d / 'unused', source, *flags], log, env)
     row['source_build_rc'] = rc
@@ -122,12 +123,12 @@ def build(name, size='LARGE'):
         row['gpu_build_rc'] = rc
     if not rc:
         row['raised_sha256'] = sha(d / 'raised')
-    native = [['aarch64-linux-gnu-gcc', *flags, '-Dmain=polygeist_polybench_iteration',
+    native = [[gpu_target.cc(), *flags, '-Dmain=polygeist_polybench_iteration',
                '-include', ROOT / 'polybench/runtime/polybench_repeat_entry.h',
                '-c', source, '-o', d / 'reference.o'],
-              ['aarch64-linux-gnu-gcc', '-O3', *flags, '-c', PB/'utilities/polybench.c',
+              [gpu_target.cc(), '-O3', *flags, '-c', PB/'utilities/polybench.c',
                '-o', d / 'polybench.o'],
-              ['aarch64-linux-gnu-gcc', d/'reference.o', d/'polybench.o',
+              [gpu_target.cc(), d/'reference.o', d/'polybench.o',
                OUT/'iteration_driver.o', '-lm', '-o', d/'reference']]
     for cmd in native:
         nr = command(cmd, log, env)
@@ -147,7 +148,7 @@ def build(name, size='LARGE'):
     return row
 
 if __name__ == '__main__':
-    subprocess.run(['aarch64-linux-gnu-gcc', '-O2', '-c', str(OUT/'iteration_driver.c'),
+    subprocess.run([gpu_target.cc(), '-O2', '-c', str(OUT/'iteration_driver.c'),
                     '-o', str(OUT/'iteration_driver.o')], check=True)
     for name in sys.argv[1:] or CASES:
         build(name)

@@ -120,8 +120,9 @@ class PointwiseReport(unittest.TestCase):
             driver.report(out, ['aten_exp2','aten_expm1','aten_log2'])
             summary = json.loads((out/'summary.json').read_text())['summary']
             self.assertEqual(summary, dict(candidates=3, complete_matches=1,
-                strict_gpu_passes=0,timed=0,baseline_complete_matches=1,new_complete_matches=1))
+                strict_gpu_passes=0,timed=0))
             rows = json.loads((out/'summary.json').read_text())['cases']
+            self.assertNotIn('baseline_complete_match', rows[0])
             self.assertEqual(rows[0]['numeric_model'], 'strict')
             self.assertEqual(rows[2]['numeric_model'], 'unknown')
 

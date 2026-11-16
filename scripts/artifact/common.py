@@ -44,6 +44,12 @@ def environment(**extra):
                MKL_NUM_THREADS="1")
     env["PATH"] = str(COMPILER / "build/bin") + ":" + str(COMPILER / "llvm-project/build/bin") + ":" + env.get("PATH", "")
     env["PYTHONPATH"] = str(ROOT / "scripts/artifact") + ":" + str(COMPILER / "scripts/correctness") + ":" + str(ROOT / "scripts/correctness") + ":" + str(COMPILER / "scripts/correctness/lib_v2") + ":" + env.get("PYTHONPATH", "")
+    import gpu_target
+    for key, value in gpu_target.environment().items():
+        if key == 'POLYGEIST_GGML_BUILD':
+            env.setdefault(key, value)
+        else:
+            env[key] = value
     # The cross-linker and CUDA compiler wrappers use separate environment
     # variables for the same configured toolkit installation.
     if setting("cuda_target"):
@@ -94,6 +100,8 @@ def provenance(out):
         machine=subprocess.check_output(["uname", "-srm"], text=True).strip(),
         tools={str(p.relative_to(COMPILER)): sha(p) for p in
                [COMPILER / "build/bin/cgeist", COMPILER / "build/bin/polygeist-opt"] if p.exists()},
+        gpu_target=setting("gpu_target", "x86_64"),
+        gpu_arch=os.environ.get("POLYGEIST_GPU_ARCH"),
         suite=os.environ.get("LL_ARTIFACT_SUITE"), specification_suite="lib_v3"))
 
 def polybench():

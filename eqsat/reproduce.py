@@ -9,6 +9,13 @@ import speq
 
 PUBLISHED = set('2mm 3mm atax bicg cholesky correlation covariance doitgen gemm gemver gesummv mvt symm syr2k syrk trisolv trmm'.split())
 
+def submitted_counts_match(totals):
+    # Compare both LoopLibrarian arms on the same published set. Additional
+    # recognitions among the other PolyBench inputs are reported separately.
+    return (totals['full']['published_cohort_recognized']==17 and
+            totals['none']['published_cohort_recognized']==8 and
+            totals['speq']['linearized_gemm_matches']==1)
+
 def inputs():
     rows = []
     for row in csv.DictReader((INPUTS/'polybench_manifest.csv').open()):
@@ -35,8 +42,7 @@ def summarize(rows):
     totals['speq'] = dict(unmodified_cases=len(native), matched_unmodified=sum(r.get('n_match',0)>0 for r in native),
                          linearized_gemm_matches=sum(r.get('n_match',0)>0 for r in linear))
     full = len(rows)==30
-    reproduced = (totals['full']['published_cohort_recognized']==17 and
-                  totals['none']['recognized']==8 and totals['speq']['linearized_gemm_matches']==1)
+    reproduced = submitted_counts_match(totals)
     save(OUT/'summary.json', dict(totals=totals, results=results, full_cohort=full,
          submitted_cohort_reproduced=full and reproduced,
          scope='Recognition counts; ABI lowering is reported separately. SpEQ one is a linearized GEMM, not unmodified PolyBench.'))

@@ -10,9 +10,14 @@ mkdir -p "$OUT"
 OUT=$(cd "$OUT" && pwd)
 BENCH=${POLYGEIST_LLAMA_BENCH:-"$REPO_ROOT/llama/inputs"}
 SOURCE=${POLYGEIST_LLAMA_SOURCE:-"$BENCH/llama2_extended_forward_bench.c"}
-CUDA=${CUDA:-/usr/local/cuda-12.6/targets/sbsa-linux}
-GGML_BUILD=${POLYGEIST_GGML_BUILD:-$REPO_ROOT/build/ggml-aarch64}
-: "${POLYGEIST_CUTENSOR_ROOT:?set to the AArch64 cuTENSOR tree}"
+source "$POLYGEIST_ROOT/scripts/correctness/gpu_target.sh"
+configure_gpu_target "${POLYGEIST_GPU_TARGET:-x86_64}"
+TARGET=cuda
+CPU_FLAGS=()
+GGML_PLATFORM=x86_64
+if [ "$POLYGEIST_GPU_TARGET" = jetson ]; then TARGET=jetson; CPU_FLAGS=(-march=armv8.2-a+fp16+bf16); GGML_PLATFORM=aarch64; fi
+GGML_BUILD=${POLYGEIST_GGML_BUILD:-$REPO_ROOT/build/ggml-$GGML_PLATFORM}
+: "${POLYGEIST_CUTENSOR_ROOT:?set to the target cuTENSOR tree}"
 # Apply the same generic view normalization to application and library IR.
 # This exposes matrix operations whose parallel dimensions were split in C.
 export POLYGEIST_NORMALIZE_PARALLEL_DIMS=1
@@ -20,22 +25,16 @@ export POLYGEIST_NORMALIZE_PARALLEL_DIMS=1
 export POLYGEIST_MATCH_REGION_BUDGET=${POLYGEIST_MATCH_REGION_BUDGET:-180}
 DEFS=(-DMODEL_DIM=4096 -DFFN_DIM=11008 -DVOCAB=32000 -DSEQ_LEN=2048
       -DNUM_HEADS=32 -DDUMP_ALL=1)
-CC=${AARCH64_CC:-aarch64-linux-gnu-gcc}
-CXX=${AARCH64_CXX:-aarch64-linux-gnu-g++}
-"$CC" -O3 -march=armv8.2-a+fp16+bf16 "${DEFS[@]}" -DWARMUP=5 -DMEASURE=5 \
+CC=$GPU_CC
+CXX=$GPU_CXX
+"$CC" -O3 "${CPU_FLAGS[@]}" "${DEFS[@]}" -DWARMUP=5 -DMEASURE=5 \
   -DLLAMA_HARNESS_NATIVE "$BENCH/llama_extended_timing_harness.c" -lm \
   -o "$OUT/llama_native"
-POLYGEIST_WRAP_KERNEL_PIPELINE=0 POLYGEIST_DISABLE_POINTWISE_MATCHING=0 \
-POLYGEIST_KEEP_WORK=1 POLYGEIST_BUILD_WORK_DIR="$OUT/nonresident-work" \
-  "$HERE/polygeist_build.sh" --target=jetson \
-  --function=kernel_llama2_extended_forward \
-  --harness="$BENCH/llama_extended_timing_harness.c" "$SOURCE" \
-  "${DEFS[@]}" -DWARMUP=5 -DMEASURE=5 -o "$OUT/llama_nonresident"
 POLYGEIST_WRAP_KERNEL_PIPELINE=0 POLYGEIST_DISABLE_POINTWISE_MATCHING=0 \
 POLYGEIST_KEEP_DEPENDENCIES=1 \
 POLYGEIST_CGEIST_FLAGS="--no-inline --memref-fullrank" POLYGEIST_SKIP_LINK=1 \
 POLYGEIST_KEEP_WORK=1 POLYGEIST_BUILD_WORK_DIR="$OUT/session-work" \
-  "$HERE/polygeist_build.sh" --target=jetson \
+  "$HERE/polygeist_build.sh" --target="$TARGET" \
   --function=kernel_llama2_extended_forward_session \
   --harness="$BENCH/llama_extended_session_timing_harness.c" "$SOURCE" \
   "${DEFS[@]}" -DSESSION_REPETITIONS=10 -DPOLYGEIST_BENCHMARK_ITERATIONS \
@@ -54,7 +53,7 @@ POLYGEIST_INLINE_GPU_ENTRY_CALLS=1 \
 "$CXX" -O3 -std=c++17 "${DEFS[@]}" "$HERE/llama_extended_ggml_bench.cpp" \
   -I"${POLYGEIST_GGML_INCLUDE:-$POLYGEIST_DEPENDENCY_ROOT/whisper.cpp/ggml/include}" \
   -L"$GGML_BUILD/ggml/src" -L"$GGML_BUILD/ggml/src/ggml-cuda" \
-  -L"$CUDA/lib" -L"$CUDA/lib/stubs" -Wl,--no-as-needed \
+  -L"$CUDA_LIBDIR" -L"$CUDA_LIBDIR/stubs" -Wl,--no-as-needed \
   -lggml -lggml-base -lggml-cpu -lggml-cuda -lcublas -lcudart -lcuda \
-  '-Wl,-rpath,$ORIGIN' -Wl,-rpath-link,"$CUDA/lib" -lpthread -ldl -lm \
+  '-Wl,-rpath,$ORIGIN' -Wl,-rpath-link,"$CUDA_LIBDIR" -lpthread -ldl -lm \
   -o "$OUT/llama_ggml"

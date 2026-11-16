@@ -7,6 +7,7 @@ from pathlib import Path
 import shlex
 import statistics
 import sys
+import gpu_target
 from common import ROOT, OUT, command, environment, save, setting, sha
 from coverage import campaign
 import local_execution
@@ -27,7 +28,7 @@ def build():
          expert_source_sha256=sha(ROOT/'scripts/correctness/llama_extended_ggml_bench.cpp')))
 
 def run():
-    local_execution.require_aarch64()
+    local_execution.require_gpu_target()
     cuda_graph = int(setting('cuda_graph', 1))
     if cuda_graph not in (0, 1):
         raise ValueError('cuda_graph must be 0 or 1')
@@ -49,7 +50,7 @@ def run():
         if sha(OUT/name)!=build['binaries'][name]:raise RuntimeError('Executable changed since build')
         exe=target+'/'+name
         if local_execution.stage(OUT/name,exe):raise RuntimeError('Llama executable staging failed')
-        libs=target+':'+setting('library_path','/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
+        libs=target+':'+gpu_target.library_path()
         cmd=('chmod +x '+shlex.quote(exe)+'; OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '
              'POLYGEIST_CUDA_GRAPH='+str(cuda_graph)+' LD_LIBRARY_PATH='+shlex.quote(libs)+' timeout 900 taskset -c '+
              str(int(setting('cpu',0)))+' '+shlex.quote(exe))

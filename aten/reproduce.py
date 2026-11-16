@@ -9,6 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT/'scripts/artifact'), str(ROOT/'scripts/correctness')]
+import gpu_target
 from common import OUT, PYTHON, command, save, setting
 
 
@@ -153,8 +154,7 @@ def main(argv=None):
         command([*runtime,'--stage','build','--jobs',str(args.jobs)], out/'build.log', timeout=21600)
     if args.stage in ('run','all'):
         command([*runtime,'--stage','run',
-                 '--library-path', setting('library_path',
-                    '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')], out/'run.log', timeout=21600)
+                 '--library-path', gpu_target.library_path()], out/'run.log', timeout=21600)
     report = paper_report(out, runtime)
     if args.stage in ('plot','all'):
         if report['summary']['timing_pairs_validated']:

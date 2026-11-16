@@ -38,5 +38,11 @@ def stage(source, destination):
 
 
 def runtime_env():
-    libraries = setting('library_path', '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
+    from gpu_target import library_path
+    libraries = library_path()
     return 'LD_LIBRARY_PATH=' + shlex.quote(libraries) + ' OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '
+
+
+def require_gpu_target():
+    from gpu_target import require_execution
+    require_execution()

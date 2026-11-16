@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import shlex
+import gpu_target
 from common import ROOT, OUT, command, environment, save, setting, sha
 import local_execution
 
@@ -19,7 +20,7 @@ def build(row):
     harness=BASE/('application_extractions/mfem_application_reference_harness.c' if pcg else 'benchmarks/mfem_full_output_validation.c')
     env=environment(POLYGEIST_BUILD_WORK_DIR=d/'work',POLYGEIST_ABI_BACKEND='cuda',
                     POLYGEIST_KEEP_DEPENDENCIES=1,POLYGEIST_MATCH_MAX_PARALLEL_DIMS=2,POLYGEIST_MATCH_MAX_OPERAND_RANK=2)
-    args=[ROOT/'scripts/correctness/polygeist_build.sh','--target=jetson','--function='+row['function'],
+    args=[ROOT/'scripts/correctness/polygeist_build.sh','--target='+gpu_target.compiler_target(),'--function='+row['function'],
           '--harness='+str(harness),BASE/row['source'],'-D'+row['macro'],
           '-DMFEM_BENCH_NE='+('2' if pcg else '1024'),'-o',d/'program']
     if pcg:args+=['-DBENCH_ITERS=1','-DMFEM_REPLAY_WARMUPS=0','-DMFEM_PUBLICATION_WARMUPS=0',
@@ -30,7 +31,7 @@ def build(row):
          executable_sha256=sha(d/'program'),emitted=proof['emitted']))
 
 def run(row):
-    local_execution.require_aarch64()
+    local_execution.require_gpu_target()
     name=row['kernel'];d=OUT/name;b=json.loads((d/'build.json').read_text())
     assert sha(d/'program')==b['executable_sha256']
     target='/tmp/looplibrarian-artifact-mfem/'+name
@@ -46,9 +47,20 @@ def run(row):
     return result
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--stage',choices=['build','run','summarize','all'],default='all')
-    p.add_argument('--cases',nargs='+');a=p.parse_args();rows=[r for r in CASES if not a.cases or r['kernel'] in a.cases]
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--stage',choices=['match','report','build','run','summarize','all'],default='all')
+    p.add_argument('--cases',nargs='+');a=p.parse_args()
+    available = list(CASES)
+    if a.stage in ['match','report']:
+        available += [dict(kernel=f'elasticity_qpoint_{dim}d',
+                           function=f'mfem_elasticity_qpoint_{dim}d_scalarized',
+                           source='normalized/elasticity_scalarized.c') for dim in (2,3)]
+    rows=[r for r in available if not a.cases or r['kernel'] in a.cases]
     if not rows or (a.cases and set(a.cases)-{r['kernel'] for r in rows}):p.error('unknown MFEM case')
+    if a.stage in ['match','report']:
+        import matching
+        report = matching.reproduce(rows) if a.stage == 'match' else matching.summarize(rows)
+        print(json.dumps({k:report[k] for k in ['recognized_inputs','abi_lowered_inputs','current_contraction_regions','paper_contraction_sites']}))
+        return
     if a.stage in ['build','all']:
         with ThreadPoolExecutor(max_workers=int(setting('jobs',2))) as pool:list(pool.map(build,rows))
     if a.stage in ['run','all']:

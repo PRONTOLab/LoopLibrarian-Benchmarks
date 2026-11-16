@@ -21,9 +21,24 @@ def main():
     p.add_argument('--stage', choices=['plan', 'match', 'build', 'run', 'report', 'summarize', 'plot', 'all'], default='all')
     p.add_argument('--output', type=Path)
     p.add_argument('--cases', nargs='+', help='Explicit subset; omit for the full paper cohort')
+    p.add_argument('--gpu-target', choices=['x86_64', 'jetson'], help='GPU execution platform (default: x86_64)')
+    p.add_argument('--gpu-arch', help='CUDA architecture, e.g. sm_80 or sm_87')
+    p.add_argument('--cohort', choices=['paper', 'all'], help='ATen selection')
     a, extra = p.parse_known_args()
-    if a.stage in ('match', 'report', 'plot') and a.suite != 'aten':
-        p.error('match/report/plot stages are currently available for ATen only')
+    if a.cohort:
+        if a.suite != 'aten':
+            p.error('--cohort applies to ATen only')
+        extra += ['--cohort', a.cohort]
+    matching_only = a.suite == 'aten' and (a.stage == 'match' or a.cohort == 'all')
+    if a.gpu_target:
+        os.environ['LL_GPU_TARGET'] = a.gpu_target
+    elif a.suite == 'pva':
+        os.environ['LL_GPU_TARGET'] = 'jetson'
+    if a.gpu_arch:
+        os.environ['LL_GPU_ARCH'] = a.gpu_arch
+    if a.stage in ('match', 'report', 'plot') and not (
+            a.suite == 'aten' or (a.suite == 'mfem' and a.stage != 'plot')):
+        p.error('match/report stages require ATen or MFEM; plot requires ATen')
     if a.stage in ('run', 'report', 'summarize', 'plot') and a.output is None:
         p.error('--output is required when resuming a built experiment')
     stamp = uuid.uuid4().hex[:12]
@@ -57,9 +72,28 @@ def main():
     if fresh and out.exists() and any(out.iterdir()):
         p.error('Use a fresh output for match/all; resume with build/run/report/plot')
     out.mkdir(parents=True, exist_ok=True)
+    import gpu_target
+    gpu_suites = ('polybench_gpu', 'llama', 'mfem', 'aten', 'eqsat_extra')
+    target_record = out/'gpu-target.json'
+    if a.suite in gpu_suites:
+        import json
+        if target_record.exists():
+            recorded = json.loads(target_record.read_text())
+            if a.gpu_target and a.gpu_target != recorded['target']:
+                p.error('The selected GPU target differs from the existing build')
+            if a.gpu_arch and a.gpu_arch != recorded['architecture']:
+                p.error('The selected CUDA architecture differs from the existing build')
+            os.environ['LL_GPU_TARGET'] = recorded['target']
+            os.environ['LL_GPU_ARCH'] = recorded['architecture']
+        elif stage not in ('run', 'report', 'summarize', 'plot'):
+            save(target_record, dict(target=gpu_target.name(), architecture=gpu_target.architecture()))
+        if stage in ('run', 'all') and not matching_only:
+            gpu_target.require_execution()
     env = environment(LL_ARTIFACT_OUTPUT=out, LL_ARTIFACT_SUITE=a.suite)
     env.setdefault('NETLIB_REF', str(Path(env['POLYGEIST_DEPENDENCY_ROOT']) / 'lapack'))
     os.environ.update(env)
+    if a.suite in gpu_suites and stage in ('build', 'all') and not matching_only:
+        gpu_target.validate_toolkit()
     provenance(out if stage in ('match', 'all') or (stage == 'build' and not (out/'provenance.json').exists())
                else out/('stage-'+stage))
     save(out/('command-'+stage+'.json'), cmd)

@@ -11,6 +11,7 @@ from build import ROOT, OUT, PB, CASES, command, sha
 from ll_paths import DEPENDENCIES
 
 UP = DEPENDENCIES/'polybenchGpu'
+import gpu_target
 from common import INPUTS, setting
 OLD = INPUTS/'polybenchgpu_adapters'
 SOURCES = dict(zip(CASES, ['2MM/2mm','3MM/3mm','ATAX/atax','BICG/bicg',
@@ -108,13 +109,12 @@ def build(name):
             'generated_source_sha256':sha(d/'native_adapter.cu')}
     log=d/'native-build.log';log.write_text('')
     env=dict(os.environ)
-    rc=command([setting('nvcc', '/usr/local/cuda/bin/nvcc'),'-O3','-std=c++17','-arch=sm_87',
-                '-ccbin','aarch64-linux-gnu-g++','-c',d/'native_adapter.cu','-o',d/'native_adapter.o'],log,env)
+    rc=command([setting('nvcc', '/usr/local/cuda/bin/nvcc'),'-O3','-std=c++17',*gpu_target.nvcc_flags(),'-c',d/'native_adapter.cu','-o',d/'native_adapter.o'],log,env)
     if not rc:
-        rc=command(['aarch64-linux-gnu-g++',d/'native_adapter.o',d/'export/harness.o',
+        rc=command([gpu_target.cxx(),d/'native_adapter.o',d/'export/harness.o',
                     d/'export/polybench.o',OUT/'iteration_driver.o',
-                    '-L'+str(Path(setting('cuda_target', '/usr/local/cuda/targets/sbsa-linux'))/'lib'),
-                    '-L'+str(Path(setting('cuda_target', '/usr/local/cuda/targets/sbsa-linux'))/'lib/stubs'),
+                    '-L'+str(gpu_target.cuda_lib()),
+                    '-L'+str(gpu_target.cuda_lib()/'stubs'),
                     '-lcudart','-lcublas','-lm','-o',d/'native'],log,env)
     record['build_rc']=rc
     if not rc:record['executable_sha256']=sha(d/'native')

@@ -7,6 +7,7 @@ import re
 import shutil
 import sys
 
+import gpu_target
 from common import ROOT, OUT, PYTHON, command, environment, save, sha
 
 GPU = ROOT/'polybench/gpu'
@@ -22,7 +23,7 @@ def build(cases, size):
     # Retain the views used in the EqSat coverage experiment.
     os.environ.update(environment(POLYGEIST_LOWER_SUBMAP_BEFORE_DEBUFFERIZE='0'))
     shutil.copyfile(GPU/'iteration_driver.c', OUT/'iteration_driver.c')
-    command(['aarch64-linux-gnu-gcc', '-O2', '-c', OUT/'iteration_driver.c',
+    command([gpu_target.cc(), '-O2', '-c', OUT/'iteration_driver.c',
              '-o', OUT/'iteration_driver.o'], OUT/'driver-build.log')
     save(OUT/'cases.json', cases)
     failed = []

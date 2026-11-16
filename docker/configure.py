@@ -14,5 +14,6 @@ for key in ('kernelfarer_root', 'ginsbach_root', 'speq_root'):
     config[key] = str(root / config[key])
 # Avoid placeholder SDK paths overriding a reviewer's environment.
 config.pop('openblas_root', None)
-config['environment'] = {'POLYGEIST_GGML_BUILD': str(root / 'build/ggml-aarch64')}
+config['environment'] = {}
+config['gpu_target'] = 'x86_64'
 (root / 'config.json').write_text(json.dumps(config, indent=2) + '\n')

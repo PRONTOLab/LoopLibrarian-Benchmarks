@@ -12,6 +12,7 @@ import time
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/'scripts/artifact'),str(ROOT/'scripts/correctness')]
+import gpu_target
 from common import COMPILER, OUT, environment, provenance, save, sha
 
 
@@ -151,7 +152,7 @@ def measure(case, mode, repetition, args):
     harness=dest/'link_harness.c'
     harness.write_text('extern void '+function+'(void);\nstatic void (*volatile keep)(void)='+function+';\nint main(void){return keep==0;}\n')
     executable=dest/'program';timefile=dest/'time.txt';work=dest/'work'
-    build=[str(COMPILER/'scripts/correctness/polygeist_build.sh'),'--target=jetson',
+    build=[str(COMPILER/'scripts/correctness/polygeist_build.sh'),'--target='+gpu_target.compiler_target(),
            '--function='+function,'--harness='+str(harness),'-o',str(executable),str(source)]
     build += [flag.replace('{root}',str(ROOT)) for flag in case['cflags']]
     if options.get('matching_stage')=='linalg':build.append('--no-debuf')

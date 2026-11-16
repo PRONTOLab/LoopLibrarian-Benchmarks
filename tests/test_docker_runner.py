@@ -41,7 +41,45 @@ class DockerRunner(unittest.TestCase):
         args = self.invoke('setup', 'ggml')
         workdirs = [args[i + 1] for i, arg in enumerate(args[:-1]) if arg == '-w']
         self.assertEqual(workdirs[-1], '/opt/looplibrarian')
-        self.assertEqual(args[-4:], ['looplibrarian:artifact', 'python3', 'setup.py', 'ggml'])
+        self.assertEqual(args[-4:], ['looplibrarian:gpu', 'python3', 'setup.py', 'ggml'])
+
+    def test_native_gpu_execution_exposes_gpu(self):
+        args = self.invoke('polybench_gpu', '--stage', 'run')
+        self.assertIn('looplibrarian:gpu', args)
+        self.assertIn('--gpus', args)
+        self.assertIn('memlock=-1', args)
+        self.assertNotIn('looplibrarian-builds:/opt/looplibrarian/build', args)
+
+    def test_matching_only_does_not_require_gpu_image(self):
+        args = self.invoke('aten', '--cohort', 'all', '--stage', 'match')
+        self.assertIn('looplibrarian:artifact', args)
+        self.assertNotIn('--gpus', args)
+
+    def test_full_aten_execution_uses_gpu_image(self):
+        for stage in ('all', 'run', 'build'):
+            with self.subTest(stage=stage):
+                args = self.invoke('aten', '--cohort', 'all', '--stage', stage)
+                self.assertIn('looplibrarian:gpu', args)
+                self.assertEqual('--gpus' in args, stage != 'build')
+
+    def test_custom_gpu_image_keeps_its_prebuilt_baseline(self):
+        args = self.invoke('llama', '--stage', 'build',
+                           extra_env={'LL_DOCKER_IMAGE': 'registry.example/looplibrarian:release'})
+        self.assertIn('registry.example/looplibrarian:release', args)
+        self.assertNotIn('looplibrarian-builds:/opt/looplibrarian/build', args)
+
+    def test_output_directory_does_not_change_execution_stage(self):
+        args = self.invoke('llama', '--output', 'build')
+        self.assertIn('--gpus', args)
+
+    def test_build_and_jetson_do_not_require_local_gpu(self):
+        for options in [('aten', '--stage', 'build'),
+                        ('compilation_cost', '--stage', 'all'),
+                        ('llama', '--gpu-target', 'jetson', '--stage', 'build')]:
+            args = self.invoke(*options)
+            self.assertNotIn('--gpus', args)
+        self.assertIn('looplibrarian:artifact', args)
+        self.assertIn('LL_GPU_TARGET=jetson', args)
 
     def test_no_credential_mount_from_obsolete_configuration(self):
         args = self.invoke('shell', extra_env={'LL_DOCKER_SSH_DIR': '/missing/private-keys'})

@@ -53,7 +53,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends file zstd \
 # Keep public-source setup and specification imports cached when only benchmark
 # drivers or documentation change.
 COPY setup.py config.example.json ./
-COPY scripts/artifact/common.py scripts/artifact/common.py
+COPY scripts/artifact/common.py scripts/artifact/gpu_target.py scripts/artifact/
 COPY scripts/correctness/ll_paths.py scripts/correctness/ll_paths.py
 COPY dependency_sources/repos.json dependency_sources/repos.json
 COPY dependency_sources/prepare_cuda_headers.py dependency_sources/cuda-headers.json dependency_sources/
@@ -89,7 +89,7 @@ ENV LL_GINSBACH_ROOT=/opt/comparisons/ginsbach \
     LL_JOBS=${COMPARISON_JOBS}
 WORKDIR /opt/comparison-setup
 COPY setup.py ./
-COPY scripts/artifact/common.py scripts/artifact/common.py
+COPY scripts/artifact/common.py scripts/artifact/gpu_target.py scripts/artifact/
 COPY scripts/correctness/ll_paths.py scripts/correctness/ll_paths.py
 COPY kernelfarer/kernelfarer.patch kernelfarer/kernelfarer.patch
 COPY ginsbach/ginsbach-linearalgebra-cuda13.patch ginsbach/ginsbach-linearalgebra-cuda13.patch

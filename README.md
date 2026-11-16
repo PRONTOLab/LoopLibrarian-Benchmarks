@@ -51,8 +51,34 @@ Docker runs as root; if necessary, restore result ownership:
 sudo chown -R "$(id -u):$(id -g)" results/runs
 ```
 
-These are x86-64 build images, and as such they do not execute AArch64 programs or emulate
-Orin's GPU or PVA. Follow [Execution on Orin](#execution-on-orin) for those runs.
+For GPU experiments on an x86 NVIDIA GPU server, build the updated base and GPU
+images from this checkout:
+
+```
+bash docker/build.sh
+bash docker/build.sh --gpu
+bash docker/run.sh polybench_gpu --cases gemm --output results/runs/gpu-smoke
+```
+
+The host needs an NVIDIA driver compatible with CUDA 12.6 and the
+[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+The GPU image installs CUDA, cuDNN, cuTENSOR, PyTorch and the ggml baseline.
+Library paths are configured inside the image; no host SDK mounts or manual
+`library_path` setting are needed. Building it takes approximately 20–60 minutes
+and needs additional disk space for CUDA and PyTorch. The runner enables GPU
+access for execution; `--stage build` does not require a GPU. Use
+`LL_DOCKER_GPUS=device=0` to select one GPU on a shared server.
+
+GPU experiments default to `--gpu-target x86_64` and `sm_80` (A100). Use
+`--gpu-arch sm_90`, for example, when building for H100; build the corresponding
+ggml image with `LL_GPU_ARCH=90 bash docker/build.sh --gpu`. The chosen target
+is saved with the experiment and reused by `--stage run`. Correctness checks and
+five timing samples are the same on both platforms. Runtimes and speedups on
+a different CPU/GPU are new measurements, not the paper's Orin measurements.
+
+Use `--gpu-target jetson --stage build` for the separate
+[Orin execution path](#execution-on-orin). A second machine is unnecessary for
+native x86 GPU experiments.
 
 ### Native setup
 
@@ -153,8 +179,9 @@ setup. They depend on machine load. Run GPU timing experiments one at a time.
 | [Library inventory](#library-inventory-table-1) | Table 1 | Under 2 minutes |
 
 ## Testing systems
-To obtain the results in the paper, we have used an x86 Linux build host and a Jetson AGX Orin execution
-target.
+The paper's measurements used the following build host and Orin target.
+Native x86 GPU experiments build and run on one machine; these two machines are
+only needed to repeat the original cross-compilation setup.
 
 | Component | Build host | Execution target |
 |---|---|---|
@@ -172,9 +199,11 @@ Orin PVA accelerator and a separately installed SDK.
 ## Execution on Orin
 
 ### Local execution
-Our artifact supports running programs locally on your own compatible device.
-To do this, set `library_path` in `config.json` to its CUDA, cuDNN, cuTENSOR, 
-and other shared-library directories.
+This optional path builds ARM executables for a Jetson. It requires target SDKs
+on the build host and compatible runtime libraries on the Jetson. Set
+`gpu_target` to `jetson` in its configuration and set `library_path` to the
+library directories on that device. The native x86 GPU Docker path above does
+not need these settings.
 
 The x86 image can cross-compile with `--stage build`. Supply `config.docker.json`
 with paths as seen inside the container, such as `/sdk/cuda/bin/nvcc`,
@@ -185,7 +214,7 @@ cp config.example.json config.docker.json
 # Edit config.docker.json to use the paths inside /sdk.
 export LL_DOCKER_CONFIG="$PWD/config.docker.json"
 export LL_DOCKER_SDK_ROOT=/path/to/installed-sdks
-bash docker/run.sh polybench_gpu --stage build --output results/runs/fig4
+bash docker/run.sh polybench_gpu --gpu-target jetson --stage build --output results/runs/fig4
 ```
 
 SDKs are mounted read-only and excluded from the image. Package the built
@@ -235,7 +264,7 @@ Additional target configuration:
 
 - **Llama:** set `environment.POLYGEIST_GGML_BUILD` and run `python3 setup.py ggml`
   to build the pinned CUDA baseline. In Docker, use
-  `/opt/looplibrarian/build/ggml-aarch64` and `bash docker/run.sh setup ggml`.
+  `/opt/looplibrarian/build/ggml-aarch64` and `LL_GPU_TARGET=jetson bash docker/run.sh setup ggml`.
 - **ATen:** set `environment.ATEN_NATIVE_TORCH_ROOT`, `ATEN_NATIVE_CUDA_ROOT`, and
   `POLYGEIST_CUTENSOR_ROOT` to the target-compatible installations. LibTorch is
   supplied separately. Jiterator tests also need CUDA 12.6 NVRTC and matching
@@ -276,7 +305,7 @@ the timing table. Select a case with `--cases gemm`.
 python3 reproduce.py polybench_gpu --output results/runs/fig4
 ```
 
-Run 12 FP64 LARGE kernels on Orin. Five warmups precede five measurements; report
+Run 12 FP64 LARGE kernels on the selected NVIDIA GPU. Five warmups precede five measurements; report
 the minimum CUDA-event compute time, excluding allocation and initial/final
 transfers. Synchronized end-to-end time is recorded separately. Every output
 must pass `atol=rtol=1e-8` before timing is accepted.
@@ -288,7 +317,8 @@ CUDA adaptations. Select a subset with `--cases gemm`.
 
 ### Llama
 
-After building the ggml baseline as described under [Execution on Orin](#execution-on-orin):
+The native GPU image includes ggml. For Jetson, first build its ggml baseline
+as described under [Execution on Orin](#execution-on-orin):
 
 ```
 python3 reproduce.py llama --output results/runs/llama
@@ -341,7 +371,10 @@ GPU timings are collected serially.
 
 Outputs include `matching/` (IR and proofs), `gpu/` (builds, checks, raw samples),
 `gpu/report.csv` (every paper case, including failures), and `summary.json`.
-Full-set runs also produce `summary.csv`. The Figure 5 plot is
+Full-set runs also produce `summary.csv` and `table5.json`/`table5.csv`, which
+report the number of complete matches across all 598 kernels and identify
+the 52 native-library cases. Matching coverage does not imply GPU correctness
+or measured performance. The Figure 5 plot is
 `plots/aten-current.pdf` and `.png`; its CSV records cases without valid timings.
 To regenerate reports or plots without rerunning experiments:
 
@@ -359,14 +392,14 @@ requires this check before timing. Both modes check full outputs, unchanged
 inputs, and buffer guards. Some reductions and convolution gradients agree with
 ATen CUDA while failing the stricter serial-C comparison.
 
-New results use the minimum of five samples per implementation. The paper used
+Timings use the minimum of five samples per implementation. The paper used
 five samples for 58 cases and twenty for 57; [paper_timings.csv](aten/paper_timings.csv)
 records each protocol. Argmax/argmin use a separately checked finite-input variant
 because ATen CUDA differs on the original NaN inputs. Sampled sparse addmm uses
 identical column indices for both implementations; its paper timings used different
 indices. Reports identify these differences, which limit direct speedup comparisons.
 
-#### Additional ATen pointwise experiments
+#### ATen pointwise experiments
 
 [pointwise_candidates.csv](aten/pointwise_candidates.csv) lists 268 candidates,
 including 54 Figure 5 cases; inclusion does not imply a successful match. Run:
@@ -402,16 +435,33 @@ and compiler settings and rejects duplicates; different dimensions remain separa
 
 ### MFEM
 
+For Table 6, run compiler matching without a GPU:
+
+```
+python3 reproduce.py mfem --stage match --output results/runs/mfem-matching
+```
+
+`matching-table.csv` groups emitted contraction regions by operator family;
+`matching-summary.json` retains the selected libraries and PCG vector calls.
+This checks all 20 operator extractions, including the two elasticity cases
+reported as unmatched, and the PCG application. `mfem/published-matching.json`
+contains the paper's per-input counts and their source revision. The current
+compiler covers the 128 previously matched contraction bodies and emits 135
+cuBLAS contractions. It additionally recognizes two contractions in value
+integration, two in mass application, and three in 3D div-div. The paper used
+cuTensorNet; this run uses imported OpenBLAS references and cuBLAS lowering.
+MFEM has no paper performance result.
+
+Optional execution checks:
+
 ```
 python3 reproduce.py mfem --output results/runs/mfem
 ```
 
 Run the 18 supported contraction fixtures (`NE=1024`) and integrated PCG updates
-(`NE=2`) on Orin. Every output is compared with the original computation using
+(`NE=2`) on the configured GPU target. Every output is compared with the original computation using
 `1e-11 + 1e-10 * abs(expected)`. `summary.json` aggregates results; each case has
 `result.json` and `run.log`. This validates execution, without a timing comparison.
-The emitted cuBLAS call count does not reproduce the paper's count of 128
-cuTensorNet contraction sites.
 
 ### Equality saturation
 
@@ -424,8 +474,10 @@ python3 reproduce.py eqsat --output results/runs/eqsat
 Compile all 30 PolyBench programs with equality saturation enabled and disabled,
 then compare recognition with SpEQ on the x86 host. `summary.json` separates
 recognition from executable lowering. The paper reports 17 recognized programs
-with equality saturation and 8 without. The current compiler recognizes 17 and 11
-in that set; additional programs outside the set are recorded separately.
+with equality saturation and 8 without. The current compiler recognizes 19 and 12
+across all 30 programs. Two additional programs, `fdtd-2d` and `ludcmp`, match
+with equality saturation; `ludcmp` also matches without it. Restricting the
+comparison to the paper's 17 recognized programs gives 17 and 11.
 SpEQ's reported single match uses GEMM with linearized indexing; results on
 unmodified PolyBench are also recorded.
 
@@ -637,12 +689,17 @@ and are not redistributed here.
 
 ## Building and publishing Docker images
 
+`Dockerfile` builds the compiler and comparison images.
+`docker/Dockerfile.gpu` extends the compiler image with native x86 CUDA libraries
+and the ggml and PyTorch comparison implementations. Build the base first.
+
 Build locally instead of pulling if you change the compiler or need another image
 revision. Builds use committed sources and exclude local configuration and results:
 
 ```
 bash docker/build.sh
 bash docker/build.sh --comparisons
+bash docker/build.sh --gpu
 ```
 
 Allow 1–4 hours for a first main-image build. LLVM and Polygeist took about

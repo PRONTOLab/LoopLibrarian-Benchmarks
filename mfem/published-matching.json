@@ -1,0 +1,148 @@
+{
+  "source_commit": "e5f7d0d7bb8ca61ef42c79fde52dbad626754821",
+  "source_path": "issues/mfem_c_kernels/section42_campaign/coverage_fixed_matcher.csv",
+  "source_sha256": "689ba1864a976326bce961748a063730f1778287631346feff185b74b22dd4a1",
+  "counting_unit": "Structurally matched regions in the retained raised modules",
+  "results": [
+    {
+      "case": "interp_value_2d",
+      "matched_regions": 2,
+      "library_calls": 2,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "8337441f276c79cb2b78d0ffca669d6dcd59208b8069b68c13f038b9f4ca9fd9"
+    },
+    {
+      "case": "interp_value_3d",
+      "matched_regions": 3,
+      "library_calls": 3,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "ac0a413032d74bcace3cf0e3cc869210107166e261cf79e0f1bb105c3ca6cc0c"
+    },
+    {
+      "case": "integrate_value_2d",
+      "matched_regions": 1,
+      "library_calls": 1,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "0c9710ddf53bd35c1253a4e8ffd66a47a8af8535266f16a700f41ba6241d6bd2"
+    },
+    {
+      "case": "integrate_value_3d",
+      "matched_regions": 2,
+      "library_calls": 2,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "4cfb44091e53f640ac51ed866357224d85eadffe3d67938691aff78dfd39c0cd"
+    },
+    {
+      "case": "mass_apply_2d",
+      "matched_regions": 3,
+      "library_calls": 3,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "c3be379bdabfb58a5f8dc3b9b41a7c0844f93c87c2b72b5d44ec381e29570113"
+    },
+    {
+      "case": "mass_apply_3d",
+      "matched_regions": 5,
+      "library_calls": 5,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "54f650f967f21abdb745ad87919ae2828f593b40073db49b3a7d7c1a9bd77c15"
+    },
+    {
+      "case": "interp_grad_2d",
+      "matched_regions": 4,
+      "library_calls": 4,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "6321d4fbfc7a62123ee830956b9ccc282b9527b4eb786d6c108bbe3d77699a7c"
+    },
+    {
+      "case": "interp_grad_3d",
+      "matched_regions": 8,
+      "library_calls": 8,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "04ecf2f5f3f3925606b134219ebf291e0822d4db46005e1db1f08fbae2ad6ee3"
+    },
+    {
+      "case": "integrate_grad_2d",
+      "matched_regions": 4,
+      "library_calls": 4,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "ab05a793e22b4e0186981adabed4ce3859df0706a9303ba31cd5bd6413605eda"
+    },
+    {
+      "case": "integrate_grad_3d",
+      "matched_regions": 9,
+      "library_calls": 9,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "183892aa32755cda0ff23b4445dc53bfa169645ea717eb52432bcd8ca9aa40f0"
+    },
+    {
+      "case": "diffusion_apply_2d",
+      "matched_regions": 6,
+      "library_calls": 6,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "b95a3c02be00d94e69c11667819dabc35e4f4c4f307e939e1dd79b17ea2ac1c6"
+    },
+    {
+      "case": "diffusion_apply_3d",
+      "matched_regions": 14,
+      "library_calls": 14,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "83f46446c0492f3ec8f0291fb681cbe948fd1085aaceacbdec758e60b1cabb85"
+    },
+    {
+      "case": "convection_apply_2d",
+      "matched_regions": 5,
+      "library_calls": 5,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "60394997b2c0825392d275c3925a8b318695e34cee6238e774b8a025e6db7a33"
+    },
+    {
+      "case": "convection_apply_3d",
+      "matched_regions": 10,
+      "library_calls": 10,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "0ceba986c0194316098190df1c916637d09e1d367bc2750c0023cee5dd96c21d"
+    },
+    {
+      "case": "elasticity_qpoint_2d",
+      "matched_regions": 0,
+      "library_calls": 0,
+      "target": "",
+      "raised_sha256": "0392961ea90b19c55978f0cf4dba0d345344196a30cfc01ef67f5eb3082e6959"
+    },
+    {
+      "case": "elasticity_qpoint_3d",
+      "matched_regions": 0,
+      "library_calls": 0,
+      "target": "",
+      "raised_sha256": "931e3ab488d01b30e0ab16af711b0c83884e431163d49ea71c282681d864edaa"
+    },
+    {
+      "case": "curlcurl_apply_2d",
+      "matched_regions": 5,
+      "library_calls": 5,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "81dec790c334ff4943a64662357a83e8235bc2c131228325f94bb9f67517e43f"
+    },
+    {
+      "case": "divdiv_apply_2d",
+      "matched_regions": 6,
+      "library_calls": 6,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "4b2f97d7a3eb05833ae80661625e886638b524d92e00586080f6ed065c9e47a7"
+    },
+    {
+      "case": "divdiv_apply_3d",
+      "matched_regions": 12,
+      "library_calls": 12,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "a7418b024b43d0cfc64d8c25a2b6ca5030570c9be242eb655f1a33f788942dac"
+    },
+    {
+      "case": "curlcurl_apply_3d",
+      "matched_regions": 29,
+      "library_calls": 29,
+      "target": "cutensornetContraction2_f64",
+      "raised_sha256": "ffd54dc05b57dcd6c609e392d5aa43cf9ec850d8e3f3277e66eaf5972a5ca0d9"
+    }
+  ]
+}

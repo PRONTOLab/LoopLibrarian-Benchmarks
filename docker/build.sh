@@ -6,6 +6,17 @@ if ! git diff --quiet HEAD -- .; then
     echo 'Commit source changes before building release images.' >&2
     exit 1
 fi
+if [[ ${1:-} == --gpu ]]; then
+    shift
+    CONTEXT=$(mktemp -d)
+    trap 'rm -rf "$CONTEXT"' EXIT
+    git archive HEAD | tar -x -C "$CONTEXT"
+    docker build -f "$CONTEXT/docker/Dockerfile.gpu" \
+        --build-arg "BASE_IMAGE=${LL_DOCKER_BASE_IMAGE:-looplibrarian:artifact}" \
+        --build-arg "GPU_ARCH=${LL_GPU_ARCH:-80}" \
+        -t "${LL_DOCKER_IMAGE:-looplibrarian:gpu}" "$@" "$CONTEXT"
+    exit
+fi
 TARGET=artifact
 DEFAULT_IMAGE=looplibrarian:artifact
 if [[ ${1:-} == --comparisons ]]; then

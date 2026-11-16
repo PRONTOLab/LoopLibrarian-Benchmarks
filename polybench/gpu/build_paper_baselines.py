@@ -4,6 +4,7 @@ import json
 import os
 import sys
 from pathlib import Path
+import gpu_target
 from common import setting
 from build import OUT, ROOT, command, sha
 from build_native import OLD, UP
@@ -17,13 +18,12 @@ for name in sys.argv[1:] or ('correlation', 'covariance'):
     source.write_text(text)
     log = d/'paper-baseline-build.log'
     log.write_text('Only timing instrumentation is changed; computational bodies are the paper adapters.\n')
-    rc = command([setting('nvcc', '/usr/local/cuda/bin/nvcc'), '-O3', '-std=c++17', '-arch=sm_87',
-                  '-ccbin', 'aarch64-linux-gnu-g++', '-I'+str(UP), '-I'+str(OLD),
+    rc = command([setting('nvcc', '/usr/local/cuda/bin/nvcc'), '-O3', '-std=c++17', *gpu_target.nvcc_flags(), '-I'+str(UP), '-I'+str(OLD),
                   '-c', source, '-o', d/'paper_baseline.o'], log, os.environ)
     if not rc:
-        rc = command(['aarch64-linux-gnu-g++', d/'paper_baseline.o', d/'export/harness.o',
+        rc = command([gpu_target.cxx(), d/'paper_baseline.o', d/'export/harness.o',
                       d/'export/polybench.o', OUT/'iteration_driver.o',
-                      '-L'+str(Path(setting('cuda_target', '/usr/local/cuda/targets/sbsa-linux'))/'lib'), '-lcudart', '-lm',
+                      '-L'+str(gpu_target.cuda_lib()), '-lcudart', '-lm',
                       '-o', d/'paper-baseline'], log, os.environ)
     record = dict(original_source=str(original.relative_to(ROOT)), original_sha256=sha(original),
                   generated_source_sha256=sha(source), build_rc=rc,

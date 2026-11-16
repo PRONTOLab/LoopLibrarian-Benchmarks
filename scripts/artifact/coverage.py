@@ -37,7 +37,8 @@ def worker(request):
         result['raised_sha256'] = sha(raised['paths']['debuf'])
         budget = int(setting('region_budget', 300))
         result['region_budget_seconds'] = budget
-        matched, proof = S.match(text, backend='cuda', region_budget=budget)
+        matched, proof = S.match(text, backend='cuda', region_budget=budget,
+                                 **row.get('match_options', {}))
         (dest/'matched.mlir').write_text(matched); save(dest/'match.json', proof)
         S.verify(matched, proof, backend='cuda')
         result.update(emitted=proof['emitted'], recognized=bool(proof['emitted']))

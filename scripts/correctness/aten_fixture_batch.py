@@ -19,6 +19,8 @@ import subprocess
 import sys
 import time
 import uuid
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'artifact'))
+import gpu_target
 
 import aten_pointwise_graph_silicon as BENCH
 from aten_pointwise_native import NATIVE as POINTWISE_NATIVE
@@ -26,8 +28,8 @@ from aten_pointwise_native import NATIVE_RUNTIME_LIBRARIES
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-CUDA = Path(os.environ.get('ATEN_NATIVE_CUDA_ROOT', '/usr/local/cuda-12.6/targets/sbsa-linux'))
-TORCH = Path(os.environ.get('ATEN_NATIVE_TORCH_ROOT', '/tmp/aten_native_sysroot_24_12/usr/local/lib/python3.12/dist-packages/torch'))
+CUDA = gpu_target.cuda_root()
+TORCH = gpu_target.torch_root()
 # Each expression calls real ATen with preallocated outputs and cached base
 # tensors. Any composition/view construction below is included in its timing.
 NATIVE = {
@@ -204,6 +206,7 @@ NATIVE = {
         t[1].view({K,I,O}).permute({2,1,0}),{}, {1},{0},{1},
         false,{0},1,{true,false,false});
       t[2].view({T+K-1,B,I}).copy_(std::get<0>(grads).permute({2,0,1}));''',
+    'count_nonzero_cpu': 'static auto nonzero_counts=at::empty({},t[0].options().dtype(at::kLong)); at::count_nonzero_out(nonzero_counts,t[0],std::optional<int64_t>{0}); t[1].copy_(nonzero_counts);',
     'count_nonzero_impl_cpu': 'static auto counts=at::empty({R},t[0].options().dtype(at::kLong)); at::count_nonzero_out(counts,t[0].view({R,C}),std::optional<int64_t>{1}); t[1].copy_(counts);',
     # Preserve the native API scope of the historical renorm_scale_factor
     # harness. Scratch initialization happens during warmup, outside timing.
@@ -530,7 +533,7 @@ def build(name, args):
     # validate compiler flags and header dependencies instead of recompiling
     # those units for every case. The resulting binary is still hashed below.
     compiler_cache = (Path('/usr/lib/ccache') if shutil.which('ccache') and
-                      Path('/usr/lib/ccache/aarch64-linux-gnu-gcc').is_file() else None)
+                      (Path('/usr/lib/ccache')/gpu_target.cc()).is_file() else None)
     if compiler_cache:
         env['PATH'] = str(compiler_cache) + os.pathsep + env.get('PATH', '')
         if env.get('POLYGEIST_NVCC') in (None, env.get('POLYGEIST_REAL_NVCC')):
@@ -539,12 +542,12 @@ def build(name, args):
         env['POLYGEIST_CUTENSOR_ROOT']=str(cutensor_root)
     if args.persistent_workspace:
         env['POLYGEIST_PERSISTENT_WORKSPACE_FUNCTION']=name
-    commands=[['aarch64-linux-gnu-gcc','-O2','-fno-fast-math','-ffp-contract=off',
+    commands=[[gpu_target.cc(),'-O2','-fno-fast-math','-ffp-contract=off',
         '-D'+name+'=native_reference','-c',str(src),'-o',str(dest/'reference.o')],
-        ['aarch64-linux-gnu-g++','-O2','-std=c++17','-DHAVE_SVE256_CPU_DEFINITION',
+        [gpu_target.cxx(),'-O2','-std=c++17',*gpu_target.torch_compile_flags(),
          '-I'+str(TORCH/'include'),'-I'+str(TORCH/'include/torch/csrc/api/include'),
          '-I'+str(CUDA/'include'),'-c',str(dest/'native.cpp'),'-o',str(dest/'native.o')],
-        [str(HERE/'polygeist_build.sh'),'--target=jetson','--function='+name,
+        [str(HERE/'polygeist_build.sh'),'--target='+gpu_target.compiler_target(),'--function='+name,
          '--semantic-mlir='+str(proofdir/'matched.mlir'),'--harness='+str(dest/'harness.c'),
          '-o',str(dest/'raised-program'),str(src),'-I'+str(CUDA/'include')]]
     # Build the normal compiler/runtime objects, then link the independent
@@ -562,9 +565,9 @@ def build(name, args):
             objects = [work/(n+'.o') for n in ['kernel','wrapper','harness','rt','mlir_runner_utils','spec_runtime']]
             objects += [p for p in [work/'thrust_runtime.o',work/'cub_runtime.o'] if p.exists()]
             objects += [dest/'reference.o',dest/'native.o']
-            cmd=['aarch64-linux-gnu-g++','-O2',*map(str,objects),
-                '-L'+str(TORCH/'lib'),'-L'+str(CUDA/'lib'),'-L'+str(CUDA/'lib/stubs'),
-                '-L/usr/lib/aarch64-linux-gnu','-Wl,--allow-shlib-undefined','-Wl,--no-as-needed',
+            cmd=[gpu_target.cxx(),'-O2',*map(str,objects),
+                '-L'+str(TORCH/'lib'),'-L'+str(gpu_target.cuda_lib()),'-L'+str(gpu_target.cuda_lib()/'stubs'),
+                '-L'+gpu_target.system_lib(), '-L'+env.get('POLYGEIST_CUDNN_LIBDIR', gpu_target.system_lib()),'-Wl,--allow-shlib-undefined','-Wl,--no-as-needed',
                 '-ltorch','-ltorch_cpu','-ltorch_cuda','-lc10_cuda','-lc10',
                 '-lcudnn','-lcublasLt','-lcublas','-lcusolver','-lcudart','-lm','-lpthread','-ldl',
                 '-Wl,--gc-sections','-o',str(dest/'raised-program')]
@@ -647,7 +650,7 @@ def correctness_summary(rc, log, expected, modes):
 
 def run_gpu(names, args):
     import local_execution as board
-    board.require_aarch64()
+    board.require_gpu_target()
     environment = 'LD_LIBRARY_PATH='+shlex.quote(args.library_path)+' '
     if args.cudnn_plan_cache:
         environment += 'POLYGEIST_CUDNN_PLAN_CACHE=1 '
@@ -790,7 +793,7 @@ def main():
     p.add_argument('--cutensor-root',type=Path,
                    default=Path(os.environ['POLYGEIST_CUTENSOR_ROOT']) if os.environ.get('POLYGEIST_CUTENSOR_ROOT') else None)
     p.add_argument('--stage',choices=['build','run'],default='build')
-    p.add_argument('--library-path',default='/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu')
+    p.add_argument('--library-path',default=gpu_target.library_path())
     args=p.parse_args();args.output=args.output.resolve();args.campaign=args.campaign.resolve()
     names=[n if n.startswith('aten_') else 'aten_'+n for n in args.cases]
     if any(n.removeprefix('aten_') not in NATIVE for n in names):

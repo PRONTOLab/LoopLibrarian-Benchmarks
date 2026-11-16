@@ -2,6 +2,7 @@
 """Read-only, credential-free idle/clock/thermal probe for CPU measurements."""
 
 import json
+import platform
 import os
 from pathlib import Path
 import re
@@ -48,19 +49,31 @@ temperatures = [{"sensor": read(p / "type"), "millicelsius": read(p / "temp")}
                 for p in Path("/sys/class/thermal").glob("thermal_zone*")]
 fans = {str(p): read(p) for p in Path("/sys/class/hwmon").glob("hwmon*/pwm*")
         if p.is_file()}
-probe = subprocess.run(["timeout", "3", "tegrastats", "--interval", "1000"],
-                       capture_output=True, text=True)
+native = platform.machine() == 'x86_64'
+probe = subprocess.run(
+    ['nvidia-smi', '--query-gpu=name,uuid,driver_version,utilization.gpu,temperature.gpu',
+     '--format=csv,noheader,nounits'] if native else
+    ["timeout", "3", "tegrastats", "--interval", "1000"],
+    capture_output=True, text=True)
 stats = probe.stdout + probe.stderr
 gpu_busy = any(int(v) > 0 for v in re.findall(r"(?:GR3D_FREQ|IGPU_FREQ)\s+(\d+)%", stats))
 fixed = bool(clocks) and all(p["scaling_min_freq"] == p["scaling_max_freq"]
                              and p["scaling_min_freq"].isdigit() for p in clocks)
 hot = any(t["millicelsius"].isdigit() and int(t["millicelsius"]) >= 85000
           for t in temperatures)
+if native:
+    devices = [line.split(',') for line in probe.stdout.splitlines() if line.strip()]
+    gpu_busy = any(int(row[-2]) > 0 for row in devices)
+    hot = hot or any(int(row[-1]) >= 85 for row in devices)
+    gpu_available = probe.returncode == 0 and bool(devices)
+else:
+    gpu_available = bool(stats.strip())
 result = dict(load=os.getloadavg(), busy=busy,
               clocks=clocks, temperatures=temperatures, fan_settings=fans,
               power_mode=read(Path("/var/lib/nvpmodel/status")),
               software=read(Path("/etc/nv_tegra_release")),
               tegrastats=stats, fixed_cpu_clocks=fixed, gpu_busy=gpu_busy,
-              temperature_limit_c=85, accepted=not busy and not gpu_busy and fixed and not hot)
+              gpu_probe=stats, architecture=platform.machine(),
+              temperature_limit_c=85, accepted=gpu_available and not busy and not gpu_busy and (native or fixed) and not hot)
 print(json.dumps(result, indent=2))
 raise SystemExit(0 if result["accepted"] else 1)
