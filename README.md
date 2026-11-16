@@ -37,8 +37,7 @@ bash docker/run.sh polybench_cpu --cases gemm --target host --size MINI --output
 ```
 
 The smoke test takes approximately 1–5 minutes and compares every output of
-native and raised GEMM. If the registry requires authentication, use an 
-account with package access or
+native and raised GEMM. To use other sources,
 [build the image locally](#building-and-publishing-docker-images).
 
 `docker/run.sh` accepts the same suites and options as `reproduce.py`. In the

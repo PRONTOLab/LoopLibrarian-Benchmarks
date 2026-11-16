@@ -78,3 +78,19 @@ jobs:
           outputs: type=image,compression=zstd,compression-level=3,force-compression=true,oci-mediatypes=true
           # No GitHub Actions cache: the image exceeds the 10 GB GHA cache cap. The persistent
           # runner keeps BuildKit's local layer cache between builds.
+
+      # The artifact instructions pull this image without credentials, so fail if the
+      # package is not public. Visibility is set in the package settings on GitHub.
+      - name: Check that the image is public
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          IMAGE: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+        run: |
+          # An empty Docker configuration has no registry login.
+          DOCKER_CONFIG=$(mktemp -d)
+          export DOCKER_CONFIG
+          if ! docker manifest inspect "$IMAGE" > /dev/null; then
+            echo "::error::$IMAGE cannot be pulled anonymously. Make the package public: https://github.com/orgs/${GITHUB_REPOSITORY_OWNER}/packages/container/${GITHUB_REPOSITORY#*/}/settings"
+            exit 1
+          fi
+          echo "$IMAGE is publicly readable."
