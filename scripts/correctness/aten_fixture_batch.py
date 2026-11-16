@@ -193,6 +193,10 @@ NATIVE = {
     'avg_pool3d_backward_cpu': '''static auto input=at::empty({B,C,I0,I1,I2},t[0].options());
       auto out=t[1].view({B,C,I0,I1,I2}); at::avg_pool3d_backward_out(out,t[0].view({B,C,I0/2,I1/2,I2/2}),input,{2,2,2},{2,2,2},{0,0,0},false,true,std::nullopt);''',
     'conv1d': 'auto out=t[3].view({B,OC,W-K+1}); at::convolution_out(out,t[0].view({B,IC,W}),t[1].view({OC,IC,K}),t[2],{1},{0},{1},false,{0},1);',
+    'conv3d': '''auto out=t[3].view({B,OC,D-K+1,H-K+1,W-K+1});
+      at::convolution_out(out,t[0].view({B,IC,D,H,W}),
+        t[1].view({OC,IC,K,K,K}),t[2],{1,1,1},{0,0,0},{1,1,1},
+        false,{0,0,0},1);''',
     'conv2d': 'auto out=t[2].view({B,OC,H-KH+1,W-KW+1}); at::convolution_out(out,t[0].view({B,IC,H,W}),t[1].view({OC,IC,KH,KW}),std::nullopt,{1,1},{0,0},{1,1},false,{0,0},1);',
     'dilated_convolution_cpu': 'auto out=t[2].view({1,O,H-2*D,W-2*D}); at::convolution_out(out,t[0].view({1,C,H,W}),t[1].view({O,C,K,K}),std::nullopt,{1,1},{0,0},{D,D},false,{0,0},1);',
     'conv_transpose3d_backward_cpu': 'auto out=t[2].view({1,C,D,H,W}); at::convolution_out(out,t[0].view({1,O,D+2,H+2,W+2}),t[1].view({C,O,K,K,K}),std::nullopt,{1,1,1},{0,0,0},{1,1,1},false,{0,0,0},1);',
