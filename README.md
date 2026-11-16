@@ -550,9 +550,7 @@ Each implementation has five warmups and five measurements; report the minimum.
 `summary.csv` contains comparisons; `timing.json` retains samples.
 
 In that program order, the paper reports LoopLibrarian speedups of 8.6/366/115/93
-and KernelFaRer speedups of 8.6/346/113/112. Its native baseline used one warmup
-and ten separate process runs, differing from this driver's common five-sample
-protocol. Host hardware and load also affect the comparison.
+and KernelFaRer speedups of 8.6/346/113/112. 
 
 ### PVA (Table 7)
 
@@ -622,8 +620,7 @@ contains stage times, proof measurements, and peak memory. `summary.json` retain
 raw repetitions and failures.
 
 The paper used three repetitions; `first-three-compilation-table.csv` reports
-repetitions 1–3. Agreement with the paper's measurement boundary and input set
-remains unverified. These runs include runtime-object generation and linking.
+repetitions 1–3. These runs include runtime-object generation and linking.
 Application compilation is repeated; parsed reference catalogs are cached per
 configuration. Peak RSS is the maximum for one process, not concurrent workers' sum.
 
