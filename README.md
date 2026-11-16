@@ -11,21 +11,23 @@ library specifications to generate library calls. The compiler is pinned under
 `third_party/Polygeist`.
 
 ## Initial setup
-The artifact repository includes a prebuilt Docker image for ease of testing. 
-We recommend you use the pre-built Docker image, as building the compiler requires
-building LLVM, which takes a significant amount of time. 
-If you would prefer to install dependencies natively, please scroll down to 
-[Native setup](#native-setup).
+We support three ways of setting up the experiment environment: a [pre-built Docker image](#pre-built-docker-image),
+[building your own Docker image](#building-docker-images), and [manual setup](#manual-setup).
+We recommend the pre-built image, as building the compiler requires building LLVM,
+which takes a significant amount of time.
+
+All three start from a checkout of this repository:
 
 ```
 git clone https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
 cd LoopLibrarian-Benchmarks
 ```
 
-### Docker setup
+### Pre-built Docker image
 
-Use x86-64 Linux with Docker, at least 32 GB RAM, and about 100 GB free disk space.
-One image includes LLVM, MLIR, Polygeist, OpenBLAS, Python dependencies,
+Requirements: x86-64 Linux, Docker, at least 32 GB RAM, and about 100 GB free disk space.
+
+The image includes LLVM, MLIR, Polygeist, OpenBLAS, Python dependencies,
 AArch64 cross-compilers, imported library specifications, plotting tools, the
 native x86 CUDA libraries, and the KernelFaRer and Ginsbach/IDL comparison tools.
 Pull the image built from `main` and give it the local name used by the runner:
@@ -33,12 +35,16 @@ Pull the image built from `main` and give it the local name used by the runner:
 ```
 docker pull ghcr.io/prontolab/looplibrarian-benchmarks:latest
 docker tag ghcr.io/prontolab/looplibrarian-benchmarks:latest looplibrarian:artifact
-bash docker/run.sh polybench_cpu --cases gemm --target host --size MINI --output results/runs/smoke
 ```
 
-The smoke test takes approximately 1–5 minutes and compares every output of
-native and raised GEMM. To use other sources,
-[build the image locally](#building-and-publishing-docker-images).
+To use other sources, [build the image locally](#building-docker-images).
+
+Then run the smoke test, which takes approximately 1–5 minutes and compares
+every output of native and raised GEMM:
+
+```
+bash docker/run.sh polybench_cpu --cases gemm --target host --size MINI --output results/runs/smoke
+```
 
 `docker/run.sh` accepts the same suites and options as `reproduce.py`. In the
 experiment commands below, replace `python3 reproduce.py` with `bash docker/run.sh`
@@ -68,14 +74,35 @@ GPU experiments default to `--gpu-target x86_64` and `sm_80` (A100). Use
 `--gpu-arch sm_90`, for example, when building for H100; build the corresponding
 ggml baseline with `LL_GPU_ARCH=90 bash docker/build.sh`. The chosen target
 is saved with the experiment and reused by `--stage run`. Correctness checks and
-five timing samples are the same on both platforms. Runtimes and speedups on
-a different CPU/GPU are new measurements, not the paper's Orin measurements.
+five timing samples are the same on both platforms.
 
 Use `--gpu-target jetson --stage build` for the separate
 [Orin execution path](#execution-on-orin). A second machine is unnecessary for
 native x86 GPU experiments.
 
-### Native setup
+### Building Docker images
+
+`Dockerfile` builds one image holding the compiler, the native x86 CUDA libraries
+with the ggml and PyTorch comparison implementations, and the KernelFaRer and
+Ginsbach/IDL comparison tools. Build locally if you change the compiler or need
+another image revision. Builds use committed sources and exclude local
+configuration and results:
+
+```
+bash docker/build.sh
+```
+
+Allow 1–4 hours for a first build, plus 20–60 minutes and additional disk space
+for CUDA and PyTorch. LLVM and Polygeist took about 48 minutes with `BUILD_JOBS=8`
+on the listed host; lower `BUILD_JOBS` on smaller machines. The image imports
+specifications and runs script tests. IDL and KernelFaRer build with
+`COMPARISON_JOBS=4` by default. Later builds reuse unchanged compiler layers.
+SpEQ is built through [its setup command](#comparison-tools).
+
+The [Docker workflow](.github/workflows/docker.yml) builds this image for pull
+requests that change the image inputs.
+
+### Manual setup
 
 Install Python 3.10 or later, `egglog==11.4.0`, NumPy, CMake, Ninja, Git, GCC/G++,
 Clang/LLVM 14, OpenBLAS development files, `file`, and `zstd`. ATen plots also
@@ -360,7 +387,7 @@ requires unsupported loop proofs. `--jobs` controls compilation parallelism;
 GPU timings are collected serially.
 
 Outputs include `matching/` (IR and proofs), `gpu/` (builds, checks, raw samples),
-`gpu/report.csv` (every paper case, including failures), and `summary.json`.
+`gpu/report.csv`, and `summary.json`.
 Full-set runs also produce `summary.csv` and `table5.json`/`table5.csv`, which
 report the number of complete matches across all 598 kernels and identify
 the 52 native-library cases. Matching coverage does not imply GPU correctness
@@ -382,9 +409,8 @@ requires this check before timing. Both modes check full outputs, unchanged
 inputs, and buffer guards. Some reductions and convolution gradients agree with
 ATen CUDA while failing the stricter serial-C comparison.
 
-Timings use the minimum of five samples per implementation. The paper used
-five samples for 58 cases and twenty for 57; [paper_timings.csv](aten/paper_timings.csv)
-records each protocol. Argmax/argmin use a separately checked finite-input variant
+Timings use the minimum of five samples per implementation. Argmax/argmin use a 
+separately checked finite-input variant
 because ATen CUDA differs on the original NaN inputs. Sampled sparse addmm uses
 identical column indices for both implementations; its paper timings used different
 indices. Reports identify these differences, which limit direct speedup comparisons.
@@ -519,8 +545,7 @@ python3 reproduce.py kernelfarer --output results/runs/table9
 ```
 
 Compare native compilation, KernelFaRer, and LoopLibrarian for complete FP32 LARGE
-GEMM, SYR2K, 2mm, and 3mm programs on x86. Every output must pass
-`atol=0.011, rtol=0.0005`, following the paper's two-decimal output convention.
+GEMM, SYR2K, 2mm, and 3mm programs on x86.
 Each implementation has five warmups and five measurements; report the minimum.
 `summary.csv` contains comparisons; `timing.json` retains samples.
 
@@ -676,27 +701,3 @@ and manifests identify their origins and adaptations. Public revisions are in
 [repos.json](dependency_sources/repos.json); Polygeist reference manifests record
 source hashes. Proprietary libraries and SDK components are installed separately
 and are not redistributed here.
-
-## Building and publishing Docker images
-
-`Dockerfile` builds one image holding the compiler, the native x86 CUDA libraries
-with the ggml and PyTorch comparison implementations, and the KernelFaRer and
-Ginsbach/IDL comparison tools.
-
-Build locally instead of pulling if you change the compiler or need another image
-revision. Builds use committed sources and exclude local configuration and results:
-
-```
-bash docker/build.sh
-```
-
-Allow 1–4 hours for a first build, plus 20–60 minutes and additional disk space
-for CUDA and PyTorch. LLVM and Polygeist took about 48 minutes with `BUILD_JOBS=8`
-on the listed host; lower `BUILD_JOBS` on smaller machines. The image imports
-specifications and runs script tests. IDL and KernelFaRer build with
-`COMPARISON_JOBS=4` by default. Later builds reuse unchanged compiler layers.
-SpEQ is built through [its setup command](#comparison-tools).
-
-The [Docker workflow](.github/workflows/docker.yml) builds this image for pull
-requests that change the image inputs. On `main` and tags it also publishes the
-image to `ghcr.io/prontolab/looplibrarian-benchmarks`, with `latest` following `main`.
