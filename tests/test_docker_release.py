@@ -70,7 +70,7 @@ class DockerRelease(unittest.TestCase):
 
     def test_build_uses_committed_context_and_removes_temporary_files(self):
         (self.root / 'local-secret.txt').write_text('not part of the artifact')
-        result, calls = self.invoke('build.sh', '--comparisons')
+        result, calls = self.invoke('build.sh')
         self.assertEqual(result.returncode, 0, result.stderr)
         call, = calls
         self.assertEqual(call['context']['Dockerfile'], 'FROM scratch\n')
@@ -78,8 +78,22 @@ class DockerRelease(unittest.TestCase):
         self.assertNotIn('.git/config', call['context'])
         self.assertIn('ARTIFACT_REVISION=' + self.revision, call['args'])
         self.assertIn('POLYGEIST_REVISION=' + '1' * 40, call['args'])
-        self.assertIn('looplibrarian:comparisons', call['args'])
+        self.assertIn('GPU_ARCH=80', call['args'])
+        self.assertIn('looplibrarian:artifact', call['args'])
+        self.assertNotIn('--target', call['args'])
         self.assertFalse(Path(call['args'][-1]).exists())
+
+    def test_former_image_options_build_the_single_image(self):
+        for option in ('--gpu', '--comparisons'):
+            with self.subTest(option=option):
+                self.log.unlink(missing_ok=True)
+                result, calls = self.invoke('build.sh', option, LL_GPU_ARCH='90')
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn('no longer needed', result.stderr)
+                call, = calls
+                self.assertNotIn(option, call['args'])
+                self.assertIn('GPU_ARCH=90', call['args'])
+                self.assertIn('looplibrarian:artifact', call['args'])
 
     def test_release_rejects_staged_and_unstaged_changes(self):
         (self.root / 'Dockerfile').write_text('FROM changed\n')
@@ -92,30 +106,25 @@ class DockerRelease(unittest.TestCase):
                     self.assertNotEqual(result.returncode, 0)
                     self.assertEqual(calls, [])
 
-    def test_publication_checks_both_images_before_pushing(self):
+    def test_publication_checks_the_image_before_pushing(self):
         result, calls = self.invoke('publish.sh', 'example.invalid/artifact')
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual([c['args'][:2] for c in calls[:2]],
-                         [['image', 'inspect'], ['image', 'inspect']])
+        self.assertEqual(calls[0]['args'][:3], ['image', 'inspect', 'looplibrarian:artifact'])
         pushed = [c['args'][1] for c in calls if c['args'][0] == 'push']
-        self.assertEqual(pushed, [f'example.invalid/artifact:{target}{suffix}'
-                                 for target in ('artifact', 'comparisons')
-                                 for suffix in ('-' + self.revision[:12], '')])
+        self.assertEqual(pushed, ['example.invalid/artifact:latest'])
 
-    def test_missing_or_stale_second_image_prevents_all_pushes(self):
+    def test_missing_or_stale_image_prevents_push(self):
         for kind in ('STALE_IMAGE', 'MISSING_IMAGE'):
             with self.subTest(kind=kind):
                 self.log.unlink(missing_ok=True)
-                result, calls = self.invoke('publish.sh', **{kind: 'looplibrarian:comparisons'})
+                result, calls = self.invoke('publish.sh', **{kind: 'looplibrarian:artifact'})
                 self.assertNotEqual(result.returncode, 0)
                 self.assertFalse(any(c['args'][0] in ('tag', 'push') for c in calls))
 
-    def test_failed_upload_stops_before_updating_stable_tags(self):
+    def test_failed_upload_is_reported(self):
         result, calls = self.invoke('publish.sh', FAIL_PUSH='1')
         self.assertNotEqual(result.returncode, 0)
-        pushed = [c for c in calls if c['args'][0] == 'push']
-        self.assertEqual(len(pushed), 1)
-        self.assertTrue(pushed[0]['args'][1].endswith('artifact-' + self.revision[:12]))
+        self.assertEqual(len([c for c in calls if c['args'][0] == 'push']), 1)
 
 
 if __name__ == '__main__':

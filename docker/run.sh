@@ -44,7 +44,7 @@ ARGS+=(-e "LL_GPU_TARGET=$GPU_TARGET")
 case "$ACTION" in
     polybench_gpu|llama|mfem|aten|eqsat_extra|compilation_cost)
         if [[ "$GPU_TARGET" == x86_64 ]]; then
-            IMAGE=${LL_DOCKER_IMAGE:-looplibrarian:gpu}
+            # Use the ggml baseline built into the image.
             USE_BUILD_VOLUME=0
             NEED_GPU=1
             if [[ "$ACTION" == compilation_cost ]]; then NEED_GPU=0; fi
@@ -52,24 +52,15 @@ case "$ACTION" in
             if [[ "$ACTION" == aten && ( "$STAGE" == match ||
                   ( "$COHORT" == all && ( "$STAGE" == report || "$STAGE" == summarize ) ) ) ]]; then
                 NEED_GPU=0
-                IMAGE=${LL_DOCKER_IMAGE:-looplibrarian:artifact}
                 USE_BUILD_VOLUME=1
             fi
             if [[ "$NEED_GPU" == 1 ]]; then ARGS+=(--gpus "${LL_DOCKER_GPUS:-all}" --ulimit memlock=-1); fi
         fi ;;
     setup)
-        if [[ ${1:-} == ggml && "$GPU_TARGET" == x86_64 ]]; then
-            IMAGE=${LL_DOCKER_IMAGE:-looplibrarian:gpu}
-            USE_BUILD_VOLUME=0
-        fi ;;
-esac
-case "$ACTION" in
-    eqsat|graph_sizes|ginsbach|kernelfarer)
-        IMAGE=${LL_DOCKER_IMAGE:-looplibrarian:comparisons} ;;
+        if [[ ${1:-} == ggml && "$GPU_TARGET" == x86_64 ]]; then USE_BUILD_VOLUME=0; fi ;;
 esac
 if [[ "$ACTION" == eqsat || "$ACTION" == graph_sizes ||
       ( "$ACTION" == setup && ${1:-} == speq ) ]]; then
-    IMAGE=${LL_DOCKER_IMAGE:-looplibrarian:comparisons}
     ARGS+=(-v /var/run/docker.sock:/var/run/docker.sock
            -e "LL_SPEQ_ROOT=$ROOT/third_party/speq")
 fi

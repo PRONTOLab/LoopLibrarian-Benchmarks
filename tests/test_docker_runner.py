@@ -30,9 +30,9 @@ class DockerRunner(unittest.TestCase):
                                     'polybench_cpu', '--stage', 'plan'])
         self.assertNotIn('/var/run/docker.sock:/var/run/docker.sock', args)
 
-    def test_speq_host_paths_and_comparison_image(self):
+    def test_speq_host_paths_and_docker_socket(self):
         args = self.invoke('graph_sizes', '--stage', 'plan')
-        self.assertIn('looplibrarian:comparisons', args)
+        self.assertIn('looplibrarian:artifact', args)
         self.assertIn('/var/run/docker.sock:/var/run/docker.sock', args)
         self.assertIn('LL_SPEQ_ROOT=' + str(ROOT / 'third_party/speq'), args)
         self.assertEqual(args[args.index('-w') + 1], str(ROOT))
@@ -41,25 +41,25 @@ class DockerRunner(unittest.TestCase):
         args = self.invoke('setup', 'ggml')
         workdirs = [args[i + 1] for i, arg in enumerate(args[:-1]) if arg == '-w']
         self.assertEqual(workdirs[-1], '/opt/looplibrarian')
-        self.assertEqual(args[-4:], ['looplibrarian:gpu', 'python3', 'setup.py', 'ggml'])
+        self.assertEqual(args[-4:], ['looplibrarian:artifact', 'python3', 'setup.py', 'ggml'])
 
     def test_native_gpu_execution_exposes_gpu(self):
         args = self.invoke('polybench_gpu', '--stage', 'run')
-        self.assertIn('looplibrarian:gpu', args)
+        self.assertIn('looplibrarian:artifact', args)
         self.assertIn('--gpus', args)
         self.assertIn('memlock=-1', args)
         self.assertNotIn('looplibrarian-builds:/opt/looplibrarian/build', args)
 
-    def test_matching_only_does_not_require_gpu_image(self):
+    def test_matching_only_does_not_require_gpu(self):
         args = self.invoke('aten', '--cohort', 'all', '--stage', 'match')
         self.assertIn('looplibrarian:artifact', args)
         self.assertNotIn('--gpus', args)
 
-    def test_full_aten_execution_uses_gpu_image(self):
+    def test_full_aten_execution_exposes_gpu_unless_building(self):
         for stage in ('all', 'run', 'build'):
             with self.subTest(stage=stage):
                 args = self.invoke('aten', '--cohort', 'all', '--stage', stage)
-                self.assertIn('looplibrarian:gpu', args)
+                self.assertIn('looplibrarian:artifact', args)
                 self.assertEqual('--gpus' in args, stage != 'build')
 
     def test_custom_gpu_image_keeps_its_prebuilt_baseline(self):

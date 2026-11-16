@@ -1,0 +1,80 @@
+name: Publish Docker image
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    tags: ["*"]
+    paths: &docker_paths
+      - "Dockerfile"
+      - ".dockerignore"
+      - "docker/**"
+      - "dependency_sources/**"
+      - "setup.py"
+      - "third_party/**"
+      - ".github/workflows/docker.yml"
+  pull_request:
+    branches: ["main"]
+    paths: *docker_paths
+
+concurrency:
+  # Cancel in-progress jobs on PRs and branches when newer commits are pushed.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker:
+    name: Build Docker image
+    runs-on: docker
+    timeout-minutes: 720
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      # The Dockerfile fetches the compiler itself, at the revision pinned by the submodule.
+      - name: Read the pinned compiler revision
+        id: compiler
+        run: echo "revision=$(git ls-tree HEAD third_party/Polygeist | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to the Container registry
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          build-args: |
+            ARTIFACT_REVISION=${{ github.sha }}
+            POLYGEIST_REVISION=${{ steps.compiler.outputs.revision }}
+          push: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # zstd layers decompress several times faster than gzip, which matters for an image this large.
+          outputs: type=image,compression=zstd,compression-level=3,force-compression=true,oci-mediatypes=true
+          # No GitHub Actions cache: the image exceeds the 10 GB GHA cache cap. The persistent
+          # runner keeps BuildKit's local layer cache between builds.

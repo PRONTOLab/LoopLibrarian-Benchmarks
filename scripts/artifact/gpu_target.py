@@ -90,7 +90,7 @@ def validate_toolkit():
     """Catch an ARM SDK selected for native builds before expensive matching."""
     library = cuda_lib()/'libcudart.so'
     if not library.is_file():
-        raise RuntimeError(f'Missing CUDA development library: {library}. Use the GPU image or configure cuda_target for {name()}.')
+        raise RuntimeError(f'Missing CUDA development library: {library}. Use the Docker image or configure cuda_target for {name()}.')
     with library.open('rb') as stream:
         header = stream.read(20)
     expected = 183 if name() == 'jetson' else 62
