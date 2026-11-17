@@ -548,10 +548,11 @@ bash docker/run.sh aten_table5 --stage report --output results/runs/aten-table5
 
 ### ATen performance (Figure 5)
 
-[figure5.py](aten/figure5.py) uses the fixed 115 cases in
-[paper_cases.csv](aten/paper_cases.csv) and the performance-benchmark tensor sizes
-in [paper_shapes.json](aten/paper_shapes.json). These sizes can differ from the
-source sizes used for Table 5:
+Of the 351 matched ATen kernels, we evaluate GPU performance for 113 selected
+non-pointwise kernels in Figure 5. [figure5.py](aten/figure5.py) uses the inputs
+in [paper_cases.csv](aten/paper_cases.csv) and the performance-benchmark tensor
+sizes in [paper_shapes.json](aten/paper_shapes.json). These sizes can differ
+from the source sizes used for Table 5:
 
 ```
 bash docker/run.sh aten_figure5 --output results/runs/aten-figure5
@@ -568,8 +569,8 @@ minutes). `--jobs` controls compilation parallelism; GPU timings run serially.
 Outputs include `matching/` (IR and proofs), `gpu/` (builds, checks and raw timing
 samples), `gpu/report.csv`, and `summary.json`. Figure 5 is written to
 `plots/aten-current.pdf` and `.png`, with its data in
-`plots/aten-current-data.csv`. The caption reports how many of the 115 cases
-have valid checks and timings.
+`plots/aten-current-data.csv`. The caption reports the number of validated
+timing pairs.
 
 To resume a completed matching stage, run an existing build, or regenerate the
 graph without new GPU execution, use the applicable command:
