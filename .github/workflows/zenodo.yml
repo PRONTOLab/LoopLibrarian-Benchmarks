@@ -1,0 +1,93 @@
+name: Publish Zenodo source archive
+
+on:
+  push:
+    # Allow draft testing with Git/SSH access, without a separate GitHub API token.
+    branches: ['zenodo-draft/v*']
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to archive (for example v0.4.0)
+        required: true
+        type: string
+      publish:
+        description: Publish the verified draft on Zenodo
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+# Zenodo allows one pending draft per record family. Serialize different tags too.
+concurrency:
+  group: looplibrarian-zenodo
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    # Manual draft tests work before automatic release publishing is enabled.
+    # Enable automatic runs only after disabling Zenodo's GitHub importer.
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || vars.ZENODO_AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      # Use maintained automation even when archiving an older tag.
+      - name: Check out release tools
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: automation
+          persist-credentials: false
+
+      - name: Validate the version tag and test release tools
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            RELEASE_TAG="${GITHUB_REF#refs/heads/zenodo-draft/}"
+          fi
+          export RELEASE_TAG
+          python3 -c 'import os, re; assert re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?", os.environ["RELEASE_TAG"]), "Expected a version tag such as v0.4.0"'
+          echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
+          python3 -m unittest discover -s automation/tests -p 'test_zenodo_release.py'
+
+      - name: Check out the tagged benchmark sources
+        uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Package sources and pinned Polygeist
+        run: |
+          python3 automation/scripts/release/package.py \
+            --repository source --tag "$RELEASE_TAG" --output dist
+
+      - name: Upload to the existing Zenodo record
+        id: zenodo
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+          ZENODO_RECORD_ID: ${{ vars.ZENODO_RECORD_ID || '24295364' }}
+          PUBLISH: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
+        run: |
+          args=()
+          if [ "$PUBLISH" = true ]; then args+=(--publish); fi
+          python3 automation/scripts/release/zenodo.py \
+            --record-id "$ZENODO_RECORD_ID" \
+            --manifest "dist/LoopLibrarian-Benchmarks-$RELEASE_TAG.json" \
+            --output dist/zenodo-result.json "${args[@]}"
+
+      - name: Zenodo ${{ steps.zenodo.outputs.status }} ${{ steps.zenodo.outputs.deposition_id }}
+        if: success()
+        run: cat dist/zenodo-result.json
+
+      - name: Save source archive, checksums, and publication result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenodo-source-archive
+          path: dist/
+          if-no-files-found: ignore
