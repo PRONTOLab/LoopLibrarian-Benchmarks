@@ -159,12 +159,13 @@ def measure(case, mode, repetition, args):
     command=['/usr/bin/timeout','--kill-after=10',str(args.timeout),'/usr/bin/time','-f',
              'wall_seconds=%e\nuser_seconds=%U\nsystem_seconds=%S\npeak_rss_kib=%M',
              '-o',str(timefile),*build]
+    spec_cache=getattr(args,'spec_cache',None) or args.output/'catalog-cache'
     env=environment(PYTHON=sys.executable,EQSAT_ABLATION=mode,
         POLYGEIST_BUILD_WORK_DIR=work,POLYGEIST_ABI_BACKEND='cuda',
         POLYGEIST_NUMERIC_MODEL=options.get('numeric_model','relaxed'),CCACHE_DISABLE=1,
         POLYGEIST_MATCHER_TELEMETRY_JSONL=dest/'matcher.jsonl',
         POLYGEIST_MATCHER_COLLECT_SIZES=1,POLYGEIST_SATURATION_TIMEOUT=10,
-        REGION_MATCH_CACHE_DIR=args.output/'catalog-cache'/mode)
+        REGION_MATCH_CACHE_DIR=spec_cache/mode)
     rank=options.get('ranks',[0])[0]
     env.update(POLYGEIST_MATCH_MAX_OPERAND_RANK=str(rank),
         POLYGEIST_MATCH_FUSE_INITIALIZERS=str(int(rank>0)),
@@ -207,6 +208,7 @@ def measure(case, mode, repetition, args):
         stages=events,executable_sha256=sha(executable) if executable.exists() else None,
         emitted=proof.get('emitted',[]),matching_ms=proof.get('elapsed_ms'),
         telemetry_available=bool(metrics['records']),proof_measurements=metrics,
+        region_catalog_cache=str(spec_cache/mode),
         saturation_time_complete=metrics['timeouts']==0 and metrics['worker_errors']==0,
         load_after=os.getloadavg(),
         uptime_after=subprocess.check_output(['uptime'],text=True).strip())
@@ -223,7 +225,11 @@ def main():
     p.add_argument('--suites',nargs='+',choices=['polybench','llama','aten','mfem'])
     p.add_argument('--cases',nargs='+',help='kernel names or suite/kernel names')
     p.add_argument('--resume',action='store_true')
+    p.add_argument('--spec-cache',type=Path,
+        help='Reuse prepared library specifications across runs in this directory; '
+             'default: an initially empty cache under --output')
     args=p.parse_args();args.output=args.output.resolve()
+    if args.spec_cache is not None:args.spec_cache=args.spec_cache.resolve()
     if args.stage=='summarize':
         metadata=args.output/'measurement.json'
         if not metadata.is_file():p.error('missing measurement.json in the requested output')
@@ -273,7 +279,8 @@ def main():
             sequential=True,cache_disabled=True,numeric_model='ATen per-case policy; relaxed for other suites',modes=['full','none'],
             saturation_timeout_seconds=10,deadline_policy='isolated proof process; process overhead included',
             graph_counting='serialized graph nodes and classes including primitive values',
-            region_catalog_cache='fresh campaign-local cache per EqSat arm; reused between builds',
+            region_catalog_cache=('persistent cache per EqSat arm: '+str(args.spec_cache)
+                if args.spec_cache else 'initially empty cache per EqSat arm; reused between builds'),
             rss_scope='GNU time maximum resident set of a process, not the sum of simultaneous processes')
         if metadata.exists():
             if not args.resume or json.loads(metadata.read_text())!=config:
