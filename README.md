@@ -104,15 +104,42 @@ requests that change the image inputs.
 
 ### Manual setup
 
-Install Python 3.10 or later, `egglog==11.4.0`, NumPy, CMake, Ninja, Git, GCC/G++,
-Clang/LLVM 14, OpenBLAS development files, `file`, and `zstd`. ATen plots also
-require `pdflatex` with PGFPlots and `standalone`, plus `pdftoppm`. The root
-[Dockerfile](Dockerfile) lists the Ubuntu build packages.
+These commands target Ubuntu 22.04 on x86-64, matching the image's base system.
+Run them from the repository root. Install the compiler and comparison-tool
+build dependencies:
 
-For Orin builds, also install AArch64 GCC/G++, an AArch64 OpenBLAS sysroot,
-CUDA 12.6 with nvcc, CCCL headers and the SBSA target, and target-compatible
-cuBLAS, cuSOLVER, cuDNN, and cuTENSOR. ATen requires CUDA-enabled AArch64 LibTorch;
-PVA requires its separate SDK. Configure their paths before running GPU experiments.
+```
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends \
+  build-essential ca-certificates ccache clang-14 cmake curl file gfortran git \
+  graphviz libffi-dev libncurses-dev libopenblas-dev libxml2-dev lld-14 \
+  llvm-14-dev ninja-build openssh-client pkg-config python3 python3-dev \
+  python3-pip python3-venv time unzip xxd zlib1g-dev zstd
+```
+
+Install the ATen plotting tools (`pdflatex`, PGFPlots, `standalone`, and
+`pdftoppm`) if you will generate figures:
+
+```
+sudo apt-get install -y --no-install-recommends \
+  texlive-latex-extra texlive-pictures poppler-utils
+```
+
+Create a Python 3.10 environment for LoopLibrarian:
+
+```
+python3 -m venv build/python
+source build/python/bin/activate
+python3 -m pip install egglog==11.4.0 numpy==1.26.4
+```
+
+Keep this environment active for the following commands; reactivate it with
+`source build/python/bin/activate` in a new shell. SpEQ's setup creates its own
+environment with its required older egglog version, so do not install
+`dependency_sources/requirements.txt` into this environment.
+
+Initialize the compiler checkout, download the pinned sources, and build the
+compiler and library specifications:
 
 ```
 git submodule update --init third_party/Polygeist
@@ -141,6 +168,59 @@ the `lib_v3` references; rerun it after changing the compiler or references.
 
 Allow 15–60 minutes for source downloads, roughly 4–12 hours for a clean native
 compiler build, and 2–10 minutes for specification import.
+
+#### Native CUDA on x86
+
+For native GPU execution, the host also needs a working NVIDIA driver compatible
+with CUDA 12.6. With the Python environment above active, install the same CUDA
+toolkit components and Python GPU packages as the image. The repository setup
+follows the [CUDA 12.6 installation guide](https://docs.nvidia.com/cuda/archive/12.6.3/cuda-installation-guide-linux/index.html):
+
+```
+curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb -o /tmp/looplibrarian-cuda-keyring.deb
+sudo dpkg -i /tmp/looplibrarian-cuda-keyring.deb
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends \
+  cuda-nvcc-12-6=12.6.85-1 cuda-libraries-dev-12-6=12.6.3-1
+python3 -m pip install torch==2.9.0 --index-url https://download.pytorch.org/whl/cu126
+python3 -m pip install cutensor-cu12==2.3.1
+export PATH="/usr/local/cuda/bin:$PATH"
+```
+
+The [PyTorch CUDA 12.6 package](https://pytorch.org/get-started/previous-versions/#v290)
+supplies the native ATen baseline and cuDNN dependencies. Configure their paths
+in the fresh `config.json` created above and build the ggml baseline:
+
+```
+python3 docker/configure_gpu.py --gpu-arch 86
+python3 setup.py ggml
+python3 reproduce.py polybench_gpu --cases gemm --output results/runs/native-gpu-smoke
+```
+
+Architecture `86` is for RTX 3090; select the architecture of your GPU. The
+configuration helper also works outside Docker: it locates the active Python
+environment's PyTorch, cuDNN and cuTENSOR installations and writes their library
+paths to `config.json`. It replaces that file's `environment` mapping, so add
+any optional SDK settings afterward.
+
+#### Cross-compiling for Orin
+
+On the x86 build host, additionally install the AArch64 C/C++ compilers:
+
+```
+sudo apt-get install -y --no-install-recommends \
+  gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+```
+
+The cross build also needs an AArch64 OpenBLAS sysroot, CUDA 12.6 with its SBSA
+target libraries, and target-compatible cuDNN, cuTENSOR and, for ATen, LibTorch.
+The x86 Python GPU packages above do not supply those ARM libraries. Install
+the target SDKs using their platform-specific distributions, then configure the
+paths described under [Execution on Orin](#execution-on-orin). The pinned public
+CCCL and reference headers are prepared by the `sources` and header commands
+above. MFEM execution additionally needs cuTensorNet; PVA needs the separately
+installed [PVA SDK](https://developer.nvidia.com/embedded/pva) and its operator
+libraries.
 
 ### Comparison tools
 
@@ -185,8 +265,9 @@ setup. They depend on machine load. Run GPU timing experiments one at a time.
 | [PolyBench CPU](#polybench-cpu-figure-3) | Figure 3 | 40 minutes–2 hours |
 | [PolyBench GPU](#polybench-gpu-figure-4) | Figure 4 | 20–50 minutes |
 | [Llama](#llama) | 19-operation coverage and one-layer inference versus ggml | 15–40 minutes |
-| [ATen](#aten-table-5-and-figure-5) | Table 5 and Figure 5 | 1–3 hours |
-| [MFEM](#mfem) | Contraction fixtures and PCG updates | 15–45 minutes |
+| [ATen matching](#aten-matching-table-5) | Table 5 | 1–3 hours |
+| [ATen performance](#aten-performance-figure-5) | Figure 5 | 1–4 hours |
+| [MFEM](#mfem) | Table 6 | 15–45 minutes |
 | [Equality saturation](#equality-saturation) | Table 10 | 30 minutes–2 hours |
 | [Graph sizes](#gemm-e-graph-sizes) | Section 4.4.3 | 2–10 minutes |
 | [Ginsbach/IDL](#ginsbachidl) | Section 4.4.1 | 10–30 minutes |
@@ -216,7 +297,8 @@ Orin PVA accelerator and a separately installed SDK.
 ## Execution on Orin
 
 ### Local execution
-This optional path builds ARM executables for a Jetson. It requires target SDKs
+This optional path runs the compiler on x86, packages the resulting ARM
+executables, and runs them on a Jetson. It requires target SDKs
 on the build host and compatible runtime libraries on the Jetson. Set
 `gpu_target` to `jetson` in its configuration and set `library_path` to the
 library directories on that device. The native x86 GPU Docker path above does
@@ -265,19 +347,13 @@ installation, including cuBLAS; the cross-compilation SDK is for building only.
 Authentication uses your SSH keys or agent. If you use a local `SSH_ASKPASS` helper,
 pass `--ssh-option BatchMode=no`; other OpenSSH settings can be supplied with
 repeated `--ssh-option KEY=VALUE` arguments. No access to the authors' machines is
-needed or provided. A native AArch64 compiler build and AArch64 Docker image have
-not been validated.
+needed or provided.
 
-Repeat `--build SUITE=PATH` to include `llama`, `mfem`, `pva`, or the `aten` paper
-selection in one bundle. Llama also needs `--ggml-build PATH` when packaging,
-which copies the four built ggml shared libraries. When packaging from Docker,
-that path is `/opt/looplibrarian/build/ggml-aarch64`. Vendor SDKs and shared
-libraries remain separate installations on the target. Experiments run serially;
-`--suites polybench_gpu llama` selects part of a bundle. Each suite retains its
-correctness checks and timing protocol, including five measured samples where
-the experiment measures performance.
+### Building and packaging multiple suites
 
-Additional target configuration:
+The following example bundles PolyBench GPU, Llama, MFEM, PVA, and the ATen
+Figure 5 selection. Use the Docker configuration and SDK mount above, with these
+additional target dependencies configured before building:
 
 - **Llama:** set `environment.POLYGEIST_GGML_BUILD` and run `python3 setup.py ggml`
   to build the pinned CUDA baseline. In Docker, use
@@ -286,10 +362,61 @@ Additional target configuration:
   `POLYGEIST_CUTENSOR_ROOT` to the target-compatible installations. LibTorch is
   supplied separately. Jiterator tests also need CUDA 12.6 NVRTC and matching
   `libnvrtc-builtins` in the target's `library_path`.
+- **MFEM:** set `cutensornet_root` to the target-compatible cuTensorNet SDK as
+  seen inside the container, for example `/sdk/cuquantum`.
 - **PVA:** install the SDK and operator libraries separately. Set
   `environment.PVA_OPERATOR_INCLUDE`, `NVCV_INCLUDE`, `CUPVA_SDK_ROOT`, and
   `PVA_LIB_STAGE` to their installed paths. SDK sources and headers are not
   redistributed here.
+
+On the x86 build host, run these commands from the repository root, using fresh
+output directories. The first command prepares Llama's ggml baseline:
+
+```
+LL_GPU_TARGET=jetson bash docker/run.sh setup ggml
+bash docker/run.sh polybench_gpu --gpu-target jetson --stage build --output results/runs/orin-polybench-gpu
+bash docker/run.sh llama --gpu-target jetson --stage build --output results/runs/orin-llama
+bash docker/run.sh mfem --gpu-target jetson --stage build --output results/runs/orin-mfem
+bash docker/run.sh pva --gpu-target jetson --stage build --output results/runs/orin-pva
+bash docker/run.sh aten_figure5 --gpu-target jetson --stage build --output results/runs/orin-aten-paper
+```
+
+Package the successful builds inside the container so the command can access
+the four ggml shared libraries in its persistent build volume. The bundle is
+written into the host checkout:
+
+```
+LL_GPU_TARGET=jetson bash docker/run.sh shell -c 'python3 target.py pack \
+  --build polybench_gpu=results/runs/orin-polybench-gpu \
+  --build llama=results/runs/orin-llama \
+  --build mfem=results/runs/orin-mfem \
+  --build pva=results/runs/orin-pva \
+  --build aten=results/runs/orin-aten-paper \
+  --ggml-build /opt/looplibrarian/build/ggml-aarch64 \
+  --output results/bundles/orin-all'
+python3 target.py run --bundle results/bundles/orin-all --verify-only
+```
+
+Vendor SDKs and their runtime libraries must be installed separately on the
+Jetson. Copy the bundle to your device, replacing `user@orin` with your login:
+
+```
+scp -r results/bundles/orin-all user@orin:~/looplibrarian-orin-all
+```
+
+On the Jetson, run the following commands. Replace the `/opt/` library
+directories with the installed target paths for cuTensorNet, cuTENSOR,
+LibTorch, and PVA:
+
+```
+cd ~/looplibrarian-orin-all
+python3 target.py run --bundle . \
+  --library-path /usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu:/opt/cuquantum/lib:/opt/cutensor/lib:/opt/libtorch/lib:/opt/pva/lib
+```
+
+All five suites run serially and write results under `runs/` in the bundle.
+Each retains its correctness checks and timing protocol, including five
+measured samples where the experiment measures performance.
 
 ## Running experiments
 
@@ -356,66 +483,89 @@ serial CPU comparison may fail its strict tolerance.
 Fixtures in `llama/inputs` include frontend adaptations such as split RoPE and
 branchless masking.
 
-### ATen (Table 5 and Figure 5)
+### ATen matching (Table 5)
 
-The inputs are 598 extracted/transliterated ATen C kernels in `aten/inputs`, with
-extraction records in `aten/metadata`. For Figure 5's 115 cases, using dimensions
-from [paper_shapes.json](aten/paper_shapes.json):
+[table5.py](aten/table5.py) runs matching across all 598 extracted/transliterated
+ATen C inputs listed in [all_cases.csv](aten/all_cases.csv), using the tensor
+sizes in those source files. It reports complete matches across the full set
+and the subset of 52 inputs whose native implementations call external libraries:
 
 ```
-python3 reproduce.py aten --cohort paper --timing-correctness publication --output results/runs/aten-paper
+bash docker/run.sh aten_table5 --output results/runs/aten-table5
 ```
 
+For a native installation, use
+`python3 aten/table5.py --output results/runs/aten-table5` instead.
+This experiment needs no GPU and does not execute or time kernels. A complete
+match requires a proven library replacement, successful API lowering, and no
+remaining computation loops. Matching takes an estimated 1–3 hours; `--jobs`
+controls matching parallelism. A diagnostic `--cases` subset is recorded as
+partial coverage, not a complete Table 5 run.
+
+`table5.json` contains the aggregate counts, including incomplete and unevaluated
+cases; `table5.csv` records every input. `matching/` retains generated IR and
+proofs, and `summary.json`/`summary.csv` retain per-case status. To regenerate
+the coverage reports from saved matching results:
+
+```
+bash docker/run.sh aten_table5 --stage report --output results/runs/aten-table5
+```
+
+### ATen performance (Figure 5)
+
+[figure5.py](aten/figure5.py) uses the fixed 115 cases in
+[paper_cases.csv](aten/paper_cases.csv) and the performance-benchmark tensor sizes
+in [paper_shapes.json](aten/paper_shapes.json). These sizes can differ from the
+source sizes used for Table 5:
+
+```
+bash docker/run.sh aten_figure5 --output results/runs/aten-figure5
+```
+
+For a native installation, use
+`python3 aten/figure5.py --output results/runs/aten-figure5` instead.
 This matches, builds, checks outputs, collects five alternating synchronized
-LoopLibrarian/ATen CUDA timing pairs after warmup, and plots the validated results.
-Use `--cases aten_mm` for one case (about 2–10 minutes). Options and published
-measurements are in [matching_options.json](aten/matching_options.json) and
-[paper_timings.csv](aten/paper_timings.csv).
+LoopLibrarian/native ATen CUDA timing pairs after five warmups, and plots the
+validated results. Timings use the minimum of five samples per implementation.
+Allow an estimated 1–4 hours; use `--cases aten_mm` for one case (about 2–10
+minutes). `--jobs` controls compilation parallelism; GPU timings run serially.
 
-For matching across all 598 inputs at their source dimensions:
+Fresh runs use the publication FP32 criterion, `0.002 * (1 + abs(reference))`.
+Use `--timing-correctness strict` for the optional diagnostic criterion,
+`1e-5 + 1e-4 * abs(reference)`, which also distinguishes signed zeros.
+Integer/index comparisons remain exact. Both modes check full outputs,
+unchanged inputs, and buffer guards. Argmax/argmin timing inputs are finite;
+sampled sparse addmm uses identical sparse indices for both implementations.
+Input recipes and correctness policies are recorded with the results.
 
-```
-python3 reproduce.py aten --cohort all --stage match --output results/runs/aten-all
-python3 reproduce.py aten --cohort all --stage build --output results/runs/aten-all
-python3 reproduce.py aten --cohort all --stage run --output results/runs/aten-all
-```
+Outputs include `matching/` (IR and proofs), `gpu/` (builds, checks and raw timing
+samples), `gpu/report.csv`, and `summary.json`. The graph is
+`plots/aten-current.pdf` and `.png`. Only cases with valid correctness checks
+and timing pairs appear as points; the caption states how many of the 115 cases
+are plotted. Failed or unavailable cases remain in `plots/aten-current-data.csv`
+with status and empty timing fields. Subset runs also state how many cases were
+selected. If no case has valid timings, `plots/status.json` records why no graph
+was produced and the case statuses remain in `gpu/report.csv`.
 
-Matching takes an estimated 1–3 hours; supported GPU runs add 1–4 hours. Native
-comparison code exists for 170 inputs. Reports identify incomplete matches and
-unsupported execution; these dimensions differ from Figure 5. COO-to-CSR still
-requires unsupported loop proofs. `--jobs` controls compilation parallelism;
-GPU timings are collected serially.
-
-Outputs include `matching/` (IR and proofs), `gpu/` (builds, checks, raw samples),
-`gpu/report.csv`, and `summary.json`.
-Full-set runs also produce `summary.csv` and `table5.json`/`table5.csv`, which
-report the number of complete matches across all 598 kernels and identify
-the 52 native-library cases. Matching coverage does not imply GPU correctness
-or measured performance. The Figure 5 plot is
-`plots/aten-current.pdf` and `.png`; its CSV records cases without valid timings.
-To regenerate reports or plots without rerunning experiments:
+To resume a completed matching stage, run an existing build, or regenerate the
+graph without new GPU execution, use the applicable command:
 
 ```
-python3 reproduce.py aten --cohort all --stage report --output results/runs/aten-all
-python3 reproduce.py aten --cohort paper --stage plot --output results/runs/aten-paper
+bash docker/run.sh aten_figure5 --stage build --output results/runs/aten-figure5
+bash docker/run.sh aten_figure5 --stage run --output results/runs/aten-figure5
+bash docker/run.sh aten_figure5 --stage plot --output results/runs/aten-figure5
 ```
 
-Add `--paper-figure path/to/figure.pdf` for a side-by-side comparison. 
+Resumed stages retain the saved cases, tensor sizes and correctness policy.
+Use separate output directories for Table 5 and Figure 5. Matching options and
+published measurements are in [matching_options.json](aten/matching_options.json)
+and [paper_timings.csv](aten/paper_timings.csv). Add
+`--paper-figure path/to/figure.pdf` for a side-by-side comparison.
 
-**Checks and comparison limits.** The paper command uses FP32 tolerance
-`0.002 * (1 + abs(reference))`. A stricter check, `1e-5 + 1e-4 * abs(reference)`,
-also distinguishes signed zeros; omitting `--timing-correctness publication`
-requires this check before timing. Both modes check full outputs, unchanged
-inputs, and buffer guards. Some reductions and convolution gradients agree with
-ATen CUDA while failing the stricter serial-C comparison.
+### Optional ATen pointwise experiments
 
-Timings use the minimum of five samples per implementation. Argmax/argmin use a 
-separately checked finite-input variant
-because ATen CUDA differs on the original NaN inputs. Sampled sparse addmm uses
-identical column indices for both implementations; its paper timings used different
-indices. Reports identify these differences, which limit direct speedup comparisons.
-
-#### ATen pointwise experiments
+This additional sweep is an extension experiment, separate from Figure 5
+reproduction. Some of its operations also contribute to the paper's coverage.
 
 [pointwise_candidates.csv](aten/pointwise_candidates.csv) lists 268 candidates,
 including 54 Figure 5 cases; inclusion does not imply a successful match. Run:

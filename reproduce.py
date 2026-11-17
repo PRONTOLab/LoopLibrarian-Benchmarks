@@ -13,9 +13,10 @@ import sys
 from common import ARTIFACT, ROOT, environment, provenance, save, setting
 
 SUITES = ['polybench_cpu', 'polybench_gpu', 'llama', 'mfem', 'eqsat', 'eqsat_extra',
-          'graph_sizes', 'ginsbach', 'kernelfarer', 'aten', 'library_inventory', 'pva', 'compilation_cost']
+          'graph_sizes', 'ginsbach', 'kernelfarer', 'aten_table5', 'aten_figure5',
+          'aten', 'library_inventory', 'pva', 'compilation_cost']
 
-def main():
+def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('suite', choices=SUITES)
     p.add_argument('--stage', choices=['plan', 'match', 'build', 'run', 'report', 'summarize', 'plot', 'all'], default='all')
@@ -24,7 +25,20 @@ def main():
     p.add_argument('--gpu-target', choices=['x86_64', 'jetson'], help='GPU execution platform (default: x86_64)')
     p.add_argument('--gpu-arch', help='CUDA architecture, e.g. sm_80 or sm_87')
     p.add_argument('--cohort', choices=['paper', 'all'], help='ATen selection')
-    a, extra = p.parse_known_args()
+    a, extra = p.parse_known_args(argv)
+    experiment = a.suite
+    if experiment in ('aten_table5', 'aten_figure5'):
+        cohort = 'all' if experiment == 'aten_table5' else 'paper'
+        if a.cohort is not None and a.cohort != cohort:
+            p.error(experiment+' fixes the ATen cohort to '+cohort)
+        a.cohort = cohort
+        # Keep the existing result format and execution-bundle suite name.
+        a.suite = 'aten'
+        if experiment == 'aten_table5':
+            if a.stage not in ('plan', 'match', 'report', 'summarize', 'all'):
+                p.error('Table 5 supports matching and coverage reports, not GPU execution or plotting')
+            if a.stage == 'all':
+                a.stage = 'match'
     if a.cohort:
         if a.suite != 'aten':
             p.error('--cohort applies to ATen only')
@@ -42,13 +56,13 @@ def main():
     if a.stage in ('run', 'report', 'summarize', 'plot') and a.output is None:
         p.error('--output is required when resuming a built experiment')
     stamp = uuid.uuid4().hex[:12]
-    out = (a.output or ROOT/'results/runs'/f'{a.suite}-{stamp}').resolve()
+    out = (a.output or ROOT/'results/runs'/f'{experiment}-{stamp}').resolve()
     directories = {'polybench_cpu': 'polybench/cpu', 'polybench_gpu': 'polybench/gpu', 'llama': 'llama', 'mfem': 'mfem', 'eqsat': 'eqsat', 'graph_sizes': 'graph_sizes', 'ginsbach': 'ginsbach', 'kernelfarer': 'kernelfarer', 'aten': 'aten', 'library_inventory': 'library_inventory'}
     directories.update(pva='pva',compilation_cost='compilation_cost')
     directories['eqsat_extra']='eqsat'
     script = ROOT/directories[a.suite]/'reproduce.py'
     if a.suite == 'eqsat_extra':script=ROOT/'eqsat/execute.py'
-    stage = 'all' if a.stage == 'plan' else a.stage
+    stage = ('match' if experiment == 'aten_table5' else 'all') if a.stage == 'plan' else a.stage
     cmd = [sys.executable, str(script), '--stage', stage]
     if a.suite == 'aten':
         cmd += ['--output', str(out)]

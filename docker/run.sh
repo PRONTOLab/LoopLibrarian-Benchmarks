@@ -42,14 +42,14 @@ done
 case "$GPU_TARGET" in x86_64|jetson) ;; *) echo 'GPU target must be x86_64 or jetson' >&2; exit 2 ;; esac
 ARGS+=(-e "LL_GPU_TARGET=$GPU_TARGET")
 case "$ACTION" in
-    polybench_gpu|llama|mfem|aten|eqsat_extra|compilation_cost)
+    polybench_gpu|llama|mfem|aten|aten_figure5|eqsat_extra|compilation_cost)
         if [[ "$GPU_TARGET" == x86_64 ]]; then
             # Use the ggml baseline built into the image.
             USE_BUILD_VOLUME=0
             NEED_GPU=1
             if [[ "$ACTION" == compilation_cost ]]; then NEED_GPU=0; fi
             case "$STAGE" in plan|match|build|report|summarize|plot) NEED_GPU=0 ;; esac
-            if [[ "$ACTION" == aten && ( "$STAGE" == match ||
+            if [[ ( "$ACTION" == aten || "$ACTION" == aten_figure5 ) && ( "$STAGE" == match ||
                   ( "$COHORT" == all && ( "$STAGE" == report || "$STAGE" == summarize ) ) ) ]]; then
                 NEED_GPU=0
                 USE_BUILD_VOLUME=1

@@ -1,9 +1,16 @@
 """A timing plot must preserve the criterion and input recipe it validated."""
+import contextlib
+import csv
+import io
+import json
 from pathlib import Path
 import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'aten'))
+import plot_results
 from plot_results import timing_group, validate_paper_cohort
 
 
@@ -39,6 +46,44 @@ class PlotCriteria(unittest.TestCase):
         for policy in ('strict', 'publication', 'unknown'):
             with self.assertRaises(AssertionError):
                 timing_group(self.result(policy=policy))
+
+    def test_plot_counts_only_valid_pairs_and_retains_unplotted_csv_rows(self):
+        root = Path(__file__).resolve().parents[1]
+        with (root/'aten/paper_cases.csv').open() as stream:
+            cases = list(csv.DictReader(stream))
+        published = dict(native_us=1000, raised_us=500, timing_protocol='minimum of 5 after 5 warmups')
+        runtime = self.result(policy='publication', publication=True)
+        runtime['binary_sha256'] = 'validated-binary'
+        runtime['timing'].update(passed=True, minimum_ms={'raised': .5, 'native_aten_cuda': 1},
+            samples=[dict(path=path, sample=i, ms=value+i*.1)
+                     for path, value in [('raised', .5), ('native_aten_cuda', 1)] for i in range(5)])
+        rows = [dict(kernel=row['kernel'], complete_match=False, published=published) for row in cases]
+        rows[0].update(complete_match=True, build=dict(rc=0, binary_sha256='validated-binary'), runtime=runtime)
+        rows[1].update(complete_match=True, build=dict(rc=1), runtime=dict(timing=dict(passed=False)))
+        with tempfile.TemporaryDirectory() as tmp:
+            report = Path(tmp)/'report.json'
+            report.write_text(json.dumps(dict(cases=rows, summary={'timing_pairs_validated':1})))
+            output = Path(tmp)/'plots'
+            with patch.object(plot_results.subprocess, 'run') as render, contextlib.redirect_stdout(io.StringIO()):
+                plot_results.main(['--report',str(report),'--output',str(output)])
+            self.assertEqual(render.call_count, 2)
+            with (output/'aten-current-data.csv').open() as stream:
+                plotted_rows = list(csv.DictReader(stream))
+            self.assertEqual(len(plotted_rows), len(cases))
+            self.assertEqual(plotted_rows[0]['status'], 'validated_original_inputs_publication')
+            self.assertEqual(plotted_rows[1]['status'], 'build_failed')
+            self.assertTrue(all(row['native_us']==row['raised_us']=='' for row in plotted_rows[1:]))
+            summary = json.loads((output/'plot-summary.json').read_text())
+            self.assertEqual(summary['timed'], 1)
+            self.assertEqual(summary['paper_cohort'], len(cases))
+            self.assertEqual(len(summary['unplotted']), len(cases)-1)
+            self.assertIn(f'1 of {len(cases)} cases plotted', (output/'aten-current.tex').read_text())
+
+            report.write_text(json.dumps(dict(cases=rows[:3], summary={'timing_pairs_validated':1})))
+            with patch.object(plot_results.subprocess, 'run'), contextlib.redirect_stdout(io.StringIO()):
+                plot_results.main(['--report',str(report),'--output',str(output)])
+            self.assertIn(f'1 of {len(cases)} cases plotted (3 selected)',
+                          (output/'aten-current.tex').read_text())
 
 
 if __name__ == '__main__':

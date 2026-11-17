@@ -55,6 +55,22 @@ class DockerRunner(unittest.TestCase):
         self.assertIn('looplibrarian:artifact', args)
         self.assertNotIn('--gpus', args)
 
+    def test_table5_never_requests_a_gpu(self):
+        for options in ((), ('--stage', 'match'), ('--stage=report',)):
+            args = self.invoke('aten_table5', *options)
+            self.assertNotIn('--gpus', args)
+            self.assertIn('aten_table5', args)
+            self.assertIn('looplibrarian-builds:/opt/looplibrarian/build', args)
+
+    def test_figure5_exposes_gpu_only_for_execution(self):
+        for stage in ('all', 'run', 'match', 'build', 'report', 'plot'):
+            with self.subTest(stage=stage):
+                args = self.invoke('aten_figure5', '--stage', stage)
+                self.assertEqual('--gpus' in args, stage in ('all', 'run'))
+        args = self.invoke('aten_figure5', '--gpu-target', 'jetson', '--stage', 'build')
+        self.assertNotIn('--gpus', args)
+        self.assertIn('LL_GPU_TARGET=jetson', args)
+
     def test_full_aten_execution_exposes_gpu_unless_building(self):
         for stage in ('all', 'run', 'build'):
             with self.subTest(stage=stage):

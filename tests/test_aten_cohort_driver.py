@@ -109,10 +109,32 @@ class CohortDriver(unittest.TestCase):
             with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
                 driver.main(['--cohort','all',*extra])
 
+    def test_fresh_paper_run_defaults_to_publication_with_explicit_strict_option(self):
+        for policy in ('publication', 'strict'):
+            with self.subTest(policy=policy), tempfile.TemporaryDirectory() as tmp:
+                out = Path(tmp)
+                def command(cmd, *args, **kwargs):
+                    if 'report' in cmd:
+                        (out/'gpu').mkdir(exist_ok=True)
+                        (out/'gpu/report.json').write_text(json.dumps(dict(summary={'timing_pairs_validated':0})))
+                extra = ['--timing-correctness', 'strict'] if policy == 'strict' else []
+                with patch.object(driver, 'command', side_effect=command) as calls, \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    driver.main(['--cohort','paper','--cases','mm','--output',tmp,*extra])
+                commands = [list(map(str, c.args[0])) for c in calls.call_args_list]
+                for cmd in commands[1:]:
+                    self.assertEqual(cmd[cmd.index('--timing-correctness')+1], policy)
+                self.assertEqual(json.loads((out/'selection.json').read_text())['timing_correctness'], policy)
+                self.assertEqual(json.loads((out/'plots/status.json').read_text())['status'], 'not_plotted')
+
     def test_plot_restores_saved_policy_without_running_gpu(self):
+        for policy in ('publication', 'strict'):
+            self.check_saved_plot_policy(policy)
+
+    def check_saved_plot_policy(self, policy):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            args = SimpleNamespace(cohort='paper',cases=['mm'],numeric_model='strict',timing_correctness='publication')
+            args = SimpleNamespace(cohort='paper',cases=['mm'],numeric_model='strict',timing_correctness=policy)
             driver.record_selection(args, out)
             (out/'matching').mkdir()
             shapes = ROOT/'aten/paper_shapes.json'
@@ -128,7 +150,7 @@ class CohortDriver(unittest.TestCase):
             commands = [list(map(str, c.args[0])) for c in calls.call_args_list]
             self.assertEqual(len(commands), 2)
             self.assertEqual(commands[0][commands[0].index('--stage')+1], 'report')
-            self.assertEqual(commands[0][commands[0].index('--timing-correctness')+1], 'publication')
+            self.assertEqual(commands[0][commands[0].index('--timing-correctness')+1], policy)
             self.assertTrue(commands[1][1].endswith('plot_results.py'))
 
 

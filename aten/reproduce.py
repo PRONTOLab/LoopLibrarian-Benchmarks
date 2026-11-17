@@ -90,7 +90,8 @@ def main(argv=None):
     p.add_argument('--jobs', type=int, default=3)
     p.add_argument('--numeric-model', choices=['strict','relaxed'],
                    help='Full-suite EqSat model; paper mode retains recorded per-case models')
-    p.add_argument('--timing-correctness', choices=['strict','publication'])
+    p.add_argument('--timing-correctness', choices=['strict','publication'],
+                   help='Fresh Figure 5 runs use publication; resumed runs keep their saved policy')
     p.add_argument('--paper-figure', type=Path, help='Optional original PDF for the paper plot comparison')
     args = p.parse_args(argv)
     args.stage = 'report' if args.stage == 'summarize' else args.stage
@@ -100,7 +101,9 @@ def main(argv=None):
     previous_path = out/'selection.json'
     previous = json.loads(previous_path.read_text()) if previous_path.exists() else {}
     args.numeric_model = args.numeric_model or previous.get('numeric_model', 'strict')
-    args.timing_correctness = args.timing_correctness or previous.get('timing_correctness', 'strict')
+    default_policy = 'publication' if args.cohort == 'paper' else 'strict'
+    args.timing_correctness = args.timing_correctness or previous.get(
+        'timing_correctness', 'strict' if previous else default_policy)
     if args.jobs < 1:
         p.error('--jobs must be positive')
     if args.cohort == 'all' and (args.stage == 'plot' or args.paper_figure or args.timing_correctness != 'strict'):

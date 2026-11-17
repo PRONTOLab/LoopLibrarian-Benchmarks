@@ -18,6 +18,7 @@ def validate_paper_cohort(data):
         raise ValueError('This plot requires results from the 115-case paper cohort')
     if len(names) != len(set(names)):
         raise ValueError('Duplicate cases in paper plotting report')
+    return len(paper)
 
 
 def band_counts(points):
@@ -40,18 +41,18 @@ def timing_group(runtime):
     return 'paper' if check.get('passed') else 'publication'
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--report', type=Path, required=True, help='gpu/report.json')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--paper-figure', type=Path,
                         help='Optional archived paper PDF to place beside the current graph unchanged')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     report = args.report.resolve()
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
     data = json.loads(report.read_text())
-    validate_paper_cohort(data)
+    paper_cohort = validate_paper_cohort(data)
     groups = {'paper': [], 'publication': [], 'alternative': []}
     rows = []
     for case in data['cases']:
@@ -95,6 +96,9 @@ def main():
     if not points:
         raise SystemExit('No validated timing pairs to plot')
     assert len(points) == data['summary']['timing_pairs_validated']
+    caption = f'{len(points)} of {paper_cohort} cases plotted'
+    if len(rows) != paper_cohort:
+        caption += f' ({len(rows)} selected)'
     with (out / 'aten-current-data.csv').open('w', newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
@@ -156,6 +160,7 @@ def main():
  node[pos=1,below left,font=\footnotesize,fill=white,inner sep=2pt]
  {{LoopLibrarian faster}};
 \end{{loglogaxis}}
+\node[anchor=north,font=\small] at (current bounding box.south) {{{caption}}};
 \end{{tikzpicture}}
 \end{{document}}
 '''
@@ -168,7 +173,8 @@ def main():
                        stdout=log, stderr=subprocess.STDOUT, check=True)
     summary = dict(source_report=str(report), source_sha256=hashlib.sha256(report.read_bytes()).hexdigest(),
                    generator_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                   cohort=len(rows), original_inputs=len(groups['paper'])+len(groups['publication']),
+                   cohort=len(rows), paper_cohort=paper_cohort, caption=caption,
+                   original_inputs=len(groups['paper'])+len(groups['publication']),
                    strict_original_inputs=len(groups['paper']),
                    publication_only_original_inputs=len(groups['publication']),
                    alternative_inputs=len(groups['alternative']), **band_counts(points),
@@ -228,7 +234,7 @@ def main():
         'The scatter follows Figure 5: native CUDA time on the horizontal axis and '
         'LoopLibrarian resident GPU time on the vertical axis, in microseconds. '
         'The black line is parity; red dotted lines delimit a factor of two.\n\n'
-        f"There are {len(points)} timed cases from the {len(rows)}-case paper cohort. "
+        f"{caption}. "
         f"Green circles show {len(groups['paper'])} cases passing strict checks on original inputs. "
         f"Blue triangles show {len(groups['publication'])} cases passing the historical criterion; "
         'their strict diagnostic failures are retained. Hollow orange diamonds show '
