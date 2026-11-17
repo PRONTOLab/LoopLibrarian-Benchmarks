@@ -29,7 +29,7 @@ Requirements: x86-64 Linux, Docker, at least 32 GB RAM, and about 100 GB free di
 
 The image includes LLVM, MLIR, Polygeist, OpenBLAS, Python dependencies,
 AArch64 cross-compilers, imported library specifications, plotting tools, the
-native x86 CUDA libraries, and the KernelFaRer, Ginsbach/IDL, and SpEQ comparison
+native x86 CUDA libraries, and the KernelFaRer, IDL, and SpEQ comparison
 tools. All experiments use this one image built by GitHub Actions.
 Pull the image built from `main` and give it the local name used by the runner:
 
@@ -89,7 +89,7 @@ x86 GPU experiments.
 
 `Dockerfile` builds one image holding the compiler, the native x86 CUDA libraries
 with the ggml and PyTorch comparison implementations, and the KernelFaRer,
-Ginsbach/IDL, and SpEQ comparison tools. Build locally if you change the compiler or need
+IDL, and SpEQ comparison tools. Build locally if you change the compiler or need
 another image revision. Builds use committed sources and exclude local
 configuration and results:
 
@@ -237,7 +237,7 @@ libraries.
 
 ### Comparison tools
 
-The Docker image already contains KernelFaRer, Ginsbach/IDL, and SpEQ, including
+The Docker image already contains KernelFaRer, IDL, and SpEQ, including
 SpEQ's reference sources, LLVM fork, and isolated Python environment. Run the
 comparison experiments directly with `bash docker/run.sh`; no additional setup,
 image build, or Docker socket mount is needed.
@@ -251,7 +251,7 @@ python3 setup.py speq
 ```
 
 These use the original projects and the included compatibility patches.
-Ginsbach/IDL builds its own LLVM fork; allow about 30 minutes with four build jobs.
+IDL builds its own LLVM fork; allow about 30 minutes with four build jobs.
 The native SpEQ setup downloads the [published artifact](https://zenodo.org/records/10802555)
 (6.3 GB), verifies and extracts the needed sources into `third_party/speq`, and
 builds its LLVM tools and Python environment there. Use Python 3.10 with its
@@ -277,7 +277,7 @@ setup. They depend on machine load. Run GPU timing experiments one at a time.
 | [MFEM](#mfem) | Table 6 | 15–45 minutes |
 | [Equality saturation](#equality-saturation) | Table 10 | 30 minutes–2 hours |
 | [Graph sizes](#gemm-e-graph-sizes) | Section 4.4.3 | 2–10 minutes |
-| [Ginsbach/IDL](#ginsbachidl) | Section 4.4.1 | 10–30 minutes |
+| [IDL](#idl) | Section 4.4.1 | 10–30 minutes |
 | [KernelFaRer](#kernelfarer-table-9) | Table 9 | 30–90 minutes |
 | [PVA](#pva-table-7) | Table 7 | 15–30 minutes |
 | [Compilation cost](#compilation-cost-table-8) | Table 8 | 6–24 hours, estimated |
@@ -470,7 +470,7 @@ separate vendor-call trace. These are separate-kernel harnesses: ten native bodi
 come from pinned PolyBenchGPU, while correlation and covariance use the paper's
 CUDA adaptations. Select a subset with `--cases gemm`.
 
-### Llama
+### Llama (Section 4.2.2)
 
 The Docker image includes the native x86 ggml baseline. For Jetson, first build its ggml baseline
 as described under [Execution on Orin](#execution-on-orin).
@@ -619,7 +619,7 @@ bash docker/run.sh graph_sizes --output results/runs/graphs
 DOT files beside it. The reported result is 370 SpEQ nodes versus 21 LoopLibrarian
 nodes.
 
-### Ginsbach/IDL
+### IDL
 
 After [comparison-tool setup](#comparison-tools):
 
