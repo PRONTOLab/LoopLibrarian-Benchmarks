@@ -11,10 +11,12 @@ library specifications to generate library calls. The compiler is pinned under
 `third_party/Polygeist`.
 
 ## Initial setup
-Use the [pre-built Docker image](#pre-built-docker-image) for CPU and native x86
-GPU experiments. It includes the compiler and GPU libraries; reviewers do not
-need to build a Docker image or compile LLVM. Start from a checkout of this
-repository:
+We support three ways of setting up the experiment environment: a [pre-built Docker image](#pre-built-docker-image),
+[building your own Docker image](#building-the-docker-image), and [manual setup](#manual-setup).
+We recommend the pre-built image, as building the compiler requires building LLVM,
+which takes a significant amount of time.
+
+All three start from a checkout of this repository:
 
 ```
 git clone https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
@@ -35,6 +37,8 @@ Pull the image built from `main` and give it the local name used by the runner:
 docker pull ghcr.io/prontolab/looplibrarian-benchmarks:latest
 docker tag ghcr.io/prontolab/looplibrarian-benchmarks:latest looplibrarian:artifact
 ```
+
+To use other sources, [build the image locally](#building-the-docker-image).
 
 Then run the smoke test, which takes approximately 1–5 minutes and compares
 every output of native and raised GEMM:
@@ -109,15 +113,7 @@ on the listed host; lower `BUILD_JOBS` on smaller machines. The image imports
 specifications and runs script tests. IDL and KernelFaRer build with
 `COMPARISON_JOBS=4` by default. Later builds reuse unchanged compiler layers.
 SpEQ is built in the same Docker build and adds a 6.3 GB source download and
-roughly 1–2 hours on a fresh build. Its separate LLVM and Python environment are
-included in the final image; intermediate build stages are not published as
-additional images.
-
-The [Docker workflow](.github/workflows/docker.yml) builds this image for every
-pull request to `main` and every push to `main` or a tag. Pushes to `main`
-automatically publish `ghcr.io/prontolab/looplibrarian-benchmarks:latest`, together
-with a commit-specific `sha-` tag. The workflow checks anonymous registry access
-after publishing; reviewers do not need to build or log in to pull the image.
+roughly 1–2 hours on a fresh build.
 
 ### Manual setup
 
@@ -473,7 +469,7 @@ CUDA adaptations. Select a subset with `--cases gemm`.
 ### Llama
 
 The Docker image includes the native x86 ggml baseline. For Jetson, first build its ggml baseline
-as described under [Execution on Orin](#execution-on-orin):
+as described under [Execution on Orin](#execution-on-orin).
 
 ```
 python3 reproduce.py llama --output results/runs/llama
@@ -510,8 +506,7 @@ For a native installation, use
 This experiment needs no GPU and does not execute or time kernels. A complete
 match requires a proven library replacement, successful API lowering, and no
 remaining computation loops. Matching takes an estimated 1–3 hours; `--jobs`
-controls matching parallelism. A diagnostic `--cases` subset is recorded as
-partial coverage, not a complete Table 5 run.
+controls matching parallelism. 
 
 `table5.json` contains the aggregate counts, including incomplete and unevaluated
 cases; `table5.csv` records every input. `matching/` retains generated IR and
@@ -541,14 +536,6 @@ validated results. Timings use the minimum of five samples per implementation.
 Allow an estimated 1–4 hours; use `--cases aten_mm` for one case (about 2–10
 minutes). `--jobs` controls compilation parallelism; GPU timings run serially.
 
-Fresh runs use the publication FP32 criterion, `0.002 * (1 + abs(reference))`.
-Use `--timing-correctness strict` for the optional diagnostic criterion,
-`1e-5 + 1e-4 * abs(reference)`, which also distinguishes signed zeros.
-Integer/index comparisons remain exact. Both modes check full outputs,
-unchanged inputs, and buffer guards. Argmax/argmin timing inputs are finite;
-sampled sparse addmm uses identical sparse indices for both implementations.
-Input recipes and correctness policies are recorded with the results.
-
 Outputs include `matching/` (IR and proofs), `gpu/` (builds, checks and raw timing
 samples), `gpu/report.csv`, and `summary.json`. The graph is
 `plots/aten-current.pdf` and `.png`. Only cases with valid correctness checks
@@ -573,43 +560,6 @@ published measurements are in [matching_options.json](aten/matching_options.json
 and [paper_timings.csv](aten/paper_timings.csv). Add
 `--paper-figure path/to/figure.pdf` for a side-by-side comparison.
 
-### Optional ATen pointwise experiments
-
-This additional sweep is an extension experiment, separate from Figure 5
-reproduction. Some of its operations also contribute to the paper's coverage.
-
-[pointwise_candidates.csv](aten/pointwise_candidates.csv) lists 268 candidates,
-including 54 Figure 5 cases; inclusion does not imply a successful match. Run:
-
-```
-python3 aten/pointwise.py --cases exp2 expm1 erfc --output results/runs/pointwise
-```
-
-Omit `--cases` for the full inventory. Use `--stage match`, `build`, `run`, or
-`report` to resume stages. Matching takes about 20–60 minutes for the inventory,
-plus compilation and GPU time for executable cases. `summary.json` separates
-candidates, complete matches, strict GPU passes, and timings.
-
-A complete match requires imported-reference proof, valid API arguments, and no
-remaining computation loops. The default `--numeric-model strict` can be changed
-to `relaxed`, which permits finite-arithmetic transformations such as reassociation
-and disregard of signed zero; it does not prove full IEEE equivalence. Use separate
-outputs for the two models. Execution checks every output against C and ATen CUDA,
-including exceptional values, signed zeros, unchanged inputs, and guards. Five
-timing pairs are collected only after strict checks pass. For example, C `roundf`
-and ATen round differ on ties and cannot be substituted for one another.
-
-These runs use source dimensions, not Figure 5 dimensions. Optional larger shapes
-for 166 candidates are in [pointwise_shapes.json](aten/pointwise_shapes.json):
-
-```
-python3 aten/pointwise.py --shape-specs aten/pointwise_shapes.json --cases exp2 expm1 erfc --output results/runs/pointwise-large
-```
-
-To combine disjoint runs, pass another run's `gpu/gpu-results.json` with
-`--stage report --extra-gpu-results PATH`. The report requires compatible inputs
-and compiler settings and rejects duplicates; different dimensions remain separate.
-
 ### MFEM
 
 For Table 6, run compiler matching without a GPU:
@@ -625,15 +575,10 @@ reported as unmatched, and the PCG application. `mfem/published-matching.json`
 contains the paper's per-input counts and their source revision. The current
 compiler covers the 128 previously matched contraction bodies and emits 135
 cuTensorNet contractions. It additionally recognizes two contractions in value
-integration, two in mass application, and three in 3D div-div. The paper used
-cuTensorNet, which is also the default contraction backend here. The imported
-OpenBLAS references describe the computations; the generated calls use the
-cuTensorNet API. The two PCG vector updates use cuBLAS.
-MFEM has no paper performance result.
+integration, two in mass application, and three in 3D div-div. 
 
 Optional execution checks require the cuTensorNet SDK. Set `cutensornet_root`
-in `config.json` or `POLYGEIST_CUTENSORNET_ROOT` to its installation directory;
-matching alone does not require the SDK:
+in `config.json` or `POLYGEIST_CUTENSORNET_ROOT` to its installation directory.
 
 ```
 python3 reproduce.py mfem --output results/runs/mfem
@@ -657,8 +602,7 @@ then compare recognition with SpEQ on the x86 host. `summary.json` separates
 recognition from executable lowering. The paper reports 17 recognized programs
 with equality saturation and 8 without. The current compiler recognizes 19 and 12
 across all 30 programs. Two additional programs, `fdtd-2d` and `ludcmp`, match
-with equality saturation; `ludcmp` also matches without it. Restricting the
-comparison to the paper's 17 recognized programs gives 17 and 11.
+with equality saturation; `ludcmp` also matches without it. 
 SpEQ's reported single match uses GEMM with linearized indexing; results on
 unmodified PolyBench are also recorded.
 
@@ -671,8 +615,7 @@ python3 target.py pack --build eqsat_extra=results/runs/eqsat-extra --output res
 
 Run the bundle as described under [Execution on Orin](#execution-on-orin).
 These checks use MINI inputs, compare every output with the original C program,
-and record five timing samples after five warmups. They validate the additional
-matches separately from the paper's performance figures.
+and record five timing samples after five warmups. 
 
 ### GEMM e-graph sizes
 
