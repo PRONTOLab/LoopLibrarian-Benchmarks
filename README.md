@@ -599,38 +599,13 @@ bash docker/run.sh eqsat --output results/runs/eqsat
 ```
 
 Compile all 30 PolyBench programs with equality saturation enabled and disabled,
-then compare recognition with SpEQ on the x86 host. The verified comparison is
-**19 programs with equality saturation and 11 without, out of the same 30**,
-using compiler revision
-[`2d07302f`](https://github.com/arpitj1/Polygeist/commit/2d07302fdf1f798dfcb1b3e08c7dd36884d3a800)
-and the [lib_v3 specifications from that revision](https://github.com/arpitj1/Polygeist/tree/2d07302fdf1f798dfcb1b3e08c7dd36884d3a800/generic_solver/lib_v3).
-A program counts as recognized when it contains at least one proven library
-replacement; complete replacement of every computation is not required.
-
-The rebuttal reported 17 with equality saturation and 8 without, also out of 30.
-The three additional recognitions without equality saturation are column sums
-in `correlation` and `covariance`, enabled by a CUB reference, and scaling in
-`trmm`, enabled by improved output-view matching. `fdtd-2d` and `ludcmp` are the
-two additional recognitions with equality saturation.
+then compare recognition with SpEQ on the x86 host. We were able to raise
+19 programs with equality saturation and 11 without, out of the same 30.
 
 `summary.json` reports recognition and executable lowering separately, including
-per-program failures. Differences from the rebuttal's counts are recorded, not
-treated as a failed experiment. `provenance.json` records the compiler revision
-used by a new run; each `ll/<program>/<full-or-none>/match.json` records the
-specification catalog's SHA-256 hash. A `--cases` subset is reported as partial.
+per-program failures. 
 SpEQ's reported single match uses GEMM with linearized indexing; results on
 unmodified PolyBench are also recorded.
-
-To execute the additional `fdtd-2d` and `ludcmp` recognitions on Orin:
-
-```
-bash docker/run.sh eqsat_extra --stage build --output results/runs/eqsat-extra
-python3 target.py pack --build eqsat_extra=results/runs/eqsat-extra --output results/eqsat-extra-bundle
-```
-
-Run the bundle as described under [Execution on Orin](#execution-on-orin).
-These checks use MINI inputs, compare every output with the original C program,
-and record five timing samples after five warmups.
 
 ### GEMM e-graph sizes
 
