@@ -621,10 +621,10 @@ nodes.
 
 ### IDL (Section 4.4.1)
 
-After [comparison-tool setup](#comparison-tools):
+Using the prebuilt image (native installations need [IDL setup](#comparison-tools)):
 
 ```
-python3 reproduce.py ginsbach --output results/runs/idl
+bash docker/run.sh ginsbach --output results/runs/idl
 ```
 
 Run IDL on all 30 PolyBench programs and execute programs containing replacements
@@ -636,10 +636,10 @@ The driver uses the original allocation helpers in
 
 ### KernelFaRer (Table 9)
 
-After [comparison-tool setup](#comparison-tools):
+Using the prebuilt image (native installations need [KernelFaRer setup](#comparison-tools)):
 
 ```
-python3 reproduce.py kernelfarer --output results/runs/table9
+bash docker/run.sh kernelfarer --output results/runs/table9
 ```
 
 Compare native compilation, KernelFaRer, and LoopLibrarian for complete FP32 LARGE
@@ -688,13 +688,12 @@ A small check is:
 python3 reproduce.py compilation_cost --cases aten/aten_avg_pool2d --repetitions 1 --output results/runs/compilation-check
 ```
 
-`compilation-table.csv` reports median build times by suite; `measurement-tables.csv`
+`compilation-table.csv` reports median compilation times by suite; `measurement-tables.csv`
 contains stage times, proof measurements, and peak memory. `summary.json` retains
 raw repetitions and failures.
 
-The default uses the paper's three repetitions; `first-three-compilation-table.csv`
-reports the same repetitions. Frontend translation, raising, and matching are
-repeated; parsed reference catalogs are cached per
+The default uses three repetitions, as in the paper. Frontend translation,
+raising, and matching are repeated; parsed reference catalogs are cached per
 configuration. Peak RSS is the maximum for one process, not concurrent workers' sum.
 
 To resume, use the suite driver directly with unchanged inputs and compiler:
@@ -704,7 +703,7 @@ python3 compilation_cost/reproduce.py --resume --output results/runs/compilation
 ```
 
 Use `python3 reproduce.py compilation_cost --stage summarize --output results/runs/compilation-cost`
-to report available data without more builds. Summaries retain the recorded
+to report available data without more compilations. Summaries retain the recorded
 measurement boundary; older complete-build timings remain labeled separately.
 
 ## Extending the experiments
@@ -718,7 +717,7 @@ For ATen dimensions, copy [paper_shapes.json](aten/paper_shapes.json) and update
 [aten_paper115_campaign.py](scripts/correctness/aten_paper115_campaign.py) and
 [aten_fixture_batch.py](scripts/correctness/aten_fixture_batch.py); the top-level
 ATen command does not expose this option. [aten/reproduce.py](aten/reproduce.py)
-shows the invocations. Additional pointwise runs accept `--shape-specs` directly.
+shows the invocations.
 
 To add a benchmark:
 
