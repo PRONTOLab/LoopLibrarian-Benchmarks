@@ -271,7 +271,7 @@ setup. They depend on machine load. Run GPU timing experiments one at a time.
 |---|---|---|
 | [PolyBench CPU](#polybench-cpu-figure-3) | Figure 3 | 40 minutes–2 hours |
 | [PolyBench GPU](#polybench-gpu-figure-4) | Figure 4 | 20–50 minutes |
-| [Llama](#llama) | 19-operation coverage and one-layer inference versus ggml | 15–40 minutes |
+| [Llama](#llama) | Section 4.2.2 | 15–40 minutes |
 | [ATen matching](#aten-matching-table-5) | Table 5 | 1–3 hours |
 | [ATen performance](#aten-performance-figure-5) | Figure 5 | 1–4 hours |
 | [MFEM](#mfem) | Table 6 | 15–45 minutes |
