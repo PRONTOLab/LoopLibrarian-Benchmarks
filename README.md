@@ -624,12 +624,16 @@ This checks all 20 operator extractions, including the two elasticity cases
 reported as unmatched, and the PCG application. `mfem/published-matching.json`
 contains the paper's per-input counts and their source revision. The current
 compiler covers the 128 previously matched contraction bodies and emits 135
-cuBLAS contractions. It additionally recognizes two contractions in value
+cuTensorNet contractions. It additionally recognizes two contractions in value
 integration, two in mass application, and three in 3D div-div. The paper used
-cuTensorNet; this run uses imported OpenBLAS references and cuBLAS lowering.
+cuTensorNet, which is also the default contraction backend here. The imported
+OpenBLAS references describe the computations; the generated calls use the
+cuTensorNet API. The two PCG vector updates use cuBLAS.
 MFEM has no paper performance result.
 
-Optional execution checks:
+Optional execution checks require the cuTensorNet SDK. Set `cutensornet_root`
+in `config.json` or `POLYGEIST_CUTENSORNET_ROOT` to its installation directory;
+matching alone does not require the SDK:
 
 ```
 python3 reproduce.py mfem --output results/runs/mfem

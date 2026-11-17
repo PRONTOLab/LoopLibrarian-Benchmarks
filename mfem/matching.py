@@ -74,7 +74,7 @@ def summarize(rows):
     return report
 
 
-def reproduce(rows):
+def reproduce(rows, contraction_library='cutensornet'):
     from coverage import campaign
     inputs = [dict(name=row['kernel'], source=str(ROOT/'mfem/inputs'/row['source']),
                    function=row['function'],
@@ -84,7 +84,10 @@ def reproduce(rows):
                          # PCG helpers. Match their inlined bodies, as in the
                          # execution build, rather than opaque declarations.
                          (['--no-inline=false'] if row['kernel']=='pcg_application' else []),
-                   match_options=dict(max_parallel_dims=2, max_operand_rank=2))
+                   match_options=dict(max_parallel_dims=2, max_operand_rank=2,
+                       disabled=(['cublasDgemm', 'cublasDgemv']
+                                 if contraction_library == 'cutensornet' else
+                                 ['cutensornetNetworkContract'])))
               for row in rows]
     campaign(inputs, OUT/'matching')
     return summarize(rows)
