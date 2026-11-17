@@ -59,9 +59,9 @@ def main():
         save(OUT/'cases.json', rows)
         campaign(rows, OUT/'ll', ablations=('full','none'))
         base=ROOT/'polybench/sources'
-        speq.run(OUT/'speq-native', ['/pb/'+str(Path(r['source']).relative_to(base)) for r in rows],
-                 func='AUTO', cflags='-I/pb/utilities -DLARGE_DATASET -DDATA_TYPE_IS_DOUBLE')
-        speq.run(OUT/'speq-linearized', ['/lleq/benchmarks/gemm_ref.c'], func='gemm_ref')
+        speq.run(OUT/'speq-native', [str(Path(r['source']).resolve()) for r in rows],
+                 func='AUTO', cflags=f'-I"{base}/utilities" -DLARGE_DATASET -DDATA_TYPE_IS_DOUBLE')
+        speq.run(OUT/'speq-linearized', [speq.source_path('benchmarks/gemm_ref.c')], func='gemm_ref')
     if a.stage in ('run','summarize'):
         rows=json.loads((OUT/'cases.json').read_text())
     summarize(rows)

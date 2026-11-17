@@ -59,11 +59,6 @@ case "$ACTION" in
     setup)
         if [[ ${1:-} == ggml && "$GPU_TARGET" == x86_64 ]]; then USE_BUILD_VOLUME=0; fi ;;
 esac
-if [[ "$ACTION" == eqsat || "$ACTION" == graph_sizes ||
-      ( "$ACTION" == setup && ${1:-} == speq ) ]]; then
-    ARGS+=(-v /var/run/docker.sock:/var/run/docker.sock
-           -e "LL_SPEQ_ROOT=$ROOT/third_party/speq")
-fi
 if [[ "$USE_BUILD_VOLUME" == 1 ]]; then ARGS+=(-v looplibrarian-builds:/opt/looplibrarian/build); fi
 case "$ACTION" in
     shell) COMMAND=(bash "$@") ;;

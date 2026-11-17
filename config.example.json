@@ -3,7 +3,6 @@
   "host_cpu": 0,
   "jobs": 3,
   "speq_root": "third_party/speq",
-  "speq_image": "speq-lleq:extract",
   "kernelfarer_root": "third_party/KernelFaRer",
   "ginsbach_root": "third_party/ginsbach",
   "environment": {},

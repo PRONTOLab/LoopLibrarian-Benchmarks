@@ -174,6 +174,9 @@ def prepare_speq_sources(archive, target):
                           files={name: sha(source/name) for name in SPEQ_SOURCE_FILES}))
 
 
+SPEQ_LLVM_REVISION = '00bd6254b3832d94558b7c38a394ea03d01a2763'
+
+
 def speq():
     target=Path(required('speq_root')).resolve();target.mkdir(parents=True,exist_ok=True)
     archive=target/'lleq-artifact.tar.gz'
@@ -183,8 +186,44 @@ def speq():
             print('Downloading the 6.3 GB published SpEQ archive',flush=True)
             urllib.request.urlretrieve(url,archive)
     prepare_speq_sources(archive, target)
-    command(['docker','build','--build-arg','BUILD_JOBS='+str(setting('jobs',3)),
-             '-t',setting('speq_image','speq-lleq:extract'),ARTIFACT/'dependency_sources'],LOG,timeout=43200)
+    requirements = ARTIFACT/'dependency_sources/requirements.txt'
+    runtime = target/'runtime.json'
+    venv = target/'venv'
+    toolchain = target/'toolchain'
+    tools = ('opt', 'clang', 'llvm-extract')
+    if runtime.exists():
+        saved = json.loads(runtime.read_text())
+        if (saved.get('llvm_revision') == SPEQ_LLVM_REVISION and
+                saved.get('requirements_sha256') == sha(requirements) and
+                (venv/'bin/python3').is_file() and
+                all((toolchain/'bin'/name).is_file() and
+                    sha(toolchain/'bin'/name) == saved.get('tools', {}).get(name)
+                    for name in tools)):
+            print('SpEQ sources and prebuilt runtime are ready')
+            return
+    # SpEQ uses egglog 1.0.0; LoopLibrarian uses 11.4.0. Never install the
+    # comparison dependencies into the compiler's Python environment.
+    command([PYTHON, '-m', 'venv', venv], LOG)
+    python = venv/'bin/python3'
+    command([python, '-m', 'pip', 'install', '--no-cache-dir', '-r', requirements], LOG)
+    source = clone('https://github.com/avery-laird/lleq.git', SPEQ_LLVM_REVISION,
+                   target/'llvm-source')
+    build = source/'build'
+    command(['cmake', '-S', source/'llvm', '-B', build, '-G', 'Ninja',
+             '-DLLVM_ENABLE_PROJECTS=clang', '-DCMAKE_BUILD_TYPE=Release',
+             '-DLLVM_TARGETS_TO_BUILD=X86'], LOG)
+    command(['cmake', '--build', build, '-j', str(setting('jobs', 3)),
+             '--target', *tools], LOG, timeout=43200)
+    (toolchain/'bin').mkdir(parents=True, exist_ok=True)
+    for name in tools:
+        shutil.copyfile((build/'bin'/name).resolve(), toolchain/'bin'/name)
+        (toolchain/'bin'/name).chmod(0o755)
+    shutil.copytree(build/'lib/clang', toolchain/'lib/clang', dirs_exist_ok=True)
+    save(runtime, dict(llvm_revision=SPEQ_LLVM_REVISION,
+                       requirements_sha256=sha(requirements),
+                       tools={name: sha(toolchain/'bin'/name) for name in tools},
+                       python_packages=subprocess.check_output(
+                           [python, '-m', 'pip', 'freeze'], text=True).splitlines()))
 
 def ggml():
     import gpu_target

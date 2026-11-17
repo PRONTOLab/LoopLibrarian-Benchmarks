@@ -1,4 +1,4 @@
-"""Check host mounts used by the container and by SpEQ's sibling container."""
+"""Check host mounts and routing through the single artifact container."""
 import json
 import os
 from pathlib import Path
@@ -30,12 +30,13 @@ class DockerRunner(unittest.TestCase):
                                     'polybench_cpu', '--stage', 'plan'])
         self.assertNotIn('/var/run/docker.sock:/var/run/docker.sock', args)
 
-    def test_speq_host_paths_and_docker_socket(self):
-        args = self.invoke('graph_sizes', '--stage', 'plan')
-        self.assertIn('looplibrarian:artifact', args)
-        self.assertIn('/var/run/docker.sock:/var/run/docker.sock', args)
-        self.assertIn('LL_SPEQ_ROOT=' + str(ROOT / 'third_party/speq'), args)
-        self.assertEqual(args[args.index('-w') + 1], str(ROOT))
+    def test_speq_uses_bundled_tools_without_a_docker_socket(self):
+        for options in [('graph_sizes',), ('eqsat',), ('setup', 'speq')]:
+            with self.subTest(options=options):
+                args = self.invoke(*options)
+                self.assertIn('looplibrarian:artifact', args)
+                self.assertFalse(any('docker.sock' in arg for arg in args))
+                self.assertFalse(any(arg.startswith('LL_SPEQ_ROOT=') for arg in args))
 
     def test_setup_uses_installed_sources(self):
         args = self.invoke('setup', 'ggml')

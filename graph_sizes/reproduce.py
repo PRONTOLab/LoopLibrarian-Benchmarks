@@ -31,7 +31,7 @@ def main():
     a=p.parse_args()
     if a.stage in ('build','all'):
         command([PYTHON,HERE/'capture.py','gemm_ref_paired'],OUT/'capture.log',timeout=1800)
-        speq.run(OUT/'speq',['/lleq/benchmarks/gemm_ref.c'],graph=True,func='gemm_ref')
+        speq.run(OUT/'speq',[speq.source_path('benchmarks/gemm_ref.c')],graph=True,func='gemm_ref')
     summarize()
 
 if __name__=='__main__':main()

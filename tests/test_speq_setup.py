@@ -2,6 +2,7 @@
 import hashlib
 import importlib.util
 import io
+import json
 from pathlib import Path
 import tarfile
 import tempfile
@@ -85,6 +86,31 @@ class SpeqSetup(unittest.TestCase):
         self.archive.write_bytes(self.archive.read_bytes() + b'changed')
         with self.assertRaisesRegex(RuntimeError, 'checksum mismatch'):
             setup.prepare_speq_sources(self.archive, self.target)
+
+    def test_prebuilt_runtime_needs_no_download_or_rebuild(self):
+        self.make_archive()
+        setup.prepare_speq_sources(self.archive, self.target)
+        self.archive.unlink()
+        python = self.target/'venv/bin/python3'
+        python.parent.mkdir(parents=True)
+        python.touch()
+        tools = {}
+        for name in ('clang', 'opt', 'llvm-extract'):
+            path = self.target/'toolchain/bin'/name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(name)
+            tools[name] = setup.sha(path)
+        (self.target/'runtime.json').write_text(json.dumps(dict(
+            llvm_revision=setup.SPEQ_LLVM_REVISION, tools=tools,
+            requirements_sha256=setup.sha(ROOT/'dependency_sources/requirements.txt'))))
+        with patch.object(setup, 'required', return_value=str(self.target)), \
+                patch.object(setup, 'command') as command, \
+                patch.object(setup, 'clone') as clone, \
+                patch.object(setup.urllib.request, 'urlretrieve') as download:
+            setup.speq()
+        command.assert_not_called()
+        clone.assert_not_called()
+        download.assert_not_called()
 
 
 if __name__ == '__main__':

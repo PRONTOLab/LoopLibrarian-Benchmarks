@@ -11,12 +11,10 @@ library specifications to generate library calls. The compiler is pinned under
 `third_party/Polygeist`.
 
 ## Initial setup
-We support three ways of setting up the experiment environment: a [pre-built Docker image](#pre-built-docker-image),
-[building your own Docker image](#building-docker-images), and [manual setup](#manual-setup).
-We recommend the pre-built image, as building the compiler requires building LLVM,
-which takes a significant amount of time.
-
-All three start from a checkout of this repository:
+Use the [pre-built Docker image](#pre-built-docker-image) for CPU and native x86
+GPU experiments. It includes the compiler and GPU libraries; reviewers do not
+need to build a Docker image or compile LLVM. Start from a checkout of this
+repository:
 
 ```
 git clone https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
@@ -29,15 +27,14 @@ Requirements: x86-64 Linux, Docker, at least 32 GB RAM, and about 100 GB free di
 
 The image includes LLVM, MLIR, Polygeist, OpenBLAS, Python dependencies,
 AArch64 cross-compilers, imported library specifications, plotting tools, the
-native x86 CUDA libraries, and the KernelFaRer and Ginsbach/IDL comparison tools.
+native x86 CUDA libraries, and the KernelFaRer, Ginsbach/IDL, and SpEQ comparison
+tools. All experiments use this one image built by GitHub Actions.
 Pull the image built from `main` and give it the local name used by the runner:
 
 ```
 docker pull ghcr.io/prontolab/looplibrarian-benchmarks:latest
 docker tag ghcr.io/prontolab/looplibrarian-benchmarks:latest looplibrarian:artifact
 ```
-
-To use other sources, [build the image locally](#building-docker-images).
 
 Then run the smoke test, which takes approximately 1–5 minutes and compares
 every output of native and raised GEMM:
@@ -56,7 +53,8 @@ Docker runs as root; if necessary, restore result ownership:
 sudo chown -R "$(id -u):$(id -g)" results/runs
 ```
 
-GPU experiments on an x86 NVIDIA GPU server use the same image:
+GPU experiments on an x86 NVIDIA GPU server use the same prebuilt image pulled
+above. Run the GPU smoke test directly:
 
 ```
 bash docker/run.sh polybench_gpu --cases gemm --output results/runs/gpu-smoke
@@ -64,27 +62,30 @@ bash docker/run.sh polybench_gpu --cases gemm --output results/runs/gpu-smoke
 
 The host needs an NVIDIA driver compatible with CUDA 12.6 and the
 [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
-The image installs CUDA, cuDNN, cuTENSOR, PyTorch and the ggml baseline.
+The image already contains CUDA, cuDNN, cuTENSOR, PyTorch and the ggml baseline.
 Library paths are configured inside the image; no host SDK mounts or manual
 `library_path` setting are needed. The runner enables GPU access for execution;
 `--stage build` does not require a GPU. Use `LL_DOCKER_GPUS=device=0` to select
 one GPU on a shared server.
 
-GPU experiments default to `--gpu-target x86_64` and `sm_80` (A100). Use
-`--gpu-arch sm_90`, for example, when building for H100; build the corresponding
-ggml baseline with `LL_GPU_ARCH=90 bash docker/build.sh`. The chosen target
+GPU experiments default to `--gpu-target x86_64` and `sm_80`. The chosen target
 is saved with the experiment and reused by `--stage run`. Correctness checks and
-five timing samples are the same on both platforms.
+five timing samples are the same on both platforms. Experiment commands compile
+the benchmark programs using the compiler already in the image.
 
 Use `--gpu-target jetson --stage build` for the separate
 [Orin execution path](#execution-on-orin). A second machine is unnecessary for
 native x86 GPU experiments.
 
-### Building Docker images
+### Building the Docker image
+
+This optional section is for contributors changing the compiler or image
+configuration. Reviewers can use the prebuilt image above for CPU and native
+x86 GPU experiments.
 
 `Dockerfile` builds one image holding the compiler, the native x86 CUDA libraries
-with the ggml and PyTorch comparison implementations, and the KernelFaRer and
-Ginsbach/IDL comparison tools. Build locally if you change the compiler or need
+with the ggml and PyTorch comparison implementations, and the KernelFaRer,
+Ginsbach/IDL, and SpEQ comparison tools. Build locally if you change the compiler or need
 another image revision. Builds use committed sources and exclude local
 configuration and results:
 
@@ -92,15 +93,31 @@ configuration and results:
 bash docker/build.sh
 ```
 
+For a custom GPU target, set the architecture when building the image and use
+the same target for the experiments. For example, build the image and ggml
+baseline for `sm_90` with:
+
+```
+LL_GPU_ARCH=90 bash docker/build.sh
+```
+
+Then pass `--gpu-arch sm_90` to the experiment commands.
+
 Allow 1–4 hours for a first build, plus 20–60 minutes and additional disk space
 for CUDA and PyTorch. LLVM and Polygeist took about 48 minutes with `BUILD_JOBS=8`
 on the listed host; lower `BUILD_JOBS` on smaller machines. The image imports
 specifications and runs script tests. IDL and KernelFaRer build with
 `COMPARISON_JOBS=4` by default. Later builds reuse unchanged compiler layers.
-SpEQ is built through [its setup command](#comparison-tools).
+SpEQ is built in the same Docker build and adds a 6.3 GB source download and
+roughly 1–2 hours on a fresh build. Its separate LLVM and Python environment are
+included in the final image; intermediate build stages are not published as
+additional images.
 
-The [Docker workflow](.github/workflows/docker.yml) builds this image for pull
-requests that change the image inputs.
+The [Docker workflow](.github/workflows/docker.yml) builds this image for every
+pull request to `main` and every push to `main` or a tag. Pushes to `main`
+automatically publish `ghcr.io/prontolab/looplibrarian-benchmarks:latest`, together
+with a commit-specific `sha-` tag. The workflow checks anonymous registry access
+after publishing; reviewers do not need to build or log in to pull the image.
 
 ### Manual setup
 
@@ -224,35 +241,29 @@ libraries.
 
 ### Comparison tools
 
-The Docker image already contains KernelFaRer and Ginsbach/IDL, which the runner
-uses for KernelFaRer, Ginsbach/IDL, equality saturation, and graph sizes.
+The Docker image already contains KernelFaRer, Ginsbach/IDL, and SpEQ, including
+SpEQ's reference sources, LLVM fork, and isolated Python environment. Run the
+comparison experiments directly with `bash docker/run.sh`; no additional setup,
+image build, or Docker socket mount is needed.
 
 For a native installation, build only the tools needed for your experiment:
 
 ```
 python3 setup.py kernelfarer
 python3 setup.py ginsbach
+python3 setup.py speq
 ```
 
 These use the original projects and the included compatibility patches.
 Ginsbach/IDL builds its own LLVM fork; allow about 30 minutes with four build jobs.
-
-SpEQ also needs its published reference sources and Docker, including for native
-installations. Run the following once before equality-saturation or graph-size
-experiments (or `python3 setup.py speq` natively):
-
-```
-bash docker/run.sh setup speq
-```
-
-This downloads the [published SpEQ artifact](https://zenodo.org/records/10802555)
+The native SpEQ setup downloads the [published artifact](https://zenodo.org/records/10802555)
 (6.3 GB), verifies and extracts the needed sources into `third_party/speq`, and
-builds `speq-lleq:extract`. Allow about 1–2 hours for a fresh build. The setup
-command invokes a build even if a prebuilt image is present. The published image
-is also available as `ghcr.io/prontolab/looplibrarian-benchmarks:speq-ab0a3de1345a`.
+builds its LLVM tools and Python environment there. Use Python 3.10 with its
+`venv` module and the build packages listed in the root Dockerfile; allow about
+1–2 hours.
 SpEQ retains its recognizer, library, LLVM passes, and 5/1/3 saturation schedule.
-The Docker runner mounts the host Docker socket for SpEQ setup and the two
-comparison experiments, granting those containers access to the host daemon.
+GitHub Actions checks linearized GEMM recognition and the 370-node SpEQ graph
+inside the combined image before publishing it.
 
 
 ## Experiments and estimated runtimes
@@ -631,10 +642,10 @@ Run the 18 supported contraction fixtures (`NE=1024`) and integrated PCG updates
 
 ### Equality saturation
 
-Complete [SpEQ setup](#comparison-tools), then run:
+Using the prebuilt image (native installations need [SpEQ setup](#comparison-tools)):
 
 ```
-python3 reproduce.py eqsat --output results/runs/eqsat
+bash docker/run.sh eqsat --output results/runs/eqsat
 ```
 
 Compile all 30 PolyBench programs with equality saturation enabled and disabled,
@@ -661,10 +672,10 @@ matches separately from the paper's performance figures.
 
 ### GEMM e-graph sizes
 
-After [SpEQ setup](#comparison-tools):
+Using the prebuilt image (native installations need [SpEQ setup](#comparison-tools)):
 
 ```
-python3 reproduce.py graph_sizes --output results/runs/graphs
+bash docker/run.sh graph_sizes --output results/runs/graphs
 ```
 
 `summary.json` reports the counts, with serialized LoopLibrarian graphs and SpEQ

@@ -63,12 +63,27 @@ RUN (python3 setup.py kernelfarer || { tail -80 third_party/setup.log; exit 1; }
     && cmake --build /opt/comparisons/kernelfarer-build -j "$COMPARISON_JOBS"
 RUN python3 setup.py ginsbach || { tail -80 third_party/setup.log; exit 1; }
 
+# SpEQ's pinned LLVM fork and old egglog live alongside the other tools, with
+# their own Python environment. This stage is copied into the same final image.
+FROM tools AS speq-tools
+ARG COMPARISON_JOBS=4
+ENV LL_SPEQ_ROOT=/opt/comparisons/speq LL_JOBS=${COMPARISON_JOBS}
+WORKDIR /opt/speq-setup
+COPY setup.py ./
+COPY scripts/artifact/common.py scripts/artifact/gpu_target.py scripts/artifact/
+COPY scripts/correctness/ll_paths.py scripts/correctness/ll_paths.py
+COPY dependency_sources/requirements.txt dependency_sources/requirements.txt
+RUN (python3 setup.py speq || { tail -80 third_party/setup.log; exit 1; }) \
+    && mkdir -p "$LL_SPEQ_ROOT/toolchain/share/licenses" \
+    && cp "$LL_SPEQ_ROOT/llvm-source/llvm/LICENSE.TXT" "$LL_SPEQ_ROOT/toolchain/share/licenses/LLVM.txt" \
+    && cp "$LL_SPEQ_ROOT/llvm-source/clang/LICENSE.TXT" "$LL_SPEQ_ROOT/toolchain/share/licenses/Clang.txt" \
+    && rm -rf "$LL_SPEQ_ROOT/llvm-source" "$LL_SPEQ_ROOT/lleq-artifact.tar.gz"
+
 FROM compiler AS prepared
 ARG BUILD_JOBS=8
 ENV NETLIB_REF=/opt/looplibrarian/third_party/lapack
 WORKDIR /opt/looplibrarian
-# The Docker client launches the separate SpEQ image through the host daemon.
-RUN apt-get update && apt-get install -y --no-install-recommends docker.io file zstd \
+RUN apt-get update && apt-get install -y --no-install-recommends file zstd \
     && rm -rf /var/lib/apt/lists/*
 # Keep public-source setup and specification imports cached when only benchmark
 # drivers or documentation change.
@@ -98,10 +113,12 @@ ENV PATH="/usr/local/cuda/bin:${PATH}" \
     NVIDIA_VISIBLE_DEVICES=all NVIDIA_DRIVER_CAPABILITIES=compute,utility
 RUN python3 setup.py ggml || { tail -80 third_party/setup.log; exit 1; }
 
-# KernelFaRer and Ginsbach/IDL.
+# KernelFaRer, Ginsbach/IDL, and SpEQ all run inside this image.
 COPY --from=comparison-tools /opt/comparisons /opt/comparisons
+COPY --from=speq-tools /opt/comparisons/speq /opt/comparisons/speq
 ENV LL_GINSBACH_ROOT=/opt/comparisons/ginsbach \
-    LL_KERNELFARER_ROOT=/opt/comparisons/KernelFaRer
+    LL_KERNELFARER_ROOT=/opt/comparisons/KernelFaRer \
+    LL_SPEQ_ROOT=/opt/comparisons/speq
 
 ARG ARTIFACT_REVISION=8452b2bc8239602d6bf3efadac531614c3311261
 LABEL org.opencontainers.image.source="https://github.com/PRONTOLab/LoopLibrarian-Benchmarks" \
@@ -121,5 +138,6 @@ FROM prepared AS artifact
 RUN apt-get purge -y openssh-client && ! command -v ssh && ! command -v scp
 RUN python3 -m unittest discover -s tests > /opt/container-tests.log 2>&1 \
     || { tail -80 /opt/container-tests.log; exit 1; }
+RUN python3 docker/check_speq.py
 ENTRYPOINT ["/bin/bash", "/opt/looplibrarian/docker/entrypoint.sh"]
 CMD ["bash"]

@@ -1,24 +1,23 @@
 """Run SpEQ's recognizer (lleq-artifact driver.py logic) on arbitrary C kernels.
 
-Runs inside the speq-lleq container with the artifact mounted at /lleq and
-this directory at /scripts:
-
-  docker run --rm -w /lleq -v ARTIFACT:/lleq -v SCRIPTS:/scripts -v SRC:/src \
-      speq-lleq python3 /scripts/speq_match.py --out /scripts/out.json \
-      [--cflags "..."] [--func NAME] file.c ...
+Called by scripts/artifact/speq.py using the bundled SpEQ Python environment
+and LLVM toolchain. LL_SPEQ_ROOT selects their installation directory.
 
 The library (GEMM, GEMV, GEMV sink/perm variant, Histogram), the opt pipeline
 and the eqsat schedule (5 transform, 1 expand, 3 transform) are copied verbatim
 from driver.py so results are comparable with the paper's Table 3.  Unlike
 driver.py, every REV loop nest is reported, not just whether any matched.
 """
-import argparse, json, os, re, subprocess, sys, tempfile, time
+from pathlib import Path
+import argparse, json, os, re, shlex, subprocess, sys, tempfile, time
 
-sys.path.insert(0, "/lleq")
+ROOT = Path(os.environ["LL_SPEQ_ROOT"])
+SOURCE = ROOT / "lleq-artifact"
+sys.path.insert(0, str(SOURCE))
 from parseIR import foldFromStr, ToEggAbstract, egraph, Val, expand, transform  # noqa: E402
 from egglog import rewrite  # noqa: E402
 
-BIN = "/llvm-lleq/build/bin"
+BIN = ROOT / "toolchain/bin"
 CLANG_ARGS = ["-emit-llvm", "-O0", "-Xclang", "-disable-O0-optnone", "-fno-discard-value-names"]
 OPT_PASSES = "mem2reg,loop-rotate,instcombine,simplifycfg,loop-simplify,gvn,lcssa,print<revpass>"
 
@@ -124,13 +123,13 @@ if __name__ == "__main__":
         # Uppercase names as in driver.py: FIR.add exec()s a global function
         # named after the kernel ("gemm", "gemv", ...), which would clobber
         # lowercase variables.
-        GEMM = FIR("/lleq/analysis/gemm_ref.ll", "gemm", ["%ni", "%nj", "%nk", "%alpha", "%beta", "%C", "%A", "%B"])
+        GEMM = FIR(str(SOURCE / "analysis/gemm_ref.ll"), "gemm", ["%ni", "%nj", "%nk", "%alpha", "%beta", "%C", "%A", "%B"])
         GEMM.add()
-        GEMV = FIR("/lleq/analysis/gemv.ll", "gemv", ["%m", "%n", "%alpha", "%a", "%x", "%beta", "%y"])
+        GEMV = FIR(str(SOURCE / "analysis/gemv.ll"), "gemv", ["%m", "%n", "%alpha", "%a", "%x", "%beta", "%y"])
         GEMV.add()
-        FIR("/lleq/analysis/gemv_sink_perm.ll", "gemv",
+        FIR(str(SOURCE / "analysis/gemv_sink_perm.ll"), "gemv",
             ["%m", "%n", "%alpha", "%a", "%x", Val.constant_real(0.0), "%y"]).add(GEMV.func)
-        FIR("/lleq/analysis/histogram.ll", "histogram", ["%N", "%buckets", "%key", "%add"]).add()
+        FIR(str(SOURCE / "analysis/histogram.ll"), "histogram", ["%N", "%buckets", "%key", "%add"]).add()
         KERNELS = ["gemm", "gemv", "histogram"]
         setup_s = time.perf_counter() - t_setup
 
@@ -140,7 +139,7 @@ if __name__ == "__main__":
                 func = a.func
                 if func == "AUTO":  # PolyBench: kernel_<dirname>
                     func = "kernel_" + os.path.basename(f)[:-2].replace("-", "_")
-                r = analyse(f, a.cflags.split(), func, wd)
+                r = analyse(f, shlex.split(a.cflags), func, wd)
                 print(f"{os.path.basename(f):24s} {r['status']:12s} "
                       f"nests={len(r['nests'])} match={r.get('n_match', 0)} "
                       f"{[n.get('matched') or n['status'] for n in r['nests']]}", flush=True)

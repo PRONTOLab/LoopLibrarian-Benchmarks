@@ -5,17 +5,11 @@ on:
   push:
     branches: ["main"]
     tags: ["*"]
-    paths: &docker_paths
-      - "Dockerfile"
-      - ".dockerignore"
-      - "docker/**"
-      - "dependency_sources/**"
-      - "setup.py"
-      - "third_party/**"
-      - ".github/workflows/docker.yml"
   pull_request:
     branches: ["main"]
-    paths: *docker_paths
+
+# The image copies the benchmark drivers, inputs, tests, and documentation too.
+# Build every revision so changes outside the Docker setup reach the image.
 
 concurrency:
   # Cancel in-progress jobs on PRs and branches when newer commits are pushed.
