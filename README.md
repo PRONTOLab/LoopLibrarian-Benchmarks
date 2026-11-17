@@ -81,6 +81,31 @@ Use `--gpu-target jetson --stage build` for the separate
 [Orin execution path](#execution-on-orin). A second machine is unnecessary for
 native x86 GPU experiments.
 
+### Build locally and execute on a remote x86 GPU server
+
+The remote helper also defaults to `x86_64`. Build without a GPU, package the
+executables, then use your SSH login to run them and retrieve the results:
+
+```
+bash docker/run.sh polybench_gpu --stage build --output results/runs/x86-gpu
+python3 target.py pack --build polybench_gpu=results/runs/x86-gpu --output results/bundles/x86-gpu
+python3 target.py remote --bundle results/bundles/x86-gpu --host user@gpu-server --results results/runs/remote-x86-gpu
+```
+
+The execution server needs Python 3.10 or later and the suite's runtime
+dependencies (CUDA libraries, plus PyTorch for ATen). It does not need the
+compiler. Use `--library-path` for libraries outside the system search paths.
+When running a copied bundle inside an existing artifact container, set
+`LL_ARTIFACT_CONFIG=/opt/looplibrarian/config.json` and invoke
+`python3 /path/to/bundle/target.py run --bundle /path/to/bundle`; the helper uses
+that container's configured runtime libraries. Bundles retain the build's target
+and CUDA architecture unchanged. Execution restores those settings and rejects a
+different target or an incompatible CPU architecture. Optional `--gpu-arch`
+must match the saved architecture; choose it at build time for the execution
+GPU. Jetson bundles require explicit `--gpu-target jetson`. Failed runs still
+retrieve available diagnostics into `--results`; `transport.json` records both
+the execution and retrieval status.
+
 ### Building the Docker image
 
 This optional section is for contributors changing the compiler or image
@@ -337,7 +362,7 @@ python3 target.py pack --build polybench_gpu=results/runs/fig4 --output results/
 Copy this bundle to any directory on Orin, then run it there:
 
 ```
-python3 target.py run --bundle . --library-path /usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu
+python3 target.py run --bundle . --gpu-target jetson --library-path /usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu
 ```
 
 The bundle contains executables, input sources, validation scripts, and unchanged
@@ -349,7 +374,7 @@ Alternatively, transfer and execute on a machine you control through an existing
 SSH configuration. This command also retrieves the results if an experiment fails:
 
 ```
-python3 target.py remote --bundle results/bundles/gpu --host user@orin --results results/runs/orin-gpu
+python3 target.py remote --bundle results/bundles/gpu --gpu-target jetson --host user@orin --results results/runs/orin-gpu
 ```
 
 Use `--jump-host user@gateway` if needed and `--library-path` for additional
@@ -421,7 +446,7 @@ LibTorch, and PVA:
 
 ```
 cd ~/looplibrarian-orin-all
-python3 target.py run --bundle . \
+python3 target.py run --bundle . --gpu-target jetson \
   --library-path /usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu:/opt/cuquantum/lib:/opt/cutensor/lib:/opt/libtorch/lib:/opt/pva/lib
 ```
 
@@ -664,7 +689,7 @@ export LL_DOCKER_PVA_OPERATOR_INCLUDE=/path/to/operator/include
 export LL_DOCKER_NVCV_INCLUDE=/path/to/nvcv/include
 export LL_DOCKER_CUPVA_SDK_ROOT=/path/to/cupva-sdk
 export LL_DOCKER_PVA_LIB_STAGE=/path/to/aarch64-pva-libraries
-bash docker/run.sh pva --stage build --vendor-compatibility --output results/runs/pva
+bash docker/run.sh pva --gpu-target jetson --stage build --vendor-compatibility --output results/runs/pva
 python3 target.py pack --build pva=results/runs/pva --output results/pva-bundle
 ```
 

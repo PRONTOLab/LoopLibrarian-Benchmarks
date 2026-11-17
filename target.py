@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shlex
 import shutil
 import subprocess
@@ -16,7 +17,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parent
 SUITES = ('polybench_gpu', 'llama', 'mfem', 'aten', 'pva', 'eqsat_extra')
-DEFAULT_LIBRARIES = '/usr/local/cuda/lib64:/usr/lib/aarch64-linux-gnu'
+GPU_TARGETS = ('x86_64', 'jetson')
 
 
 def sha(path):
@@ -39,6 +40,8 @@ def read(path):
 def build_files(suite, source):
     """Select execution inputs, keeping every proof and build record unchanged."""
     files = ['provenance.json']
+    if (source/'gpu-target.json').exists():
+        files.append('gpu-target.json')
     executables = []
     if suite == 'polybench_gpu':
         files += ['cases.json', 'paper_targets.csv', 'final-provenance.json']
@@ -149,7 +152,7 @@ def pack(destination, builds, ggml_build=None, root=ROOT):
             manifest['executables'] += [f'builds/{suite}/{name}' for name in executables]
         if 'llama' in builds:
             if ggml_build is None:
-                raise ValueError('Llama needs --ggml-build containing the built AArch64 ggml libraries')
+                raise ValueError('Llama needs --ggml-build containing the ggml libraries for the selected target')
             libraries = {p.name: p for p in ggml_build.rglob('libggml*.so.0')}
             if not {'libggml.so.0', 'libggml-base.so.0', 'libggml-cpu.so.0', 'libggml-cuda.so.0'} <= libraries.keys():
                 raise ValueError('Missing ggml shared libraries')
@@ -179,7 +182,42 @@ def verify(bundle):
     return manifest
 
 
-def run(bundle, suites=None, library_path=DEFAULT_LIBRARIES, verify_only=False):
+def check_targets(bundle, manifest, suites, gpu_target, gpu_arch=None):
+    if gpu_target not in GPU_TARGETS:
+        raise ValueError('gpu_target must be x86_64 or jetson')
+    if set(suites) - manifest['suites'].keys():
+        raise ValueError('Requested suite is absent from this bundle')
+    for suite in suites:
+        record = bundle/'builds'/suite/'gpu-target.json'
+        settings = read(record) if record.exists() else {}
+        recorded = (settings['target'] if record.exists() else
+                    'jetson' if suite == 'pva' else
+                    manifest['suites'][suite]['build_provenance'].get('gpu_target', 'x86_64'))
+        if recorded != gpu_target:
+            raise ValueError(f'{suite} was built for {recorded}; select --gpu-target {recorded}')
+        if suite == 'pva' and gpu_target != 'jetson':
+            raise ValueError('PVA requires --gpu-target jetson and Orin PVA hardware')
+        if record.exists() and not re.fullmatch(r'sm_[0-9]+', str(settings.get('architecture', ''))):
+            raise ValueError(f'Invalid saved CUDA architecture for {suite}')
+        if gpu_arch is not None and gpu_arch != settings.get('architecture'):
+            raise ValueError(f'{suite} saved CUDA architecture is {settings.get("architecture", "unknown")}; '
+                             f'cannot execute with --gpu-arch {gpu_arch}')
+    # Check the actual binaries too, including older builds without target metadata.
+    expected_machine = 183 if gpu_target == 'jetson' else 62
+    for name in manifest['executables']:
+        if Path(name).parts[1] not in suites:
+            continue
+        with (bundle/name).open('rb') as stream:
+            header = stream.read(20)
+        if header[:4] == b'\x7fELF':
+            if len(header) < 20 or header[5] not in (1, 2):
+                raise ValueError(f'Invalid executable header: {name}')
+            machine = int.from_bytes(header[18:20], 'big' if header[5] == 2 else 'little')
+            if machine != expected_machine:
+                raise ValueError(f'Executable architecture does not match {gpu_target}: {name}')
+
+
+def run(bundle, suites=None, library_path=None, verify_only=False, gpu_target='x86_64', gpu_arch=None):
     bundle = bundle.resolve()
     manifest = verify(bundle)
     suites = suites or list(manifest['suites'])
@@ -188,19 +226,38 @@ def run(bundle, suites=None, library_path=DEFAULT_LIBRARIES, verify_only=False):
     if verify_only:
         print(f"Verified {len(manifest['files'])} files; suites: {', '.join(suites)}")
         return 0
-    if os.uname().machine not in ('aarch64', 'arm64'):
-        raise ValueError('Execution requires an AArch64 target; --verify-only works on the build host')
+    check_targets(bundle, manifest, suites, gpu_target, gpu_arch)
+    machines = ('aarch64', 'arm64') if gpu_target == 'jetson' else ('x86_64', 'amd64')
+    if os.uname().machine.lower() not in machines:
+        raise ValueError(f'{gpu_target} executables cannot run on {os.uname().machine}; '
+                         '--verify-only works on the build host')
     results = bundle/'runs'
     if any((results/suite).exists() for suite in suites):
         raise ValueError('Execution results already exist; use a fresh bundle copy for another run')
     results.mkdir(exist_ok=True)
+    config_path = os.environ.get('LL_ARTIFACT_CONFIG')
+    config = read(Path(config_path)) if config_path else {}
+    system_lib = '/usr/lib/' + ('aarch64-linux-gnu' if gpu_target == 'jetson' else 'x86_64-linux-gnu')
+    defaults = ':'.join(p for p in ('/usr/local/cuda/lib64', system_lib,
+                                   os.environ.get('LD_LIBRARY_PATH', '')) if p)
+    libraries = (library_path if library_path is not None else
+                 os.environ.get('LL_LIBRARY_PATH', config.get('library_path', defaults)))
     ggml = bundle/'runtime/ggml'
-    libraries = str(ggml/'ggml/src') + ':' + library_path if ggml.exists() else library_path
-    config = dict(library_path=libraries, cpu=0, gpu_target='jetson',
-                  environment={'POLYGEIST_GGML_BUILD': str(ggml)} if ggml.exists() else {})
+    runtime_env = dict(config.get('environment', {}))
+    # Build settings are restored per suite by reproduce.py. A runtime config
+    # must not overwrite them when common.environment() applies its overrides.
+    for key in ('LL_GPU_TARGET', 'POLYGEIST_GPU_TARGET', 'LL_GPU_ARCH', 'POLYGEIST_GPU_ARCH'):
+        runtime_env.pop(key, None)
+    if ggml.exists():
+        libraries = str(ggml/'ggml/src') + ':' + libraries
+        runtime_env['POLYGEIST_GGML_BUILD'] = str(ggml)
+    runtime_env['LD_LIBRARY_PATH'] = libraries
+    runtime_env['LL_LIBRARY_PATH'] = libraries
+    config.update(library_path=libraries, cpu=0, gpu_target=gpu_target, environment=runtime_env)
     save(results/'target-config.json', config)
     env = dict(os.environ, LL_EXECUTION_BUNDLE=str(bundle/'execution-bundle.json'),
                LL_ARTIFACT_CONFIG=str(results/'target-config.json'),
+               LL_GPU_TARGET=gpu_target, LL_LIBRARY_PATH=libraries,
                POLYGEIST_ROOT=str(bundle/'third_party/Polygeist'), PYTHONDONTWRITEBYTECODE='1')
     statuses = read(results/'execution.json') if (results/'execution.json').exists() else {}
     for suite in suites:
@@ -218,7 +275,10 @@ def run(bundle, suites=None, library_path=DEFAULT_LIBRARIES, verify_only=False):
         if any(d['returncode'] or 'not found' in d['output'] for d in dependencies):
             statuses[suite] = dict(returncode=1, error='Missing runtime libraries; see runtime-dependencies.json')
         else:
-            cmd = [sys.executable, str(bundle/'reproduce.py'), suite, '--stage', 'run', '--output', str(output)]
+            cmd = [sys.executable, str(bundle/'reproduce.py'), suite, '--stage', 'run',
+                   '--gpu-target', gpu_target, '--output', str(output)]
+            if gpu_arch is not None:
+                cmd += ['--gpu-arch', gpu_arch]
             if suite in ('mfem', 'pva'):
                 cmd += ['--cases', *sorted(p.parent.name for p in output.glob('*/build.json'))]
             started = time.monotonic()
@@ -231,9 +291,10 @@ def run(bundle, suites=None, library_path=DEFAULT_LIBRARIES, verify_only=False):
     return int(any(statuses[s]['returncode'] for s in suites))
 
 
-def remote(bundle, host, destination, results, jump_host=None, library_path=DEFAULT_LIBRARIES, suites=None,
-           ssh_options=()):
-    verify(bundle)
+def remote(bundle, host, destination, results, jump_host=None, library_path=None, suites=None,
+           ssh_options=(), gpu_target='x86_64', gpu_arch=None):
+    manifest = verify(bundle)
+    check_targets(bundle, manifest, suites or list(manifest['suites']), gpu_target, gpu_arch)
     if not host or host.startswith('-') or any(c.isspace() for c in host):
         raise ValueError('Use an SSH alias or user@host')
     if not destination.startswith('/') or destination == '/':
@@ -259,7 +320,11 @@ def remote(bundle, host, destination, results, jump_host=None, library_path=DEFA
         with archive.open('rb') as stream:
             subprocess.run([*ssh, command], stdin=stream, check=True)
     args = ['python3', destination+'/target.py', 'run', '--bundle', destination,
-            '--library-path', library_path]
+            '--gpu-target', gpu_target]
+    if gpu_arch is not None:
+        args += ['--gpu-arch', gpu_arch]
+    if library_path is not None:
+        args += ['--library-path', library_path]
     if suites:
         args += ['--suites', *suites]
     results.mkdir(parents=True)
@@ -283,7 +348,10 @@ def main():
         p = sub.add_parser(action)
         p.add_argument('--bundle', type=Path, required=True)
         p.add_argument('--suites', choices=SUITES, nargs='+')
-        p.add_argument('--library-path', default=DEFAULT_LIBRARIES)
+        p.add_argument('--gpu-target', choices=GPU_TARGETS, default='x86_64',
+                       help='Execution target (default: x86_64); must match the built bundle')
+        p.add_argument('--gpu-arch', help='Optional CUDA architecture check; must match the saved build')
+        p.add_argument('--library-path', help='Runtime library paths on the execution machine')
         if action == 'run':
             p.add_argument('--verify-only', action='store_true')
         else:
@@ -305,9 +373,9 @@ def main():
         print('Packaged', len(manifest['executables']), 'executables in', args.output)
         return 0
     if args.action == 'run':
-        return run(args.bundle, args.suites, args.library_path, args.verify_only)
+        return run(args.bundle, args.suites, args.library_path, args.verify_only, args.gpu_target, args.gpu_arch)
     return remote(args.bundle.resolve(), args.host, args.remote_dir, args.results.resolve(),
-                  args.jump_host, args.library_path, args.suites, args.ssh_option)
+                  args.jump_host, args.library_path, args.suites, args.ssh_option, args.gpu_target, args.gpu_arch)
 
 
 if __name__ == '__main__':
