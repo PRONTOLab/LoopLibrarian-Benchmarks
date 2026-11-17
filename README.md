@@ -271,13 +271,13 @@ setup. They depend on machine load. Run GPU timing experiments one at a time.
 |---|---|---|
 | [PolyBench CPU](#polybench-cpu-figure-3) | Figure 3 | 40 minutes–2 hours |
 | [PolyBench GPU](#polybench-gpu-figure-4) | Figure 4 | 20–50 minutes |
-| [Llama](#llama) | Section 4.2.2 | 15–40 minutes |
+| [Llama](#llama-section-422) | Section 4.2.2 | 15–40 minutes |
 | [ATen matching](#aten-matching-table-5) | Table 5 | 1–3 hours |
 | [ATen performance](#aten-performance-figure-5) | Figure 5 | 1–4 hours |
-| [MFEM](#mfem) | Table 6 | 15–45 minutes |
-| [Equality saturation](#equality-saturation) | Table 10 | 30 minutes–2 hours |
-| [Graph sizes](#gemm-e-graph-sizes) | Section 4.4.3 | 2–10 minutes |
-| [IDL](#idl) | Section 4.4.1 | 10–30 minutes |
+| [MFEM](#mfem-table-6) | Table 6 | 15–45 minutes |
+| [Equality saturation](#equality-saturation-table-10) | Table 10 | 30 minutes–2 hours |
+| [Graph sizes](#gemm-e-graph-sizes-section-443) | Section 4.4.3 | 2–10 minutes |
+| [IDL](#idl-section-441) | Section 4.4.1 | 10–30 minutes |
 | [KernelFaRer](#kernelfarer-table-9) | Table 9 | 30–90 minutes |
 | [PVA](#pva-table-7) | Table 7 | 15–30 minutes |
 | [Compilation cost](#compilation-cost-table-8) | Table 8 | 6–24 hours, estimated |
@@ -561,7 +561,7 @@ published measurements are in [matching_options.json](aten/matching_options.json
 and [paper_timings.csv](aten/paper_timings.csv). Add
 `--paper-figure path/to/figure.pdf` for a side-by-side comparison.
 
-### MFEM
+### MFEM (Table 6)
 
 For Table 6, run compiler matching without a GPU:
 
@@ -590,7 +590,7 @@ Run the 18 supported contraction fixtures (`NE=1024`) and integrated PCG updates
 `1e-11 + 1e-10 * abs(expected)`. `summary.json` aggregates results; each case has
 `result.json` and `run.log`. This validates execution, without a timing comparison.
 
-### Equality saturation
+### Equality saturation (Table 10)
 
 Using the prebuilt image (native installations need [SpEQ setup](#comparison-tools)):
 
@@ -607,7 +607,7 @@ per-program failures.
 SpEQ's reported single match uses GEMM with linearized indexing; results on
 unmodified PolyBench are also recorded.
 
-### GEMM e-graph sizes
+### GEMM e-graph sizes (Section 4.4.3)
 
 Using the prebuilt image (native installations need [SpEQ setup](#comparison-tools)):
 
@@ -619,7 +619,7 @@ bash docker/run.sh graph_sizes --output results/runs/graphs
 DOT files beside it. The reported result is 370 SpEQ nodes versus 21 LoopLibrarian
 nodes.
 
-### IDL
+### IDL (Section 4.4.1)
 
 After [comparison-tool setup](#comparison-tools):
 
