@@ -26,6 +26,12 @@ METADATA_FIELDS = {
 }
 
 
+class ApiError(RuntimeError):
+    def __init__(self, method, path, status, response_format):
+        self.status = status
+        super().__init__(f'Zenodo {method} {path} returned HTTP {status} ({response_format} response)')
+
+
 class Client:
     def __init__(self, base, token):
         if base not in ('https://zenodo.org', 'https://sandbox.zenodo.org'):
@@ -63,7 +69,8 @@ class Client:
                 return json.loads(payload) if payload else None
         except urllib.error.HTTPError as exc:
             # Server response bodies and request headers are never printed.
-            raise RuntimeError(f'Zenodo {method} {parsed.path} returned HTTP {exc.code}') from None
+            kind = 'JSON' if 'application/json' in exc.headers.get('Content-Type', '') else 'non-JSON'
+            raise ApiError(method, parsed.path, exc.code, kind) from None
         except urllib.error.URLError:
             raise RuntimeError(f'Zenodo {method} {parsed.path} failed; rerun to resume') from None
         finally:
@@ -111,7 +118,20 @@ def metadata_for(latest, manifest):
 
 
 def family(client, base_id):
-    base = client.request('GET', f'/api/deposit/depositions/{base_id}')
+    try:
+        base = client.request('GET', f'/api/deposit/depositions/{base_id}')
+    except ApiError as exc:
+        if exc.status != 403:
+            raise
+        # Distinguish access to this record from rejection of all deposit access.
+        # Read only; never print the user's other deposition metadata.
+        try:
+            client.request('GET', '/api/deposit/depositions?size=1')
+        except ApiError as account_error:
+            raise RuntimeError(f'{exc}; account-list check also failed: {account_error}. '
+                               'Check token scopes and whether Zenodo is blocking this runner.') from None
+        raise RuntimeError(f'The token can list depositions but cannot manage record {base_id}. '
+                           'Use a token from an account with access to this record.') from None
     concept = str(base.get('conceptrecid', ''))
     if not concept:
         raise ValueError('Zenodo did not identify the existing record family')

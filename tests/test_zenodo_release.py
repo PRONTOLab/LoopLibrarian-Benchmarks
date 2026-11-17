@@ -214,6 +214,21 @@ class ZenodoPublication(unittest.TestCase):
             self.run_release(True)
         self.assertEqual(self.client.calls, [])
 
+    def test_record_forbidden_is_distinguished_from_account_access(self):
+        record_error = zenodo.ApiError('GET', '/api/deposit/depositions/10', 403, 'JSON')
+        with patch.object(self.client, 'request', side_effect=[record_error, []]) as request:
+            with self.assertRaisesRegex(RuntimeError, 'can list depositions but cannot manage record 10'):
+                self.run_release()
+            self.assertTrue(all(call.args[0] == 'GET' for call in request.call_args_list))
+
+    def test_general_api_rejection_reports_both_read_only_checks(self):
+        error = zenodo.ApiError('GET', '/api/deposit/depositions', 403, 'non-JSON')
+        with patch.object(self.client, 'request', side_effect=[error, error]) as request:
+            with self.assertRaisesRegex(RuntimeError, 'account-list check also failed'):
+                self.run_release()
+            self.assertEqual(request.call_count, 2)
+            self.assertTrue(all(call.args[0] == 'GET' for call in request.call_args_list))
+
     def test_token_is_never_sent_to_another_origin(self):
         client = zenodo.Client('https://zenodo.org', 'test-token')
         for url in ('https://example.com/api/files/x', '//example.com/api/files/x',
