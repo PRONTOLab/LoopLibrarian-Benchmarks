@@ -60,4 +60,14 @@ class FixtureResults(unittest.TestCase):
             result=correctness_summary(3,self.log(bad=1)+'\n'+publication,16,2)
             self.assertFalse(result['publication_passed'])
 
+    def test_single_publication_check_controls_the_primary_result(self):
+        for bad,guard,rc,passed in [(0,0,0,True),(1,0,3,False),(0,1,3,False)]:
+            log='CORRECTNESS_POLICY publication\n'+self.log(bad=bad,guard=guard)
+            log=log.replace('maxabs=0','maxabs=0 raised_tol=0.002 native_tol=0.002')
+            result=correctness_summary(rc,log,16,2)
+            self.assertEqual(result['correctness_policy'],'publication')
+            self.assertEqual(result['passed'],passed)
+            self.assertEqual(result['publication_passed'],passed)
+            self.assertEqual(result['raised_passed'],result['publication_raised_passed'])
+
 if __name__=='__main__':unittest.main()

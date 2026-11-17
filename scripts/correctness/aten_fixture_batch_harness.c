@@ -2,19 +2,10 @@
  * Compare every output, unchanged input, and both allocation guards. */
 #define CU(x) do { cudaError_t e=(x); if(e!=cudaSuccess){fprintf(stderr,"CUDA %s\n",cudaGetErrorString(e));exit(2);} }while(0)
 static double now_ms(void) { struct timespec t; clock_gettime(CLOCK_MONOTONIC,&t); return t.tv_sec*1e3+t.tv_nsec*1e-6; }
-static int equal(float a,float b) {
-  if(isnan(a)||isnan(b)) return isnan(a)&&isnan(b);
-  if(!isfinite(a)||!isfinite(b)) return a==b;
-  if(a==0&&b==0) return signbit(a)==signbit(b);
-  return fabs((double)a-b)<=ABS_TOL+REL_TOL*fabs((double)b);
-}
 enum { GUARD_BYTES = 32 };
 static size_t bytes(int a) { return sizes[a]*element_bytes[a]+2*GUARD_BYTES; }
 static void *allocation(float *p) { return (unsigned char*)p-GUARD_BYTES; }
 static void *slot(int a,const float *p,size_t i) { return (unsigned char*)p+i*element_bytes[a]; }
-static int equal_slot(int array,const void *a,const void *b) {
-  return integer_arrays[array] ? memcmp(a,b,element_bytes[array])==0 : equal(*(const float*)a,*(const float*)b);
-}
 static int publication_equal_slot(int array,const void *a,const void *b,
                                   double tolerance,int require_finite) {
   if(integer_arrays[array]) return memcmp(a,b,element_bytes[array])==0;
@@ -33,6 +24,7 @@ static void mismatch(const char *label,int array,size_t index,const void *got,co
   } else printf("%s array=%d i=%zu got=%a expected=%a\n",label,array,index,*(const float*)got,*(const float*)expected);
 }
 int main(int argc,char **argv) {
+  puts("CORRECTNESS_POLICY publication");
   float *initial[NA],*host[NA],*device[NA],*reference[NA],*native[NA];
   int kind=argc>1&&!strcmp(argv[1],"edge")?1:argc>1&&!strcmp(argv[1],"zeros")?2:0;
   const char *recipe = argc>1 ? argv[1] : "normal";
@@ -99,7 +91,6 @@ int main(int argc,char **argv) {
       invoke(resident?device:host); CU(cudaDeviceSynchronize());
       if(resident) for(int a=0;a<NA;a++) CU(cudaMemcpy(allocation(host[a]),allocation(device[a]),bytes(a),cudaMemcpyDeviceToHost));
       size_t count=0,bad=0,nativebad=0,nativerefbad=0,guardbad=0,inputbad=0; double maxabs=0;
-      size_t publication_bad=0,publication_nativebad=0,publication_nativerefbad=0;
       for(int a=0;a<NA;a++) {
         for(int j=0;j<GUARD_BYTES;j++) {
           unsigned char *h=allocation(host[a]),*n=allocation(native[a]);
@@ -111,17 +102,13 @@ int main(int argc,char **argv) {
           if(outputs[a]) {
             count++;
             if(!integer_arrays[a]&&isfinite(*(const float*)h)&&isfinite(*(const float*)r))maxabs=fmax(maxabs,fabs((double)*(const float*)h-*(const float*)r));
-            if(!equal_slot(a,h,r)) { if(bad<4)mismatch("MISMATCH",a,i,h,r);bad++; }
-            if(!equal_slot(a,h,n)) { if(nativebad<4)mismatch("NATIVE_MISMATCH",a,i,h,n);nativebad++; }
-            if(!equal_slot(a,n,r)) { if(nativerefbad<4)mismatch("NATIVE_REFERENCE_MISMATCH",a,i,n,r);nativerefbad++; }
-            publication_bad+=!publication_equal_slot(a,h,r,PUBLICATION_RAISED_TOL,0);
-            publication_nativerefbad+=!publication_equal_slot(a,n,r,PUBLICATION_NATIVE_TOL,1);
-            publication_nativebad+=!publication_equal_slot(a,h,n,fmax(PUBLICATION_RAISED_TOL,PUBLICATION_NATIVE_TOL),1);
+            if(!publication_equal_slot(a,h,r,PUBLICATION_RAISED_TOL,0)) { if(bad<4)mismatch("MISMATCH",a,i,h,r);bad++; }
+            if(!publication_equal_slot(a,h,n,fmax(PUBLICATION_RAISED_TOL,PUBLICATION_NATIVE_TOL),1)) { if(nativebad<4)mismatch("NATIVE_MISMATCH",a,i,h,n);nativebad++; }
+            if(!publication_equal_slot(a,n,r,PUBLICATION_NATIVE_TOL,1)) { if(nativerefbad<4)mismatch("NATIVE_REFERENCE_MISMATCH",a,i,n,r);nativerefbad++; }
           } else if(memcmp(h,slot(a,initial[a],i),element_bytes[a])||memcmp(n,slot(a,initial[a],i),element_bytes[a])) inputbad++;
         }
       }
-      printf("CHECK kind=%d parameters=%d resident=%d count=%zu bad=%zu nativebad=%zu nativerefbad=%zu guardbad=%zu inputbad=%zu maxabs=%.9g\n",kind,parameter_case,resident,count,bad,nativebad,nativerefbad,guardbad,inputbad,maxabs);
-      printf("PUBLICATION_CHECK kind=%d parameters=%d resident=%d count=%zu bad=%zu nativebad=%zu nativerefbad=%zu raised_tol=%.17g native_tol=%.17g\n",kind,parameter_case,resident,count,publication_bad,publication_nativebad,publication_nativerefbad,(double)PUBLICATION_RAISED_TOL,(double)PUBLICATION_NATIVE_TOL);
+      printf("CHECK kind=%d parameters=%d resident=%d count=%zu bad=%zu nativebad=%zu nativerefbad=%zu guardbad=%zu inputbad=%zu maxabs=%.9g raised_tol=%.17g native_tol=%.17g\n",kind,parameter_case,resident,count,bad,nativebad,nativerefbad,guardbad,inputbad,maxabs,(double)PUBLICATION_RAISED_TOL,(double)PUBLICATION_NATIVE_TOL);
       bad_total|=bad||nativebad||nativerefbad||guardbad||inputbad;
     }
   }

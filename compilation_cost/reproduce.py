@@ -1,4 +1,4 @@
-"""Fresh, sequential source-to-linked-executable compilation measurements."""
+"""Fresh, sequential compilation measurements from C through equality saturation."""
 import argparse
 import csv
 import json
@@ -12,8 +12,10 @@ import time
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/'scripts/artifact'),str(ROOT/'scripts/correctness')]
-import gpu_target
 from common import COMPILER, OUT, environment, provenance, save, sha
+
+MEASUREMENT_BOUNDARY = 'source_to_eqsat'
+LEGACY_BOUNDARY = 'source_to_linked_executable'
 
 
 def proof_measurements(path):
@@ -55,21 +57,23 @@ def measured_fields(row):
             '4-5':'abi_seconds','6':'llvm_lowering_seconds','7':'abi_bridge_seconds',
             '8':'runtime_and_object_compilation_seconds','9':'link_seconds'}
     for event in row.get('stages',[]):
-        match=re.search(r'\[([\d-]+)/9\]',event['label'])
+        match=re.search(r'\[([\d-]+)/(?:3|9)\]',event['label'])
         if match and match[1] in labels:
             key=labels[match[1]]
             fields[key]=fields.get(key,0)+event['duration_seconds']
     return fields
 
 
-def summarize(output, cases, repetitions):
+def summarize(output, cases, repetitions, modes=('full',), measurement_boundary=LEGACY_BOUNDARY):
     records=[]
     for case in cases:
-        for mode in ['full','none']:
+        for mode in modes:
             rows=[]
             for n in range(1,repetitions+1):
                 p=output/case['suite']/case['kernel']/(mode+'-'+str(n))/'result.json'
                 if p.exists(): rows.append(json.loads(p.read_text()))
+            if any(r.get('measurement_boundary',LEGACY_BOUNDARY)!=measurement_boundary for r in rows):
+                raise ValueError('Cannot combine different compilation measurement boundaries')
             good=[r for r in rows if r['status']=='ok']
             first_three=[r for r in rows if r['repetition'] in (1,2,3)]
             measurements=[measured_fields(r) for r in good]
@@ -89,7 +93,7 @@ def summarize(output, cases, repetitions):
                           for r in rows if r['status']!='ok']))
     tables=[]
     for suite in sorted({c['suite'] for c in cases}):
-        for mode in ['full','none']:
+        for mode in modes:
             selected=[r for r in records if r['suite']==suite and r['mode']==mode]
             values=[r['median_seconds'] for r in selected if r['status']=='complete']
             tables.append(dict(suite=suite,mode=mode,requested_inputs=len(selected),
@@ -128,9 +132,13 @@ def summarize(output, cases, repetitions):
                 writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
     save(output/'summary.json',dict(tables=tables,first_three_tables=first_three_tables,
         metric_tables=metric_tables,inputs=records,
-        scope='Complete C-to-linked-AArch64 builds; per-input medians. Failed/incomplete inputs remain explicit.',
+        measurement_boundary=measurement_boundary,
+        scope=('C through verified equality-saturation matching; no ABI lowering, code generation, or linking. '
+               if measurement_boundary==MEASUREMENT_BOUNDARY else 'Complete C-to-linked-executable builds. ')+
+              'Per-input medians; failed/incomplete inputs remain explicit.',
         publication_protocol='Paper used three repetitions; first-three medians are also retained.',
-        experiment_protocol=f'{repetitions} fresh repetitions in each EqSat arm; no compiler-result cache.'))
+        experiment_protocol=f'{repetitions} fresh repetitions per input for EqSat modes: '+
+                            ', '.join(modes)+'; no compiler-result cache.'))
     return tables
 
 
@@ -149,13 +157,12 @@ def measure(case, mode, repetition, args):
         from aten_paper_shapes import load_shapes, materialize
         source=dest/original_source.name
         materialize(original_source,source,load_shapes(ROOT/'aten/paper_shapes.json')[case['kernel']])
-    harness=dest/'link_harness.c'
-    harness.write_text('extern void '+function+'(void);\nstatic void (*volatile keep)(void)='+function+';\nint main(void){return keep==0;}\n')
-    executable=dest/'program';timefile=dest/'time.txt';work=dest/'work'
-    build=[str(COMPILER/'scripts/correctness/polygeist_build.sh'),'--target='+gpu_target.compiler_target(),
-           '--function='+function,'--harness='+str(harness),'-o',str(executable),str(source)]
-    build += [flag.replace('{root}',str(ROOT)) for flag in case['cflags']]
-    if options.get('matching_stage')=='linalg':build.append('--no-debuf')
+    timefile=dest/'time.txt';work=dest/'work'
+    worker=Path(__file__).with_name('through_eqsat.py')
+    worker_request=dest/'worker-request.json'
+    save(worker_request,dict(source=str(source),function=function,work=str(work),
+        cflags=[flag.replace('{root}',str(ROOT)) for flag in case['cflags']],matching_options=options))
+    build=[sys.executable,str(worker),str(worker_request)]
     command=['/usr/bin/timeout','--kill-after=10',str(args.timeout),'/usr/bin/time','-f',
              'wall_seconds=%e\nuser_seconds=%U\nsystem_seconds=%S\npeak_rss_kib=%M',
              '-o',str(timefile),*build]
@@ -178,7 +185,8 @@ def measure(case, mode, repetition, args):
     env.pop('POLYGEIST_SEMANTIC_MLIR',None)
     save(dest/'request.json',dict(case=case,mode=mode,repetition=repetition,command=command,
         source_sha256=sha(source),original_source_sha256=sha(original_source),
-        harness_sha256=sha(harness),matching_options=options,load_before=os.getloadavg(),
+        measurement_boundary=MEASUREMENT_BOUNDARY,worker_sha256=sha(worker),
+        matching_options=options,load_before=os.getloadavg(),
         uptime_before=subprocess.check_output(['uptime'],text=True).strip()))
     started=time.monotonic();events=[]
     with (dest/'build.log').open('w') as log:
@@ -186,8 +194,9 @@ def measure(case, mode, repetition, args):
                                  stderr=subprocess.STDOUT,text=True,bufsize=1)
         for line in process.stdout:
             log.write(line);log.flush()
-            if re.search(r'\[\d+(?:-\d+)?/9\]',line):
+            if re.search(r'\[\d+/3\]',line):
                 events.append(dict(seconds=time.monotonic()-started,label=line.strip()))
+        process.stdout.close()
         rc=process.wait()
     elapsed=time.monotonic()-started
     timing={}
@@ -200,12 +209,14 @@ def measure(case, mode, repetition, args):
     for index,event in enumerate(events):
         event['duration_seconds']=(events[index+1]['seconds'] if index+1<len(events) else elapsed)-event['seconds']
     proof=json.loads((work/'match.json').read_text()) if (work/'match.json').exists() else {}
-    status='ok' if rc==0 and executable.is_file() else 'timeout' if rc in [124,137] else 'error'
+    matched=work/'matched.mlir'
+    status='ok' if rc==0 and matched.is_file() and (work/'match.json').is_file() else 'timeout' if rc in [124,137] else 'error'
     metrics=proof_measurements(dest/'matcher.jsonl')
     if status=='ok' and not metrics['records']: status='missing_metrics'
     row=dict(suite=case['suite'],kernel=case['kernel'],mode=mode,repetition=repetition,
         status=status,returncode=rc,wall_seconds=elapsed,process_timing=timing,
-        stages=events,executable_sha256=sha(executable) if executable.exists() else None,
+        measurement_boundary=MEASUREMENT_BOUNDARY,
+        stages=events,matched_ir_sha256=sha(matched) if matched.exists() else None,
         emitted=proof.get('emitted',[]),matching_ms=proof.get('elapsed_ms'),
         telemetry_available=bool(metrics['records']),proof_measurements=metrics,
         region_catalog_cache=str(spec_cache/mode),
@@ -220,7 +231,9 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--stage',choices=['build','run','summarize','all'],default='all')
     p.add_argument('--output',type=Path,default=OUT)
-    p.add_argument('--repetitions',type=int,help='Fresh repetitions per arm (default: 5; summarize uses recorded count)')
+    p.add_argument('--repetitions',type=int,help='Fresh repetitions per input and mode (default: 3; summarize uses recorded count)')
+    p.add_argument('--modes',nargs='+',choices=['full','none'],
+        help='Equality-saturation modes (default: full, all rewrites enabled; summarize uses recorded modes)')
     p.add_argument('--timeout',type=int,default=300)
     p.add_argument('--suites',nargs='+',choices=['polybench','llama','aten','mfem'])
     p.add_argument('--cases',nargs='+',help='kernel names or suite/kernel names')
@@ -236,12 +249,17 @@ def main():
         recorded=json.loads(metadata.read_text())
         if args.repetitions is not None and args.repetitions!=recorded['repetitions']:
             p.error('summary repetition count must match the recorded experiment')
+        recorded_modes=recorded.get('modes',['full','none'])
+        if args.modes is not None and args.modes!=recorded_modes:
+            p.error('summary modes must match the recorded experiment')
         if args.suites or args.cases:
             p.error('summarize retains the recorded cohort; inspect per-input rows for subsets')
-        tables=summarize(args.output,recorded['cases'],recorded['repetitions'])
+        tables=summarize(args.output,recorded['cases'],recorded['repetitions'],recorded_modes,
+                         recorded.get('measurement_boundary',LEGACY_BOUNDARY))
         print(json.dumps(tables),flush=True)
         return
-    if args.repetitions is None:args.repetitions=5
+    if args.repetitions is None:args.repetitions=3
+    if args.modes is None:args.modes=['full']
     if args.repetitions<1: p.error('positive repetitions required')
     manifest=Path(__file__).with_name('inputs.json')
     cases=[c for c in json.loads(manifest.read_text())['cases']
@@ -272,11 +290,13 @@ def main():
             for p in (COMPILER/folder).rglob('*') if p.is_file() and p.suffix in ['.py','.sh','.c','.cu','.h','.inc'])
         args.compiler_state={p:(p.stat().st_size,p.stat().st_mtime_ns) for p in compiler_files}
         config=dict(cases=cases,repetitions=args.repetitions,timeout=args.timeout,
+            measurement_boundary=MEASUREMENT_BOUNDARY,
             compiler=str(COMPILER),manifest_sha256=sha(manifest),
             compiler_input_hashes={str(p.relative_to(COMPILER)):sha(p) for p in compiler_files},
             driver_sha256=sha(Path(__file__)),source_hashes={c['source']:sha(ROOT/c['source']) for c in cases},
+            worker_sha256=sha(Path(__file__).with_name('through_eqsat.py')),
             paper_shapes_sha256=sha(ROOT/'aten/paper_shapes.json'),
-            sequential=True,cache_disabled=True,numeric_model='ATen per-case policy; relaxed for other suites',modes=['full','none'],
+            sequential=True,cache_disabled=True,numeric_model='ATen per-case policy; relaxed for other suites',modes=args.modes,
             saturation_timeout_seconds=10,deadline_policy='isolated proof process; process overhead included',
             graph_counting='serialized graph nodes and classes including primitive values',
             region_catalog_cache=('persistent cache per EqSat arm: '+str(args.spec_cache)
@@ -288,14 +308,15 @@ def main():
         else:
             save(metadata,config);provenance(args.output)
             (args.output/'measurement_driver.py').write_bytes(Path(__file__).read_bytes())
+            (args.output/'measurement_worker.py').write_bytes(Path(__file__).with_name('through_eqsat.py').read_bytes())
             (args.output/'inputs.json').write_bytes(manifest.read_bytes())
             (args.output/'aten-paper-shapes.json').write_bytes((ROOT/'aten/paper_shapes.json').read_bytes())
         for repetition in range(1,args.repetitions+1):
             for index,case in enumerate(cases):
-                modes=['full','none'] if (index+repetition)%2 else ['none','full']
+                modes=args.modes if (index+repetition)%2 else args.modes[::-1]
                 for mode in modes: measure(case,mode,repetition,args)
-                summarize(args.output,cases,args.repetitions)
-    tables=summarize(args.output,cases,args.repetitions)
+                summarize(args.output,cases,args.repetitions,args.modes,MEASUREMENT_BOUNDARY)
+    tables=summarize(args.output,cases,args.repetitions,args.modes,MEASUREMENT_BOUNDARY)
     print(json.dumps(tables),flush=True)
 
 

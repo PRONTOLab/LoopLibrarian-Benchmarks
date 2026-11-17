@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce pointwise candidate matching, strict GPU checks, and five pairs."""
+"""Reproduce pointwise candidate matching, publication GPU checks, and five pairs."""
 import argparse
 import csv
 import hashlib
@@ -70,12 +70,12 @@ def report(out, selected, shape_specs=None, extra_gpu_results=(), scope='pointwi
                          residual_counts=best.get('counts'),
                          matching_details='matching/'+name+'/result.json',
                          native_baseline_available=native, build=built, execution_status=execution,
-                         strict_gpu_pass=bool(variants and built and built.get('rc') == 0 and
+                         gpu_pass=bool(variants and built and built.get('rc') == 0 and
                                               same_binary and runtime.get('fully_validated', False)),
                          gpu=runtime or None))
     summary = dict(candidates=len(rows), complete_matches=sum(r['complete_match'] for r in rows),
-                   strict_gpu_passes=sum(r['strict_gpu_pass'] for r in rows),
-                   timed=sum(bool(r['strict_gpu_pass'] and r['gpu'].get('timing', {}).get('passed')
+                   gpu_passes=sum(r['gpu_pass'] for r in rows),
+                   timed=sum(bool(r['gpu_pass'] and r['gpu'].get('timing', {}).get('passed')
                                   and r['gpu']['timing'].get('native_over_raised')) for r in rows))
     if scope == 'all':
         summary.update(native_adapters=sum(r['native_baseline_available'] for r in rows),
@@ -91,7 +91,7 @@ def report(out, selected, shape_specs=None, extra_gpu_results=(), scope='pointwi
                  else 'Pointwise IR candidates, not the paper 115 denominator. ')+
                 ('Explicit shape manifest; separate source copies. ' if shape_specs else 'Original fixture dimensions. ')+
                 'Matching/ABI results are separate from optional GPU checks and timings.')))
-    fields = ['kernel','numeric_model','complete_match','strict_gpu_pass','timing_pairs',
+    fields = ['kernel','numeric_model','complete_match','gpu_pass','timing_pairs',
               'native_over_raised','raised_min_ms','native_min_ms','dimension_scope',
               'native_baseline_scope','match_status','execution_status','build_error',
               'emitted','remaining_linalg','remaining_loops']
@@ -99,9 +99,9 @@ def report(out, selected, shape_specs=None, extra_gpu_results=(), scope='pointwi
         writer = csv.DictWriter(stream,fieldnames=fields); writer.writeheader()
         for row in rows:
             runtime = row['gpu'] or {}; timing = runtime.get('timing',{})
-            timed = row['strict_gpu_pass'] and timing.get('passed')
+            timed = row['gpu_pass'] and timing.get('passed')
             writer.writerow(dict(kernel=row['kernel'],numeric_model=row['numeric_model'],complete_match=row['complete_match'],
-                strict_gpu_pass=row['strict_gpu_pass'],
+                gpu_pass=row['gpu_pass'],
                 timing_pairs=len(timing['samples'])//2 if timed else '',
                 native_over_raised=timing.get('native_over_raised','') if timed else '',
                 raised_min_ms=timing.get('minimum_ms',{}).get('raised','') if timed else '',
@@ -130,7 +130,7 @@ def main():
     p.add_argument('--ranks', type=int, nargs='+', default=[1],
                    help='Operand rank limits to test; default: 1')
     p.add_argument('--numeric-model',choices=['strict','relaxed'],default='strict',
-                   help='EqSat assumptions; GPU output checks remain strict in either mode')
+                   help='EqSat assumptions; GPU output checks use the publication criterion in either mode')
     p.add_argument('--shape-specs', type=Path,
                    help='Optional archived dimensions, applied to separate C copies')
     p.add_argument('--extra-gpu-results',type=Path,nargs='+',default=[],
@@ -166,7 +166,7 @@ def main():
     if eligible:
         runtime = [sys.executable, ROOT/'scripts/correctness/aten_fixture_batch.py',
             '--campaign', out/'matching', '--output', out/'gpu', '--cases', *eligible,
-            '--rank','-1','--timing-samples','5','--timing-correctness','strict',
+            '--rank','-1','--timing-samples','5',
             '--require-full-correctness',*shapes,
             '--cudnn-plan-cache','--gpu-workspace-cache','--persistent-workspace']
         if args.stage in ('build','all'):

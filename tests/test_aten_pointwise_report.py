@@ -31,7 +31,7 @@ class PointwiseReport(unittest.TestCase):
                 fully_validated=True,timing=dict(passed=True,native_over_raised=2,samples=[{}]*10))]))
             driver.report(out,['aten_exp2'],extra_gpu_results=[evidence])
             summary = json.loads((out/'summary.json').read_text())['summary']
-            self.assertEqual(summary['strict_gpu_passes'], 1)
+            self.assertEqual(summary['gpu_passes'], 1)
             self.assertEqual(summary['timed'], 1)
 
     def test_rebuilt_binary_cannot_reuse_old_successful_timings(self):
@@ -48,7 +48,7 @@ class PointwiseReport(unittest.TestCase):
                 binary_sha256='old',fully_validated=True,timing=dict(passed=True,native_over_raised=10))]))
             driver.report(out,['aten_exp2'],scope='all')
             report = json.loads((out/'summary.json').read_text())
-            self.assertEqual(report['summary']['strict_gpu_passes'], 0)
+            self.assertEqual(report['summary']['gpu_passes'], 0)
             self.assertEqual(report['summary']['timed'], 0)
             self.assertEqual(report['cases'][0]['execution_status'], 'stale_or_incomplete_gpu_evidence')
 
@@ -69,7 +69,7 @@ class PointwiseReport(unittest.TestCase):
             self.assertEqual(report['summary']['candidates'], 3)
             self.assertEqual(report['summary']['complete_matches'], 2)
             self.assertEqual(report['summary']['complete_without_native_adapter'], 1)
-            self.assertEqual(report['summary']['strict_gpu_passes'], 0)
+            self.assertEqual(report['summary']['gpu_passes'], 0)
             self.assertEqual([r['execution_status'] for r in report['cases']],
                              ['build_failed','native_adapter_unavailable','incomplete_match'])
 
@@ -120,7 +120,7 @@ class PointwiseReport(unittest.TestCase):
             driver.report(out, ['aten_exp2','aten_expm1','aten_log2'])
             summary = json.loads((out/'summary.json').read_text())['summary']
             self.assertEqual(summary, dict(candidates=3, complete_matches=1,
-                strict_gpu_passes=0,timed=0))
+                gpu_passes=0,timed=0))
             rows = json.loads((out/'summary.json').read_text())['cases']
             self.assertNotIn('baseline_complete_match', rows[0])
             self.assertEqual(rows[0]['numeric_model'], 'strict')

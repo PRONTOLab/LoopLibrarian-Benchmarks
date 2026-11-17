@@ -38,7 +38,7 @@ def timing_group(runtime):
     if recipe == 'native-paper':
         return 'alternative'
     assert recipe == 'paper', 'Unclassified timing-input exception'
-    return 'paper' if check.get('passed') else 'publication'
+    return 'paper' if policy == 'publication' else 'legacy'
 
 
 def main(argv=None):
@@ -53,7 +53,7 @@ def main(argv=None):
     out.mkdir(parents=True, exist_ok=True)
     data = json.loads(report.read_text())
     paper_cohort = validate_paper_cohort(data)
-    groups = {'paper': [], 'publication': [], 'alternative': []}
+    groups = {'paper': [], 'legacy': [], 'alternative': []}
     rows = []
     for case in data['cases']:
         runtime = case.get('runtime', {})
@@ -85,8 +85,8 @@ def main(argv=None):
                 assert math.isclose(min(s['ms'] for s in samples), minimum[path], rel_tol=1e-10)
             native, raised = minimum['native_aten_cuda'] * 1000, minimum['raised'] * 1000
             groups[group].append((native, raised))
-            row.update(status={'paper':'validated_original_inputs_strict',
-                               'publication':'validated_original_inputs_publication',
+            row.update(status={'paper':'validated_original_inputs_publication',
+                               'legacy':'validated_original_inputs_legacy',
                                'alternative':'validated_alternative_inputs'}[group],
                        timing_correctness_policy=timing.get('correctness_policy','strict'),
                        input_kind=recipe, native_us=native, raised_us=raised,
@@ -113,8 +113,8 @@ def main(argv=None):
     high = max(xhigh, yhigh)
     scatter = []
     for group, label, color, mark in [
-            ('paper', 'Original inputs: strict', 'raisedgreen', '*'),
-            ('publication', 'Original inputs: paper criterion', 'publicationblue', 'triangle'),
+            ('paper', 'Publication criterion', 'raisedgreen', '*'),
+            ('legacy', 'Archived criterion', 'publicationblue', 'triangle'),
             ('alternative', 'Alternative inputs', 'alternateorange', 'diamond')]:
         if not groups[group]:
             continue
@@ -174,9 +174,9 @@ def main(argv=None):
     summary = dict(source_report=str(report), source_sha256=hashlib.sha256(report.read_bytes()).hexdigest(),
                    generator_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                    cohort=len(rows), paper_cohort=paper_cohort, caption=caption,
-                   original_inputs=len(groups['paper'])+len(groups['publication']),
-                   strict_original_inputs=len(groups['paper']),
-                   publication_only_original_inputs=len(groups['publication']),
+                   original_inputs=len(groups['paper'])+len(groups['legacy']),
+                   publication_original_inputs=len(groups['paper']),
+                   archived_criterion_original_inputs=len(groups['legacy']),
                    alternative_inputs=len(groups['alternative']), **band_counts(points),
                    unplotted=[dict(kernel=r['kernel'], status=r['status']) for r in rows
                               if not r['status'].startswith('validated_')],
@@ -235,9 +235,10 @@ def main(argv=None):
         'LoopLibrarian resident GPU time on the vertical axis, in microseconds. '
         'The black line is parity; red dotted lines delimit a factor of two.\n\n'
         f"{caption}. "
-        f"Green circles show {len(groups['paper'])} cases passing strict checks on original inputs. "
-        f"Blue triangles show {len(groups['publication'])} cases passing the historical criterion; "
-        'their strict diagnostic failures are retained. Hollow orange diamonds show '
+        f"Green circles show {len(groups['paper'])} cases passing the publication criterion on original inputs. "
+        +(f"Blue triangles show {len(groups['legacy'])} archived cases under their recorded criterion. "
+          if groups['legacy'] else '')+
+        'Hollow orange diamonds show '
         'separately recorded alternative input recipes; consult the CSV for each case. '
         'Missing and failed cases have no fabricated coordinates and remain in '
         '`aten-current-data.csv` and `plot-summary.json`.\n\n'

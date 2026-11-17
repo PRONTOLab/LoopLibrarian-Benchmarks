@@ -90,8 +90,8 @@ def main(argv=None):
     p.add_argument('--jobs', type=int, default=3)
     p.add_argument('--numeric-model', choices=['strict','relaxed'],
                    help='Full-suite EqSat model; paper mode retains recorded per-case models')
-    p.add_argument('--timing-correctness', choices=['strict','publication'],
-                   help='Fresh Figure 5 runs use publication; resumed runs keep their saved policy')
+    p.add_argument('--timing-correctness', choices=['publication'],default='publication',
+                   help=argparse.SUPPRESS)
     p.add_argument('--paper-figure', type=Path, help='Optional original PDF for the paper plot comparison')
     args = p.parse_args(argv)
     args.stage = 'report' if args.stage == 'summarize' else args.stage
@@ -101,13 +101,14 @@ def main(argv=None):
     previous_path = out/'selection.json'
     previous = json.loads(previous_path.read_text()) if previous_path.exists() else {}
     args.numeric_model = args.numeric_model or previous.get('numeric_model', 'strict')
-    default_policy = 'publication' if args.cohort == 'paper' else 'strict'
-    args.timing_correctness = args.timing_correctness or previous.get(
-        'timing_correctness', 'strict' if previous else default_policy)
+    # Read-only reports preserve historical evidence. New builds and executions
+    # use the publication checker and cannot resume an old numerical policy.
+    if previous and args.stage in ('report','plot'):
+        args.timing_correctness = previous.get('timing_correctness','strict')
     if args.jobs < 1:
         p.error('--jobs must be positive')
-    if args.cohort == 'all' and (args.stage == 'plot' or args.paper_figure or args.timing_correctness != 'strict'):
-        p.error('Paper plotting and publication timing criteria require --cohort paper')
+    if args.cohort == 'all' and (args.stage == 'plot' or args.paper_figure):
+        p.error('Paper plotting requires --cohort paper')
     campaign = out/'matching'
     fresh = args.stage in ('match', 'all')
     if fresh and any(p.exists() for p in (campaign, out/'selection.json', out/'gpu')):
@@ -146,7 +147,7 @@ def main(argv=None):
     runtime = [PYTHON, ROOT/'scripts/correctness/aten_paper_runtime.py',
                '--campaign', campaign, '--output', out/'gpu', *selection,
                '--cudnn-plan-cache','--gpu-workspace-cache','--persistent-workspace',
-               '--native-paper-inputs','--timing-correctness',args.timing_correctness]
+               '--native-paper-inputs']
     if match_needed:
         command([PYTHON, ROOT/'scripts/correctness/aten_paper115_campaign.py',
             '--output', campaign, '--checklist', checklist, *selection, '--include-validated',

@@ -41,7 +41,7 @@ class CohortDriver(unittest.TestCase):
     def test_resume_keeps_subset_and_rejects_cohort_and_source_changes(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            args = SimpleNamespace(cohort='all', cases=['gather_cpu'], numeric_model='strict', timing_correctness='strict')
+            args = SimpleNamespace(cohort='all', cases=['gather_cpu'], numeric_model='strict', timing_correctness='publication')
             driver.record_selection(args, out)
             args.cases = None
             self.assertEqual(driver.record_selection(args, out)[1], ['aten_gather_cpu'])
@@ -73,7 +73,7 @@ class CohortDriver(unittest.TestCase):
     def test_build_resumes_without_rematching_and_rejects_new_case_selection(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(driver, 'command') as command:
             out = Path(tmp)
-            args = SimpleNamespace(cohort='all',cases=['gather_cpu'],numeric_model='strict',timing_correctness='strict')
+            args = SimpleNamespace(cohort='all',cases=['gather_cpu'],numeric_model='strict',timing_correctness='publication')
             driver.record_selection(args, out)
             (out/'matching').mkdir()
             (out/'matching/provenance.json').write_text(json.dumps(dict(
@@ -102,29 +102,28 @@ class CohortDriver(unittest.TestCase):
             self.assertTrue(commands[-1][1].endswith('plot_results.py'))
             for cmd in commands[1:4]:
                 self.assertIn('--native-paper-inputs', cmd)
-                self.assertEqual(cmd[cmd.index('--timing-correctness')+1], 'publication')
+                self.assertNotIn('--timing-correctness', cmd)
 
-    def test_full_cohort_cannot_use_paper_plot_or_criterion(self):
-        for extra in (['--stage','plot'], ['--timing-correctness','publication']):
+    def test_full_cohort_rejects_paper_plot_and_removed_strict_option(self):
+        for extra in (['--stage','plot'], ['--timing-correctness','strict']):
             with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
                 driver.main(['--cohort','all',*extra])
 
-    def test_fresh_paper_run_defaults_to_publication_with_explicit_strict_option(self):
-        for policy in ('publication', 'strict'):
-            with self.subTest(policy=policy), tempfile.TemporaryDirectory() as tmp:
+    def test_fresh_paper_run_uses_only_publication(self):
+        for extra in ([], ['--timing-correctness','publication']):
+            with self.subTest(extra=extra), tempfile.TemporaryDirectory() as tmp:
                 out = Path(tmp)
                 def command(cmd, *args, **kwargs):
                     if 'report' in cmd:
                         (out/'gpu').mkdir(exist_ok=True)
                         (out/'gpu/report.json').write_text(json.dumps(dict(summary={'timing_pairs_validated':0})))
-                extra = ['--timing-correctness', 'strict'] if policy == 'strict' else []
                 with patch.object(driver, 'command', side_effect=command) as calls, \
                         contextlib.redirect_stdout(io.StringIO()):
                     driver.main(['--cohort','paper','--cases','mm','--output',tmp,*extra])
                 commands = [list(map(str, c.args[0])) for c in calls.call_args_list]
                 for cmd in commands[1:]:
-                    self.assertEqual(cmd[cmd.index('--timing-correctness')+1], policy)
-                self.assertEqual(json.loads((out/'selection.json').read_text())['timing_correctness'], policy)
+                    self.assertNotIn('--timing-correctness', cmd)
+                self.assertEqual(json.loads((out/'selection.json').read_text())['timing_correctness'], 'publication')
                 self.assertEqual(json.loads((out/'plots/status.json').read_text())['status'], 'not_plotted')
 
     def test_plot_restores_saved_policy_without_running_gpu(self):
@@ -150,7 +149,11 @@ class CohortDriver(unittest.TestCase):
             commands = [list(map(str, c.args[0])) for c in calls.call_args_list]
             self.assertEqual(len(commands), 2)
             self.assertEqual(commands[0][commands[0].index('--stage')+1], 'report')
-            self.assertEqual(commands[0][commands[0].index('--timing-correctness')+1], policy)
+            self.assertNotIn('--timing-correctness', commands[0])
+            self.assertEqual(json.loads((out/'selection.json').read_text())['timing_correctness'], policy)
+            if policy == 'strict':
+                with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                    driver.main(['--cohort','paper','--stage','run','--output',tmp])
             self.assertTrue(commands[1][1].endswith('plot_results.py'))
 
 

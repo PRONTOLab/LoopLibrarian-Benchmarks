@@ -31,7 +31,8 @@ def reusable_runtime(saved, built, args, alternative):
         return True
     policy = saved.get('timing_correctness',
                        saved.get('timing', {}).get('correctness_policy', 'strict'))
-    return (policy == args.timing_correctness and
+    return (policy == F.CORRECTNESS_POLICY and
+            built.get('correctness_policy') == F.CORRECTNESS_POLICY and
             saved.get('cudnn_plan_cache') == args.cudnn_plan_cache and
             saved.get('gpu_workspace_cache') == args.gpu_workspace_cache and
             set(saved.get('correctness', {})) ==
@@ -137,8 +138,7 @@ def report(args, cases):
     summary['raised_runtime_within_5pct_or_faster']=sum(c['raised_time_over_paper']<=1.05 for c in timed)
     summary['native_relative_speedup_within_5pct_or_better']=sum(c['speedup_over_paper']>=0.95 for c in timed)
     summary['timed_cases_with_same_publication_statistic']=sum(c['same_statistic'] for c in timed)
-    summary['strict_original_inputs_passed']=summary['original_paper_comparisons_passed']
-    summary['timings_using_strict_criterion']=sum(c['correctness_policy']=='strict' for c in timed)
+    summary['timings_using_archived_criterion']=sum(c['correctness_policy']!='publication' for c in timed)
     aligned=[c for c in timed if c['same_statistic'] and c['same_raised_input_recipe']]
     summary['timed_cases_with_same_statistic_and_raised_inputs']=len(aligned)
     summary['same_statistic_and_raised_inputs_speedup_within_5pct_or_better']=sum(
@@ -203,8 +203,8 @@ def main():
     parser.add_argument('--cutensor-root', type=Path)
     parser.add_argument('--native-paper-inputs', action='store_true',
                         help='Where separately recorded, also test and time native-harness inputs; keep original raised-input failures')
-    parser.add_argument('--timing-correctness', choices=['strict','publication'],default='strict',
-                        help='Retain strict diagnostics; optionally gate timings on the archived publication criterion')
+    parser.add_argument('--timing-correctness', choices=[F.CORRECTNESS_POLICY],default=F.CORRECTNESS_POLICY,
+                        help=argparse.SUPPRESS)
     parser.add_argument('--cudnn-plan-cache', action='store_true')
     parser.add_argument('--gpu-workspace-cache', action='store_true')
     parser.add_argument('--persistent-workspace', action='store_true')

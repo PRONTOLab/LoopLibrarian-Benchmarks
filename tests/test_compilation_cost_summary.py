@@ -5,6 +5,7 @@ import io
 import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -14,6 +15,44 @@ driver=importlib.util.module_from_spec(spec);spec.loader.exec_module(driver)
 
 
 class CompilationSummary(unittest.TestCase):
+    def test_build_schedule_and_summary_follow_selected_modes(self):
+        case=next(c for c in json.loads(path.with_name('inputs.json').read_text())['cases']
+                  if c['suite']=='aten' and c['kernel']=='aten_avg_pool2d')
+        for options,repetitions,modes in [([],3,['full']),
+                (['--repetitions','2','--modes','full','none'],2,['full','none'])]:
+            with self.subTest(options=options), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);compiler=root/'compiler';output=root/'results'
+                for relative in ['build/bin/cgeist','build/bin/polygeist-opt',
+                        'generic_solver/kernel_library_v3.mlir','generic_solver/lib_v3/import_manifest.json']:
+                    f=compiler/relative;f.parent.mkdir(parents=True,exist_ok=True);f.write_text('fixture')
+                source=root/case['source'];source.parent.mkdir(parents=True);source.write_text('fixture')
+                (root/'aten/paper_shapes.json').write_text('{}')
+                validator=SimpleNamespace(validate=lambda _: ({},None))
+                with patch.object(driver,'ROOT',root), patch.object(driver,'COMPILER',compiler), \
+                        patch.object(driver,'environment',return_value={}), \
+                        patch.object(driver,'provenance'), patch.object(driver,'measure') as measure, \
+                        patch.dict('sys.modules',spec_provenance=validator), \
+                        patch.object(driver.sys,'path',driver.sys.path.copy()), \
+                        patch('sys.argv',['reproduce.py','--output',str(output),
+                              '--cases','aten/aten_avg_pool2d',*options]), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    driver.main()
+                calls=[(c.args[1],c.args[2]) for c in measure.call_args_list]
+                self.assertCountEqual(calls,[(mode,n) for mode in modes
+                                            for n in range(1,repetitions+1)])
+                recorded=json.loads((output/'measurement.json').read_text())
+                self.assertEqual(recorded['modes'],modes)
+                self.assertEqual(recorded['repetitions'],repetitions)
+                self.assertEqual(recorded['measurement_boundary'],driver.MEASUREMENT_BOUNDARY)
+                with patch('sys.argv',['reproduce.py','--stage','summarize','--output',str(output)]), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    driver.main()
+                summary=json.loads((output/'summary.json').read_text())
+                self.assertEqual([t['mode'] for t in summary['tables']],modes)
+                self.assertEqual(summary['measurement_boundary'],driver.MEASUREMENT_BOUNDARY)
+                self.assertEqual([r['requested'] for r in summary['inputs']],
+                                 [repetitions]*len(modes))
+
     def test_summary_uses_recorded_cohort_without_current_sources(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
@@ -31,6 +70,49 @@ class CompilationSummary(unittest.TestCase):
             self.assertEqual(full['requested_inputs'],1)
             self.assertEqual(full['complete_inputs'],1)
             self.assertEqual(full['mean'],1.5)
+            self.assertEqual([t['mode'] for t in summary['tables']],['full','none'])
+            self.assertEqual(summary['measurement_boundary'],driver.LEGACY_BOUNDARY)
+
+    def test_different_measurement_boundaries_cannot_be_combined(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);cases=[dict(suite='aten',kernel='mixed')]
+            for n,boundary in enumerate([driver.LEGACY_BOUNDARY,driver.MEASUREMENT_BOUNDARY],1):
+                dest=root/'aten/mixed'/('full-'+str(n));dest.mkdir(parents=True)
+                (dest/'result.json').write_text(json.dumps(dict(status='ok',wall_seconds=10,
+                    repetition=n,returncode=0,measurement_boundary=boundary)))
+            with self.assertRaisesRegex(ValueError,'measurement boundaries'):
+                driver.summarize(root,cases,2,measurement_boundary=driver.MEASUREMENT_BOUNDARY)
+
+    def test_matching_completion_does_not_require_a_linked_executable(self):
+        for rc,proof_available,expected in [(0,True,'ok'),(1,True,'error'),(0,False,'error')]:
+            with self.subTest(rc=rc,proof_available=proof_available), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);(root/'kernel.c').write_text('void kernel(void) {}')
+                output=root/'out';dest=output/'polybench/kernel/full-1';work=dest/'work'
+                case=dict(suite='polybench',kernel='kernel',function='kernel',source='kernel.c',cflags=[])
+
+                def process(*args,**kwargs):
+                    work.mkdir(parents=True)
+                    if proof_available:
+                        (work/'matched.mlir').write_text('module {}')
+                        (work/'match.json').write_text(json.dumps(dict(emitted=[],elapsed_ms=1)))
+                    (dest/'matcher.jsonl').write_text(json.dumps(dict(phase='linalg_match'))+'\n')
+                    return SimpleNamespace(stdout=io.StringIO(
+                        '[1/3] frontend\n[2/3] raising\n[3/3] equality saturation\n'),wait=lambda:rc)
+
+                args=SimpleNamespace(output=output,compiler_state={},timeout=300,spec_cache=None)
+                with patch.object(driver,'ROOT',root), patch.object(driver.subprocess,'Popen',side_effect=process), \
+                        patch.object(driver.subprocess,'check_output',return_value='test load'), \
+                        patch.object(driver,'environment',side_effect=lambda **kwargs:kwargs), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    driver.measure(case,'full',1,args)
+                result=json.loads((dest/'result.json').read_text())
+                self.assertEqual(result['status'],expected)
+                self.assertEqual(result['measurement_boundary'],driver.MEASUREMENT_BOUNDARY)
+                self.assertNotIn('executable_sha256',result)
+                self.assertFalse((dest/'program').exists())
+                if expected=='ok':
+                    self.assertIsNotNone(result['matched_ir_sha256'])
+                    self.assertIn('matching_stage_seconds',driver.measured_fields(result))
 
     def test_first_three_requires_repetitions_one_two_three(self):
         with tempfile.TemporaryDirectory() as directory:

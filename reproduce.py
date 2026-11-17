@@ -14,7 +14,7 @@ from common import ARTIFACT, ROOT, environment, provenance, save, setting
 
 SUITES = ['polybench_cpu', 'polybench_gpu', 'llama', 'mfem', 'eqsat', 'eqsat_extra',
           'graph_sizes', 'ginsbach', 'kernelfarer', 'aten_table5', 'aten_figure5',
-          'aten', 'library_inventory', 'pva', 'compilation_cost']
+          'aten', 'pva', 'compilation_cost']
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
@@ -57,7 +57,7 @@ def main(argv=None):
         p.error('--output is required when resuming a built experiment')
     stamp = uuid.uuid4().hex[:12]
     out = (a.output or ROOT/'results/runs'/f'{experiment}-{stamp}').resolve()
-    directories = {'polybench_cpu': 'polybench/cpu', 'polybench_gpu': 'polybench/gpu', 'llama': 'llama', 'mfem': 'mfem', 'eqsat': 'eqsat', 'graph_sizes': 'graph_sizes', 'ginsbach': 'ginsbach', 'kernelfarer': 'kernelfarer', 'aten': 'aten', 'library_inventory': 'library_inventory'}
+    directories = {'polybench_cpu': 'polybench/cpu', 'polybench_gpu': 'polybench/gpu', 'llama': 'llama', 'mfem': 'mfem', 'eqsat': 'eqsat', 'graph_sizes': 'graph_sizes', 'ginsbach': 'ginsbach', 'kernelfarer': 'kernelfarer', 'aten': 'aten'}
     directories.update(pva='pva',compilation_cost='compilation_cost')
     directories['eqsat_extra']='eqsat'
     script = ROOT/directories[a.suite]/'reproduce.py'

@@ -27,10 +27,10 @@ class PlotCriteria(unittest.TestCase):
         return dict(timing=dict(input_kind=recipe, correctness_policy=policy),
                     correctness={recipe: dict(passed=strict, publication_passed=publication)})
 
-    def test_publication_pass_is_visibly_separate_from_strict_pass(self):
-        self.assertEqual(timing_group(self.result(strict=True)), 'paper')
+    def test_archived_strict_results_are_not_relabeled_as_publication(self):
+        self.assertEqual(timing_group(self.result(strict=True)), 'legacy')
         self.assertEqual(timing_group(self.result(policy='publication', publication=True)),
-                         'publication')
+                         'paper')
         with self.assertRaises(AssertionError):
             timing_group(self.result(policy='strict', publication=True))
 
@@ -75,6 +75,9 @@ class PlotCriteria(unittest.TestCase):
             self.assertTrue(all(row['native_us']==row['raised_us']=='' for row in plotted_rows[1:]))
             summary = json.loads((output/'plot-summary.json').read_text())
             self.assertEqual(summary['timed'], 1)
+            self.assertEqual(summary['publication_original_inputs'], 1)
+            self.assertNotIn('strict', (output/'aten-current.tex').read_text())
+            self.assertNotIn('strict', (output/'README.md').read_text())
             self.assertEqual(summary['paper_cohort'], len(cases))
             self.assertEqual(len(summary['unplotted']), len(cases)-1)
             self.assertIn(f'1 of {len(cases)} cases plotted', (output/'aten-current.tex').read_text())

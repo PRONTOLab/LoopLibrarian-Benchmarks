@@ -18,16 +18,17 @@ class RuntimeSelection(unittest.TestCase):
         saved = dict(binary_sha256='same', cudnn_plan_cache=True,
                      gpu_workspace_cache=True, correctness={'paper': {}},
                      timing={'correctness_policy': 'publication'})
-        built = dict(binary_sha256='same', rc=0)
-        args = SimpleNamespace(timing_correctness='publication',
-                               cudnn_plan_cache=True, gpu_workspace_cache=True)
+        built = dict(binary_sha256='same', rc=0, correctness_policy='publication')
+        args = SimpleNamespace(cudnn_plan_cache=True, gpu_workspace_cache=True)
         self.assertTrue(R.reusable_runtime(saved, built, args, False))
         self.assertFalse(R.reusable_runtime(saved, built, args, True))
-        args.timing_correctness = 'strict'
+        saved['timing']['correctness_policy'] = 'strict'
         self.assertFalse(R.reusable_runtime(saved, built, args, False))
         saved['timing'] = {}
-        self.assertTrue(R.reusable_runtime(saved, built, args, False))
+        self.assertFalse(R.reusable_runtime(saved, built, args, False))
         saved['timing_correctness'] = 'publication'
+        self.assertTrue(R.reusable_runtime(saved, built, args, False))
+        del built['correctness_policy']
         self.assertFalse(R.reusable_runtime(saved, built, args, False))
 
     def test_csv_preserves_unmatched_and_failed_comparisons_without_timings(self):

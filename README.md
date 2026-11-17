@@ -11,10 +11,14 @@ library specifications to generate library calls. The compiler is pinned under
 `third_party/Polygeist`.
 
 ## Initial setup
-Use the [pre-built Docker image](#pre-built-docker-image) for CPU and native x86
-GPU experiments. It includes the compiler and GPU libraries; reviewers do not
-need to build a Docker image or compile LLVM. Start from a checkout of this
-repository:
+We support three ways of setting up the experiment environment: a
+[pre-built Docker image](#pre-built-docker-image),
+[building your own Docker image](#building-docker-images), and
+[manual setup](#manual-setup).
+We recommend the pre-built image, as building the compiler requires building LLVM,
+which takes a significant amount of time.
+
+All three start from a checkout of this repository:
 
 ```
 git clone https://github.com/PRONTOLab/LoopLibrarian-Benchmarks.git
@@ -35,6 +39,8 @@ Pull the image built from `main` and give it the local name used by the runner:
 docker pull ghcr.io/prontolab/looplibrarian-benchmarks:latest
 docker tag ghcr.io/prontolab/looplibrarian-benchmarks:latest looplibrarian:artifact
 ```
+
+To use other sources, [build the image locally](#building-docker-images).
 
 Then run the smoke test, which takes approximately 1–5 minutes and compares
 every output of native and raised GEMM:
@@ -77,7 +83,7 @@ Use `--gpu-target jetson --stage build` for the separate
 [Orin execution path](#execution-on-orin). A second machine is unnecessary for
 native x86 GPU experiments.
 
-### Building the Docker image
+### Building Docker images
 
 This optional section is for contributors changing the compiler or image
 configuration. Reviewers can use the prebuilt image above for CPU and native
@@ -114,10 +120,7 @@ included in the final image; intermediate build stages are not published as
 additional images.
 
 The [Docker workflow](.github/workflows/docker.yml) builds this image for every
-pull request to `main` and every push to `main` or a tag. Pushes to `main`
-automatically publish `ghcr.io/prontolab/looplibrarian-benchmarks:latest`, together
-with a commit-specific `sha-` tag. The workflow checks anonymous registry access
-after publishing; reviewers do not need to build or log in to pull the image.
+pull request to `main` and every push to `main` or a tag.
 
 ### Manual setup
 
@@ -284,8 +287,7 @@ setup. They depend on machine load. Run GPU timing experiments one at a time.
 | [Ginsbach/IDL](#ginsbachidl) | Section 4.4.1 | 10–30 minutes |
 | [KernelFaRer](#kernelfarer-table-9) | Table 9 | 30–90 minutes |
 | [PVA](#pva-table-7) | Table 7 | 15–30 minutes |
-| [Compilation cost](#compilation-cost-table-8) | Table 8 | 30–60 hours, estimated |
-| [Library inventory](#library-inventory-table-1) | Table 1 | Under 2 minutes |
+| [Compilation cost](#compilation-cost-table-8) | Table 8 | 6–24 hours, estimated |
 
 ## Testing systems
 The paper's measurements used the following build host and Orin target.
@@ -304,6 +306,11 @@ Figure 3 uses CPU 0 on Orin with one OpenBLAS thread. PolyBench GPU, Llama,
 ATen, and MFEM execute on Orin. KernelFaRer, IDL, equality saturation, graph
 measurements, and compilation measurements use the x86 host. PVA requires the
 Orin PVA accelerator and a separately installed SDK.
+
+The native x86 GPU path was also tested on an Intel Core i7-8700K host
+(6 cores, 12 threads) with an NVIDIA GeForce RTX 3090 (24 GiB, compute capability
+8.6). The prebuilt combined Docker image passed PolyBench GPU GEMM and ATen
+conv3d correctness and timing checks on this GPU with NVIDIA driver 580.178.04.
 
 ## Execution on Orin
 
@@ -541,22 +548,18 @@ validated results. Timings use the minimum of five samples per implementation.
 Allow an estimated 1–4 hours; use `--cases aten_mm` for one case (about 2–10
 minutes). `--jobs` controls compilation parallelism; GPU timings run serially.
 
-Fresh runs use the publication FP32 criterion, `0.002 * (1 + abs(reference))`.
-Use `--timing-correctness strict` for the optional diagnostic criterion,
-`1e-5 + 1e-4 * abs(reference)`, which also distinguishes signed zeros.
-Integer/index comparisons remain exact. Both modes check full outputs,
+Runs use the publication correctness criterion: `0.002 * (1 + abs(reference))`
+for standard FP32 cases, with the recorded publication thresholds for FP64 and
+kernel-specific cases. Integer/index comparisons remain exact. Checks cover full outputs,
 unchanged inputs, and buffer guards. Argmax/argmin timing inputs are finite;
 sampled sparse addmm uses identical sparse indices for both implementations.
 Input recipes and correctness policies are recorded with the results.
 
 Outputs include `matching/` (IR and proofs), `gpu/` (builds, checks and raw timing
-samples), `gpu/report.csv`, and `summary.json`. The graph is
-`plots/aten-current.pdf` and `.png`. Only cases with valid correctness checks
-and timing pairs appear as points; the caption states how many of the 115 cases
-are plotted. Failed or unavailable cases remain in `plots/aten-current-data.csv`
-with status and empty timing fields. Subset runs also state how many cases were
-selected. If no case has valid timings, `plots/status.json` records why no graph
-was produced and the case statuses remain in `gpu/report.csv`.
+samples), `gpu/report.csv`, and `summary.json`. Figure 5 is written to
+`plots/aten-current.pdf` and `.png`, with its data in
+`plots/aten-current-data.csv`. The caption reports how many of the 115 cases
+have valid checks and timings.
 
 To resume a completed matching stage, run an existing build, or regenerate the
 graph without new GPU execution, use the applicable command:
@@ -588,15 +591,15 @@ python3 aten/pointwise.py --cases exp2 expm1 erfc --output results/runs/pointwis
 Omit `--cases` for the full inventory. Use `--stage match`, `build`, `run`, or
 `report` to resume stages. Matching takes about 20–60 minutes for the inventory,
 plus compilation and GPU time for executable cases. `summary.json` separates
-candidates, complete matches, strict GPU passes, and timings.
+candidates, complete matches, GPU correctness passes, and timings.
 
 A complete match requires imported-reference proof, valid API arguments, and no
 remaining computation loops. The default `--numeric-model strict` can be changed
 to `relaxed`, which permits finite-arithmetic transformations such as reassociation
 and disregard of signed zero; it does not prove full IEEE equivalence. Use separate
-outputs for the two models. Execution checks every output against C and ATen CUDA,
-including exceptional values, signed zeros, unchanged inputs, and guards. Five
-timing pairs are collected only after strict checks pass. For example, C `roundf`
+outputs for the two models. Execution uses the publication criterion to check
+every output against C and ATen CUDA, and checks unchanged inputs and guards. Five
+timing pairs are collected only after these checks pass. For example, C `roundf`
 and ATen round differ on ties and cannot be substituted for one another.
 
 These runs use source dimensions, not Figure 5 dimensions. Optional larger shapes
@@ -719,10 +722,12 @@ and KernelFaRer speedups of 8.6/346/113/112.
 
 ### PVA (Table 7)
 
-Install the PVA Solutions operator headers, NVCV headers, cuPVA SDK, and
-AArch64 operator libraries separately. Configure their paths as described under
-[Execution on Orin](#execution-on-orin). For Docker, existing installations can
-be mounted read-only without copying them into the image:
+Table 7 runs 18 cases across six PVA operator families on Jetson Orin. Install
+the PVA SDK, operator headers and libraries, and NVCV headers separately, then
+build and package the cases below. Follow [Execution on Orin](#execution-on-orin)
+to run the bundle. `summary.json` records execution checks and output comparisons;
+per-case results retain numerical differences and comparison criteria. This
+experiment reports correctness and execution coverage without timings.
 
 ```
 export LL_DOCKER_PVA_OPERATOR_INCLUDE=/path/to/operator/include
@@ -733,37 +738,6 @@ bash docker/run.sh pva --stage build --vendor-compatibility --output results/run
 python3 target.py pack --build pva=results/runs/pva --output results/pva-bundle
 ```
 
-Transfer the bundle to Orin and use `target.py run` with the installed CUDA and
-PVA libraries in `--library-path`, as in the execution instructions above. The
-operator library and cuPVA runtime must be compatible with the installed target.
-
-Raise public C fixtures, match imported OpenCV references, emit typed PVA calls,
-and compare full outputs. This is a correctness experiment, without PVA timings.
-The 18 cases cover dilation, 3×3 Gaussian and box filtering for four integer
-types; 8/16-bit-input histograms with signed/unsigned 32-bit outputs; and 8-bit
-bilateral filtering and histogram equalization. Histograms and filters use
-192×256 inputs. Select a case with
-`--cases morphology_u8`; resume execution with `--stage run`.
-
-`summary.json` records results. Per-case files include raised IR, matching proof,
-API configuration, and checks. Gaussian and box filters test original, random,
-impulse, constant, and quantization-edge inputs, including borders, input
-preservation, and guards. The 8-bit unsigned Gaussian case requires exact equality; its API parameters
-come from the imported coefficients. BoxFilter permits a recorded quantization
-error bound of 3 over 8-bit pixels. Build records retain the coefficient/rounding
-model and accepted bound. The other typed filters, bilateral and equalization
-use explicitly declared approximate backend bindings: output errors are recorded
-without an asserted bound. Their execution checks require the selected vendor
-call, intact input and guard regions, and correct border handling. Results
-distinguish exact equality, bounded agreement, and recorded approximation.
-
-`--vendor-compatibility` additionally builds a direct API comparison for Box,
-Bilateral, and HistogramEqualization. The bundle runs it and records all output
-differences in `vendor-result.json`; these are separate from compiler matches.
-Bilateral uses a different neighborhood from the fixture. Equalization's
-normalization and constant-image behavior are covered by its declared approximation.
-The 18 execution cases cover six supported operator families.
-
 ### Compilation cost (Table 8)
 
 ```
@@ -772,9 +746,13 @@ python3 reproduce.py compilation_cost --output results/runs/compilation-cost
 
 [inputs.json](compilation_cost/inputs.json) lists 199 inputs: 30 PolyBench,
 23 Llama (19 operation fixtures, extended forward, and three llama2.c functions),
-115 ATen, and 31 MFEM. Measure C-to-linked-AArch64 compilation sequentially with
-and without equality-saturation rewrites, five times per input: 1,990 builds.
-The 30–60-hour estimate comes from initial 50–170-second probes. A small check is:
+115 ATen, and 31 MFEM. By default, measure compilation from C through raising and
+verified equality-saturation matching, sequentially three times per input with
+all rewrites enabled (`--repetitions 3 --modes full`): 597 compilations. Each run
+stops before ABI lowering, LLVM code generation, runtime-object compilation, and
+linking. The estimated 6–24 hours extrapolates the 32–138 seconds through matching
+recorded in a four-input pilot; duration depends on the inputs and machine load.
+A small check is:
 
 ```
 python3 reproduce.py compilation_cost --cases aten/aten_avg_pool2d --repetitions 1 --output results/runs/compilation-check
@@ -784,9 +762,9 @@ python3 reproduce.py compilation_cost --cases aten/aten_avg_pool2d --repetitions
 contains stage times, proof measurements, and peak memory. `summary.json` retains
 raw repetitions and failures.
 
-The paper used three repetitions; `first-three-compilation-table.csv` reports
-repetitions 1–3. These runs include runtime-object generation and linking.
-Application compilation is repeated; parsed reference catalogs are cached per
+The default uses the paper's three repetitions; `first-three-compilation-table.csv`
+reports the same repetitions. Frontend translation, raising, and matching are
+repeated; parsed reference catalogs are cached per
 configuration. Peak RSS is the maximum for one process, not concurrent workers' sum.
 
 To resume, use the suite driver directly with unchanged inputs and compiler:
@@ -796,17 +774,8 @@ python3 compilation_cost/reproduce.py --resume --output results/runs/compilation
 ```
 
 Use `python3 reproduce.py compilation_cost --stage summarize --output results/runs/compilation-cost`
-to report available data without more builds.
-
-### Library inventory (Table 1)
-
-```
-python3 reproduce.py library_inventory --output results/runs/inventory
-```
-
-This host-only command writes `inventory.json`, grouping current specifications
-by library and comparing the total with the paper's 257. Additional imports in
-the current catalog are included in the count.
+to report available data without more builds. Summaries retain the recorded
+measurement boundary; older complete-build timings remain labeled separately.
 
 ## Extending the experiments
 

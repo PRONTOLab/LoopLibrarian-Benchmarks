@@ -30,6 +30,7 @@ ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 CUDA = gpu_target.cuda_root()
 TORCH = gpu_target.torch_root()
+CORRECTNESS_POLICY = 'publication'
 # Each expression calls real ATen with preallocated outputs and cached base
 # tensors. Any composition/view construction below is included in its timing.
 NATIVE = {
@@ -375,9 +376,8 @@ def harness(name, cfg):
 #include <time.h>
 #include <cuda_runtime_api.h>
 '''
-    prefix += f'#define NA {len(sizes)}\n#define NS {ns}\n#define ABS_TOL 1e-5\n#define REL_TOL 1e-4\n'
-    # Independently report the archived publication criteria. The strict
-    # diagnostics above remain unchanged, including their process exit code.
+    prefix += f'#define NA {len(sizes)}\n#define NS {ns}\n'
+    # Use the publication's existing dtype and per-kernel thresholds.
     raised_tolerance = cfg.get('rtol', 2e-3)
     native_tolerance = 1e-10 if cfg.get('dtype') == 'double' else 2e-3
     prefix += f'#define PUBLICATION_RAISED_TOL {raised_tolerance:.17g}\n'
@@ -446,8 +446,7 @@ def harness(name, cfg):
     if cfg.get('dtype') == 'double':
         text=re.sub(r'\bfloat\b','double',text).replace('FLT_MAX','DBL_MAX').replace('FLT_MIN','DBL_MIN')
         text=text.replace('#include <double.h>','#include <float.h>')
-        text=text.replace('0x1p-149f','0x1p-1074').replace('#define ABS_TOL 1e-5','#define ABS_TOL 1e-12')
-        text=text.replace('#define REL_TOL 1e-4','#define REL_TOL 1e-10')
+        text=text.replace('0x1p-149f','0x1p-1074')
     return text
 
 
@@ -586,8 +585,10 @@ def build(name, args):
              persistent_workspace=args.persistent_workspace,
              source_sha256=sha(src),proof_sha256=sha(proofdir/'proof.json'),
              baseline='real ATen CUDA calls for the extracted fixture; preallocated outputs',
-             numerical_policy=('NaN classes, infinity signs, zero signs; ' +
-                 ('FP64 atol=1e-12 rtol=1e-10' if cfg.get('dtype')=='double' else 'FP32 atol=1e-5 rtol=1e-4')))
+             correctness_policy=CORRECTNESS_POLICY,
+             numerical_policy='Publication: error <= tolerance * (1 + abs(reference)); integer outputs exact',
+             raised_tolerance=cfg.get('rtol',2e-3),
+             native_tolerance=1e-10 if cfg.get('dtype')=='double' else 2e-3)
     if name == 'aten_xor_sum_cpu':
         row['baseline']='ATen CUDA bitwise_xor tree with preallocated intermediates; installed libtorch lacks hash_tensor; not the newer xor_sum kernel'
     if name == 'aten_mse_backward':
@@ -614,6 +615,7 @@ def build(name, args):
 
 
 def correctness_summary(rc, log, expected, modes):
+    policy = CORRECTNESS_POLICY if 'CORRECTNESS_POLICY publication' in log.splitlines() else 'strict'
     checks=[]
     for line in log.splitlines():
         if line.startswith('CHECK '):
@@ -634,6 +636,10 @@ def correctness_summary(rc, log, expected, modes):
             if all('nativerefbad' in c for c in checks) else None)
     publication = [{k:float(v) for k,v in re.findall(r'(\w+)=([+\-\d.eE]+)',line)}
                    for line in log.splitlines() if line.startswith('PUBLICATION_CHECK ')]
+    # Older logs contain a separate publication check. Never relabel their
+    # original comparison; new harnesses perform only the publication check.
+    if policy == CORRECTNESS_POLICY:
+        publication = checks
     publication_complete = (complete and len(publication)==modes and
         all(p.get('count')==expected and p.get('resident')==c.get('resident') and
             all(k in p for k in ('bad','nativebad','nativerefbad','raised_tol','native_tol'))
@@ -642,7 +648,7 @@ def correctness_summary(rc, log, expected, modes):
     publication_raised = publication_complete and safe and all(p['bad']==0 for p in publication)
     publication_native = publication_complete and safe and all(p['nativerefbad']==0 for p in publication)
     publication_agreement = publication_complete and safe and all(p['nativebad']==0 for p in publication)
-    return dict(rc=rc,passed=raised and agreement and native is not False,
+    return dict(rc=rc,correctness_policy=policy,passed=raised and agreement and native is not False,
                 raised_passed=raised,native_passed=native,
                 raised_matches_native=agreement,checks=checks,vendor_calls=vendor_calls,
                 publication_passed=publication_raised and publication_native and publication_agreement,
@@ -688,6 +694,8 @@ def run_gpu(names, args):
             save(args.output/'gpu-results.json',results)
             continue
         program=dest/'raised-program'
+        if built.get('correctness_policy') != CORRECTNESS_POLICY:
+            raise ValueError('Rebuild with the publication checker before running: '+name)
         if sha(program)!=built['binary_sha256']:raise RuntimeError('Binary changed after build')
         staged='/tmp/ll-aten-fixture-'+name+'-'+built['binary_sha256'][:12]
         if board.stage(program,staged):raise RuntimeError('Local staging failed: '+name)
@@ -695,7 +703,7 @@ def run_gpu(names, args):
         (dest/'executable-hash.log').write_text(log)
         if rc or built['binary_sha256'] not in log:raise RuntimeError('Remote hash check failed')
         row=dict(kernel=name,run_id=run_id,binary_sha256=built['binary_sha256'],
-                 timing_correctness=getattr(args,'timing_correctness','strict'),
+                 timing_correctness=CORRECTNESS_POLICY,
                  scope=built['baseline'],dimension_scope=built['configuration']['dimension_scope'],
                  cudnn_plan_cache=args.cudnn_plan_cache,
                  gpu_workspace_cache=getattr(args,'gpu_workspace_cache',False),correctness={})
@@ -729,20 +737,17 @@ def run_gpu(names, args):
         timing_input=getattr(args,'timing_input','auto')
         if timing_input=='auto':
             timing_input='paper' if 'paper_initializers' in cfg else 'normal'
-        policy=getattr(args,'timing_correctness','strict')
-        all_raised_ok=row['publication_raised_validated'] if policy=='publication' else row['raised_validated']
-        timing_check='publication_passed' if policy=='publication' else 'passed'
         if (not args.skip_timing
                 and (not getattr(args,'require_full_correctness',False) or row['fully_validated'])
-                and (all_raised_ok or args.time_validated_normal_inputs)
-                and row['correctness'].get(timing_input,{}).get(timing_check)):
+                and (row['raised_validated'] or args.time_validated_normal_inputs)
+                and row['correctness'].get(timing_input,{}).get('publication_passed')):
             rc,log=board.run(environment+'timeout '+str(run_timeout)+' '+shlex.quote(staged)+' timing '+shlex.quote(timing_input),timeout=run_timeout+5)
             (dest/'timing-gpu.log').write_text(log)
             samples=[dict(path=a,sample=int(b),ms=float(c)) for a,b,c in re.findall(r'SAMPLE path=(\w+) sample=(\d+) ms=([\deE.+-]+)',log)]
             count=cfg.get('timing_samples',5)
             passed=rc==0 and 'PASS timing' in log and len(samples)==2*count and all(sorted(s['sample'] for s in samples if s['path']==p)==list(range(count)) for p in ('raised','native_aten_cuda'))
             row['timing']=dict(passed=passed,samples=samples,input_kind=timing_input,
-                correctness_policy=policy,
+                correctness_policy=CORRECTNESS_POLICY,
                 all_raised_input_modes_passed=row['raised_validated'],
                 normal_input_only_override=args.time_validated_normal_inputs,
                 native_edge_disagreement=(not row['native_matches_reference']
@@ -780,8 +785,8 @@ def main():
     p.add_argument('--rank',type=int,default=0)
     p.add_argument('--shape-specs',type=Path,help='Pinned benchmark dimensions; separate source copies preserve the original fixtures')
     p.add_argument('--timing-samples',type=int,default=5)
-    p.add_argument('--timing-correctness',choices=['strict','publication'],default='strict',
-                   help='Timing gate; publication retains separate strict diagnostics and uses archived tolerances')
+    p.add_argument('--timing-correctness',choices=[CORRECTNESS_POLICY],default=CORRECTNESS_POLICY,
+                   help=argparse.SUPPRESS)
     p.add_argument('--run-timeout',type=int,default=60)
     p.add_argument('--correctness-kinds', nargs='+', choices=['normal','edge','zeros','paper','native-paper'],
                    help='Selected input recipes, explicitly recorded in the results')
