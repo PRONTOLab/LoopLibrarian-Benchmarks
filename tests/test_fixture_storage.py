@@ -44,9 +44,16 @@ static const char *cudaGetErrorString(int e){(void)e;return "stub";}
                 check=True,capture_output=True)
             for mode in ['normal','edge','zeros']:
                 result=subprocess.run([str(d/'check'),mode],text=True,capture_output=True)
-                self.assertEqual(result.returncode,3 if corrupt else 0,result.stdout+result.stderr)
+                # Publication comparisons with the native implementation require
+                # finite floating-point outputs, even for an exact copy.
+                nonfinite_rejected=mode=='edge' and kind=='ptr'
+                self.assertEqual(result.returncode,3 if corrupt or nonfinite_rejected else 0,
+                                 result.stdout+result.stderr)
                 self.assertIn('count=19',result.stdout)
                 if corrupt:self.assertIn('guardbad=1',result.stdout)
+                elif nonfinite_rejected:
+                    self.assertRegex(result.stdout,
+                        r'bad=0 nativebad=[1-9]\d* nativerefbad=[1-9]\d* guardbad=0 inputbad=0')
 
     def test_mixed_int8_int32_arrays_have_correct_byte_sizes(self):
         self.execute('int8_t','bptr')
