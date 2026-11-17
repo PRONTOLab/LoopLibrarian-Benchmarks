@@ -832,19 +832,53 @@ To add a benchmark:
    ATen invocation; both lower-level drivers accept `--checklist`.
 4. Check compilation, generated library calls, and output correctness before timing.
 
-To add a library reference in the Polygeist submodule:
+## Extending LoopLibrarian
 
-1. Add it under `generic_solver/lib_v3/ref_c/` with a manifest under
-   `generic_solver/lib_v3/manifest/`. Record public source, argument types/layouts,
-   numerical assumptions, and target API. See the [Thrust fill reference](third_party/Polygeist/generic_solver/lib_v3/ref_c/thrust_fill.c)
-   and [manifest](third_party/Polygeist/generic_solver/lib_v3/manifest/thrust_fill.json).
-2. Add a runtime adapter if needed, calling the library with the declared bindings.
-3. Run `python3 setup.py specs` to raise and validate it. Callers and references
-   use the same raising and equality-saturation pipeline; no operation-specific
-   matcher is required.
-4. Add execution checks for supported shapes, layouts, and numerical assumptions;
-   reject unsupported inputs. Commit compiler extensions in Polygeist and update
-   this repository's submodule pin when distributing them.
+LoopLibrarian's compiler lives in `third_party/Polygeist`. Extensions can improve
+how programs are raised to MLIR, how equivalent computations are matched, or
+which library implementations are available.
+
+### Improving compiler passes
+
+When a computation cannot be raised, inspect the intermediate MLIR to identify
+the unsupported loop, memory access, or control flow. Start with
+[RaiseToLinalg.cpp](third_party/Polygeist/lib/polygeist/Passes/RaiseToLinalg.cpp)
+for converting loops to Linalg, and
+[LinalgDebufferize.cpp](third_party/Polygeist/lib/polygeist/Passes/LinalgDebufferize.cpp)
+for converting buffer operations to tensor operations. Add a small regression
+case under `test/polygeist-opt/`. Application code and library references use
+the shared [raising recipe](third_party/Polygeist/scripts/correctness/lib_v2/recipe.py);
+rebuild the compiler and regenerate specifications after changing these passes.
+
+### Improving matching
+
+When raising succeeds but a library replacement is missing, inspect the generated
+IR and match report. The matching entry point,
+[spec_match.py](third_party/Polygeist/scripts/correctness/spec_match.py), invokes
+the [Linalg matcher](third_party/Polygeist/scripts/correctness/lib_v2/match_v2.py)
+and [generic region matcher](third_party/Polygeist/scripts/correctness/region_match/matcher.py).
+Extend their handling of dataflow, indexing, or equality-saturation rules while
+preserving the selected numerical assumptions. Add tests for both equivalent
+computations that should match and similar computations that must be rejected.
+Library replacements must be justified by imported reference semantics.
+
+### Adding library references
+
+1. Add a C reference under `generic_solver/lib_v3/ref_c/` and a manifest under
+   `generic_solver/lib_v3/manifest/`. Record its public source, license,
+   adaptations, argument types, layouts, numerical assumptions, and target API.
+   The [Thrust fill reference](third_party/Polygeist/generic_solver/lib_v3/ref_c/thrust_fill.c)
+   and [manifest](third_party/Polygeist/generic_solver/lib_v3/manifest/thrust_fill.json)
+   provide an example.
+2. Declare the API bindings and add a runtime adapter where needed.
+3. From the artifact root, run `python3 setup.py specs` to raise and validate the
+   reference through the shared pipeline.
+4. Check generated calls and full outputs for supported shapes, layouts, and
+   data types, including rejection of unsupported inputs.
+
+See the [library specification documentation](third_party/Polygeist/generic_solver/lib_v3/README.md)
+for import and validation details. When distributing compiler extensions, commit
+them in Polygeist and update this artifact's submodule revision.
 
 ## Repository files and licenses
 
